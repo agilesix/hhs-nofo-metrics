@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import math
+
+import pytest
+
 from hhs_nofo_metrics.toon_output import encode_toon
 
 
@@ -75,3 +79,58 @@ def test_encodes_keyed_tabular_object() -> None:
             "second": {"status": "review", "count": 3},
         }
     ) == ("[2:]{status,count}:\n  first: ok,2\n  second: review,3")
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (None, "null"),
+        (True, "true"),
+        (False, "false"),
+        (0, "0"),
+        (12.5, "12.5"),
+        (math.inf, "null"),
+        (-math.inf, "null"),
+        (math.nan, "null"),
+        (1e-7, "1e-7"),
+        (1e21, "1e+21"),
+        ([], "[]"),
+        ([1, "two", False], "[3]: 1,two,false"),
+    ],
+)
+def test_encodes_primitive_and_compact_root_values(
+    value: object, expected: str
+) -> None:
+    assert encode_toon(value) == expected  # type: ignore[arg-type]
+
+
+def test_encodes_empty_and_nested_nonuniform_list_items() -> None:
+    value = {
+        "items": [
+            {},
+            [],
+            [1, 2],
+            {"name": "first", "details": {"active": True}},
+        ]
+    }
+
+    assert encode_toon(value) == (
+        "items[4]:\n"
+        "  -\n"
+        "  - [0]:\n"
+        "  - [2]: 1,2\n"
+        "  - name: first\n"
+        "    details:\n"
+        "      active: true"
+    )
+
+
+def test_rejects_non_json_values_and_unpaired_surrogates() -> None:
+    with pytest.raises(TypeError, match="Unsupported TOON root: set"):
+        encode_toon({"not", "json"})  # type: ignore[arg-type]
+    with pytest.raises(TypeError, match="Unsupported TOON value: set"):
+        encode_toon({"value": {1, 2}})  # type: ignore[arg-type]
+    with pytest.raises(TypeError, match="Unsupported TOON list item: set"):
+        encode_toon([{"valid": True}, {1, 2}])  # type: ignore[list-item]
+    with pytest.raises(ValueError, match="unpaired Unicode surrogate"):
+        encode_toon("\ud800")

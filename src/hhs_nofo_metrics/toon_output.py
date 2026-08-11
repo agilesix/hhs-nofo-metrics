@@ -60,6 +60,7 @@ def _encode_string(value: str, *, delimiter: str = ",") -> str:
         or _NUMERIC_LIKE_RE.fullmatch(value) is not None
         or any(character in value for character in (":", '"', "\\", "[", "]", "{", "}"))
         or any(ord(character) < 0x20 for character in value)
+        or any(0xD800 <= ord(character) <= 0xDFFF for character in value)
         or delimiter in value
         or value.startswith(("-", "#"))
     )

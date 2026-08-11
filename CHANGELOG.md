@@ -12,6 +12,14 @@ package release may support more than one measurement contract.
 - MIT licensing with Agile Six Applications, Inc. attribution.
 - Public package metadata, repository links, and explicit maintainer and
   non-endorsement language.
+- Focused public-contract coverage for the CLI, source materialization,
+  tagged-PDF structure and geometry handling, and TOON output, with an 84%
+  enforced coverage floor.
+
+### Fixed
+
+- Rejected unpaired Unicode surrogates at the TOON output boundary instead of
+  allowing a terminal encoding failure outside the structured CLI envelope.
 
 ## [0.5.0] - 2026-08-11
 
