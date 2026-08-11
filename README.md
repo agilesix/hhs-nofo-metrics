@@ -5,6 +5,10 @@ reproducible plain-language measurements from an HHS Notice of Funding
 Opportunity. It supports source-native semantic HTML, tagged PDFs, and an
 explicitly lower-confidence fallback for untagged PDFs.
 
+The package is maintained by Agile Six and includes provisional, versioned
+profiles derived from HHS NOFO measurement guidance. It is not an official HHS
+policy interpretation, certification, or endorsement.
+
 It produces measurements and provenance. It does not make clearance,
 compliance, accessibility, legal, policy, or document-quality determinations,
 and it does not perform generative-AI review.
@@ -46,11 +50,10 @@ semantic HTML whenever it is available.
 
 ## Installation
 
-Until a package registry release exists, install from an authenticated checkout
-or from a commit-pinned private Git URL:
+Until a package registry release exists, install from a commit-pinned Git URL:
 
 ```bash
-pip install "hhs-nofo-metrics @ git+ssh://git@github.com/mikec-ai/hhs-nofo-metrics.git@<commit-sha>"
+pip install "hhs-nofo-metrics @ git+https://github.com/mikec-ai/hhs-nofo-metrics.git@<commit-sha>"
 ```
 
 For local development, use the editable installation shown below.

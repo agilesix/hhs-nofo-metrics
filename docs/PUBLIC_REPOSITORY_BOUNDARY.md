@@ -43,8 +43,9 @@ Before any public push:
 4. Review Git history, not only the current tree. If private paths or artifacts
    ever entered history, publish from a clean squashed export or deliberately
    rewrite history before making the repository public.
-5. Confirm licensing, contribution, security-reporting, and code-of-conduct
-   decisions separately; those policy files are not implied by this boundary.
+5. Confirm the MIT attribution, contribution guidance, and security-reporting
+   process remain correct. Decide separately whether the project needs a code
+   of conduct; that policy is not implied by this technical boundary.
 
 ## Decision rule
 

@@ -10,6 +10,8 @@ package release may support more than one measurement contract.
 ### Added
 
 - MIT licensing with Agile Six Applications, Inc. attribution.
+- Public package metadata, repository links, and explicit maintainer and
+  non-endorsement language.
 
 ## [0.5.0] - 2026-08-11
 

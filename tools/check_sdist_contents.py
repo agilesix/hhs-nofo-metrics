@@ -18,6 +18,7 @@ FORBIDDEN_PARTS = {
 REQUIRED_FILES = {
     "CHANGELOG.md",
     "CONTRIBUTING.md",
+    "LICENSE",
     "README.md",
     "SECURITY.md",
     "docs/ARCHITECTURE.md",

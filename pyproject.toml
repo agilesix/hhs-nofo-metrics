@@ -9,11 +9,18 @@ description = "Versioned, reproducible readability metrics for HHS NOFO document
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
+authors = [{ name = "Agile Six Applications, Inc." }]
 requires-python = ">=3.11"
 dependencies = [
   "pdfplumber>=0.11,<1",
   "pypdf>=5,<7",
 ]
+
+[project.urls]
+Homepage = "https://github.com/mikec-ai/hhs-nofo-metrics"
+Repository = "https://github.com/mikec-ai/hhs-nofo-metrics"
+Issues = "https://github.com/mikec-ai/hhs-nofo-metrics/issues"
+Changelog = "https://github.com/mikec-ai/hhs-nofo-metrics/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
