@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.14"]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+
+      - name: Check formatting
+        run: ruff format --check .
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Run tests with coverage
+        run: pytest --cov=hhs_nofo_metrics --cov-report=term-missing
+
+  package:
+    name: Public boundary and package smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+
+      - name: Check public repository boundary
+        run: python tools/check_public_repo.py
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Check wheel product boundary
+        run: python tools/check_wheel_contents.py dist/*.whl
+
+      - name: Install wheel in a clean environment
+        run: |
+          python -m venv /tmp/hhs-nofo-metrics-wheel-smoke
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/python -m pip install dist/*.whl
+          test "$(/tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --version)" = "0.5.0"
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics | grep 'profiles\[3\]:'
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics profiles list --json | python -m json.tool > /dev/null
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --help
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/python - <<'PY'
+          from hhs_nofo_metrics import SourceBundle, analyze, list_profiles
+
+          assert set(list_profiles()) == {
+              "hhs-nofo-fy27-html@0.4.0",
+              "hhs-nofo-fy27-pdf-estimate@0.5.0",
+              "hhs-nofo-fy27-generic-pdf-estimate@0.4.0",
+          }
+          source = SourceBundle.from_html(
+              b'<main id="download_target"><p>Applications are reviewed.</p></main>'
+          )
+          result = analyze(
+              source,
+              profile="hhs-nofo-fy27-html@0.4.0",
+              adapter_config={"root_id": "download_target"},
+          )
+          assert result.schema_version == "1.1.0"
+          assert result.metrics["passive_sentence_percentage"].value == 100
+          PY
