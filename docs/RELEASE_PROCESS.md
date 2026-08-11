@@ -38,7 +38,8 @@ source follows its intended analysis path.
 
 ## Public-release gate
 
-Before making the repository or a distribution public, choose and add the
-project license. Do not infer a license from dependencies or organizational
-affiliation. Re-run the history and secret scans after the final commit and
-publish from a clean export if any private material ever entered Git history.
+Before making the repository or a distribution public, confirm that the MIT
+copyright attribution in `LICENSE` remains correct for the intended release.
+Do not infer ownership from dependencies or organizational affiliation. Re-run
+the history and secret scans after the final commit and publish from a clean
+export if any private material ever entered Git history.

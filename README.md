@@ -171,3 +171,7 @@ Private PDFs, Word captures, screenshots, Gartner data, review packets, and
 calibration receipts belong outside this repository. Run the public-boundary
 check before every release candidate and the history-aware form before any
 repository is made public.
+
+## License
+
+This project is available under the [MIT License](LICENSE).

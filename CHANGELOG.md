@@ -7,7 +7,9 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
-No changes yet.
+### Added
+
+- MIT licensing with Agile Six Applications, Inc. attribution.
 
 ## [0.5.0] - 2026-08-11
 
