@@ -26,10 +26,7 @@ from hhs_nofo_metrics.methods.token_candidates import (
     READABILITY_CHARACTER_CANDIDATE_REFERENCE,
     SYLLABLE_CANDIDATE_METHOD_REFERENCE,
 )
-from hhs_nofo_metrics.metric_scopes import (
-    ProfileMetricScopes,
-    resolve_profile_metric_scopes,
-)
+from hhs_nofo_metrics.metric_scopes import resolve_profile_metric_scopes
 from hhs_nofo_metrics.models import (
     METRIC_IDS,
     AdapterIdentity,
@@ -39,7 +36,6 @@ from hhs_nofo_metrics.models import (
     MethodIdentity,
     MetricProfile,
     MetricResult,
-    MetricSelectionRule,
     NormalizedDocument,
     ProfileIdentity,
     Segment,
@@ -101,7 +97,7 @@ def _method_identity(profile: MetricProfile, slot: str) -> MethodIdentity:
     )
 
 
-def _validate_profile(profile: MetricProfile) -> ProfileMetricScopes:
+def _validate_profile(profile: MetricProfile) -> None:
     for slot, expected in _EXPECTED_METHODS.items():
         method = profile.methods[slot]
         observed = (
@@ -126,21 +122,7 @@ def _validate_profile(profile: MetricProfile) -> ProfileMetricScopes:
             f"{PASSIVE_SENTENCE_METHOD_REFERENCE!r}; profile "
             f"declares {passive_reference!r}"
         )
-    return resolve_profile_metric_scopes(profile)
-
-
-def _included_segments(
-    segments: tuple[Segment, ...], rule: MetricSelectionRule
-) -> tuple[Segment, ...]:
-    return tuple(
-        segment
-        for segment in segments
-        if segment.inclusion_override is True
-        or (
-            segment.inclusion_override is not False
-            and segment.role in rule.include_roles
-        )
-    )
+    resolve_profile_metric_scopes(profile)
 
 
 def _readability_sentences(
@@ -170,7 +152,7 @@ def analyze_semantic_document(
     revision: str | None,
     estimate_kind: Literal["none", "tagged_pdf", "flat_pdf"] = "none",
 ) -> AnalysisResult:
-    scope_rules = _validate_profile(profile)
+    _validate_profile(profile)
     is_estimate = estimate_kind != "none"
     reflow_diagnostics: ReflowDiagnostics | None = None
     if estimate_kind == "flat_pdf":
@@ -210,10 +192,8 @@ def analyze_semantic_document(
     }
     word_selected = selected_by_metric["word_count"]
     readability_selected = selected_by_metric["words_per_sentence"]
-    word_segments = _included_segments(document.segments, scope_rules.document_content)
-    readability_segments = _included_segments(
-        document.segments, scope_rules.readability_sentences
-    )
+    word_segments = word_selected.included_segments
+    readability_segments = readability_selected.included_segments
     if is_estimate:
         readability_segments = tuple(
             segment

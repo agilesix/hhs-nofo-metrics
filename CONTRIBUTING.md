@@ -30,10 +30,11 @@ To test the distributable artifact:
 ```bash
 .venv/bin/python -m build
 .venv/bin/python tools/check_wheel_contents.py dist/*.whl
+.venv/bin/python tools/check_sdist_contents.py dist/*.tar.gz
 ```
 
-CI installs the built wheel into a clean environment and runs the packaged CLI
-as an additional smoke test.
+CI installs both built distributions into clean environments and runs the
+packaged API and CLI as additional smoke tests.
 
 ## Method changes
 

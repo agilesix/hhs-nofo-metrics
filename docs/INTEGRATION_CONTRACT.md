@@ -126,8 +126,9 @@ Stable categories are `adapter_not_found`, `adapter_contract_error`,
 `analysis_error`, and `nofo_metrics_error`.
 
 The CLI returns `0` for success, `2` for usage errors, and `1` for expected
-runtime failures. Standard output contains a compact JSON receipt or error;
-standard error is reserved for unexpected diagnostics.
+runtime failures. Standard output contains a compact TOON 4.1 receipt or error
+by default; add `--json` to receive JSON. Standard error is reserved for
+unexpected diagnostics.
 
 ```bash
 hhs-nofo-metrics analyze input.pdf \

@@ -1,4 +1,4 @@
-"""Versioned extraction-plugin contract owned by the core package."""
+"""Versioned extraction-adapter contract owned by the core package."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from hashlib import sha256
 from typing import Any, Mapping, Protocol, TypeAlias
 
 from hhs_nofo_metrics.errors import AdapterContractError
-from hhs_nofo_metrics.models import NormalizedDocument
+from hhs_nofo_metrics.models import NormalizedDocument, Segment
 from hhs_nofo_metrics.sources import MaterializedSourceBundle
 
 ADAPTER_CONTRACT_VERSION = "1.0.0"
@@ -257,8 +257,20 @@ def validate_adapter_result(
         raise AdapterContractError(
             "adapter result document must be a NormalizedDocument"
         )
+    if not isinstance(result.document.segments, tuple):
+        raise AdapterContractError("normalized document segments must be a tuple")
+    if not all(isinstance(item, Segment) for item in result.document.segments):
+        raise AdapterContractError(
+            "normalized document segments must contain Segment values"
+        )
+    if not isinstance(result.document.warnings, tuple):
+        raise AdapterContractError("normalized document warnings must be a tuple")
+    if not isinstance(result.document.metadata, Mapping):
+        raise AdapterContractError("normalized document metadata must be a mapping")
     if not isinstance(result.coverage, AdapterCoverage):
         raise AdapterContractError("adapter result coverage must be an AdapterCoverage")
+    if not isinstance(result.artifacts_consumed, tuple):
+        raise AdapterContractError("adapter artifacts_consumed must be a tuple")
     if any(
         not isinstance(value, str) or not value for value in result.artifacts_consumed
     ):
@@ -271,6 +283,12 @@ def validate_adapter_result(
         raise AdapterContractError(
             "adapter capabilities_used must be a frozenset of strings"
         )
+    if not isinstance(result.dependencies, Mapping):
+        raise AdapterContractError("adapter dependencies must be a mapping")
+    if not isinstance(result.warnings, tuple):
+        raise AdapterContractError("adapter warnings must be a tuple")
+    if not isinstance(result.evidence, tuple):
+        raise AdapterContractError("adapter evidence must be a tuple")
     descriptor = plugin.descriptor
     artifact_names = {artifact.name for artifact in source.artifacts}
     if not result.artifacts_consumed:
@@ -308,9 +326,7 @@ def validate_adapter_result(
     if any(
         segment.inclusion_override is not None for segment in result.document.segments
     ):
-        raise AdapterContractError(
-            "adapter plugins may not set Segment.inclusion_override"
-        )
+        raise AdapterContractError("adapters may not set Segment.inclusion_override")
     if result.coverage.status == "failed":
         raise AdapterContractError("failed adapter coverage cannot be analyzed")
     if any(

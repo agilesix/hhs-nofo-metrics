@@ -11,7 +11,7 @@ No changes yet.
 
 ## [0.5.0] - 2026-08-11
 
-Initial release candidate.
+Initial private release.
 
 ### Added
 
@@ -24,7 +24,8 @@ Initial release candidate.
   statuses, coverage, and warnings.
 - Metric-specific reliability and include/exclude sensitivity for PDF
   estimates.
-- A versioned external adapter-plugin contract.
+- Three versioned built-in extraction adapters with one validated internal
+  contract.
 - A compact CLI for analysis and contract inspection.
 
 ### Changed
@@ -43,6 +44,8 @@ Initial release candidate.
 - Experimental Word-parity, calibration, corpus, producer-specific, and
   historical architecture code from the release repository.
 - The strict tagged-PDF profile and legacy no-profile API behavior.
+- Automatic third-party adapter discovery and two unused experimental
+  classification modules.
 
 ### Known limitations
 

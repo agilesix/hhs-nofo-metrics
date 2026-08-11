@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator, FormatChecker
 
+import hhs_nofo_metrics
 from hhs_nofo_metrics.analysis_pipelines import (
     pipeline_reference_for_profile,
     resolve_profile_pipeline,
@@ -43,6 +44,10 @@ PDF_ESTIMATE_PROFILE_PATH = (
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_analysis_result_is_exported_from_package_root() -> None:
+    assert hhs_nofo_metrics.AnalysisResult is AnalysisResult
 
 
 def configured_method(method_id: str) -> MethodIdentity:
@@ -371,6 +376,19 @@ def test_source_identity_rejects_nonstandard_pdf_metadata() -> None:
     assert any(
         "Additional properties are not allowed" in error.message for error in errors
     )
+
+
+@pytest.mark.parametrize("field_name", ("document_id", "revision"))
+def test_source_identity_rejects_empty_optional_identifiers(field_name: str) -> None:
+    values = {field_name: ""}
+    with pytest.raises(ValueError, match=field_name):
+        SourceIdentity(
+            kind="pdf",
+            sha256="a" * 64,
+            byte_length=100,
+            production_path="synthetic_test",
+            **values,
+        )
 
 
 def test_coverage_distinguishes_extracted_pages_from_pages_with_text() -> None:

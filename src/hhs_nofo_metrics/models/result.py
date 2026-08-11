@@ -16,15 +16,8 @@ WARNING_SEVERITIES = frozenset({"info", "warning", "error"})
 RESULT_BASES = frozenset({"rendered_pdf_measurement", "structured_estimate"})
 OBSERVED_PDF_METADATA_FIELDS = frozenset(
     {
-        "Author",
-        "CreationDate",
         "Creator",
-        "Keywords",
-        "ModDate",
         "Producer",
-        "Subject",
-        "Title",
-        "Trapped",
     }
 )
 
@@ -100,6 +93,10 @@ class SourceIdentity:
         if self.byte_length < 0:
             raise ValueError("source byte_length must not be negative")
         _required_string(self.production_path, "production_path")
+        if self.document_id is not None:
+            _required_string(self.document_id, "document_id")
+        if self.revision is not None:
+            _required_string(self.revision, "revision")
         unsupported_metadata = (
             set(self.observed_pdf_metadata) - OBSERVED_PDF_METADATA_FIELDS
         )

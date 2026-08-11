@@ -63,6 +63,50 @@ def test_html_adapter_emits_ordered_semantic_blocks_from_selected_root() -> None
     assert result.coverage.matched_blocks == 7
 
 
+def test_html_adapter_honors_legal_omitted_end_tags() -> None:
+    html = b"""<main id=download_target>
+      <p>First paragraph.<p>Second paragraph.
+      <ul><li>First item.<li>Second item.</ul>
+      <table><tr><th>Label<th>Value<tr><td>One<td>Two</table>
+    </main>"""
+    bundle = SourceBundle.from_html(html)
+
+    with materialize_source_bundle(bundle) as materialized:
+        result = HtmlAdapterPlugin().extract(
+            materialized, config={"root_id": "download_target"}
+        )
+
+    assert [(item.role, item.text) for item in result.document.segments] == [
+        ("body", "First paragraph."),
+        ("body", "Second paragraph."),
+        ("list", "First item."),
+        ("list", "Second item."),
+        ("heading", "Label"),
+        ("heading", "Value"),
+        ("table", "One"),
+        ("table", "Two"),
+    ]
+
+
+def test_html_adapter_preserves_nested_lists_with_omitted_list_item_end_tags() -> None:
+    html = b"""<main id=download_target><ul>
+      <li>Parent item.<ul><li>Nested item.</ul>
+      <li>Sibling item.
+    </ul></main>"""
+    bundle = SourceBundle.from_html(html)
+
+    with materialize_source_bundle(bundle) as materialized:
+        result = HtmlAdapterPlugin().extract(
+            materialized, config={"root_id": "download_target"}
+        )
+
+    assert [(item.role, item.text) for item in result.document.segments] == [
+        ("list", "Parent item."),
+        ("list", "Nested item."),
+        ("list", "Sibling item."),
+    ]
+
+
 def test_html_analysis_uses_source_structure_and_publishes_no_source_text() -> None:
     result = analyze(
         SourceBundle.from_html(HTML),

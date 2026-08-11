@@ -19,11 +19,13 @@ from .errors import (
     NofoMetricsError,
     ProfileError,
 )
+from .models import AnalysisResult
 from .sources import HtmlSource, SourceArtifact, SourceBundle
 from .version import PACKAGE_VERSION
 
 __all__ = [
     "AnalysisError",
+    "AnalysisResult",
     "AdapterContractError",
     "AdapterError",
     "AdapterExecutionError",

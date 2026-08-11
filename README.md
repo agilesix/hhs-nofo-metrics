@@ -19,7 +19,7 @@ and it does not perform generative-AI review.
   passive-sentence percentage.
 - Versioned profiles and source-free result contracts.
 - Reliability-aware PDF estimates for tagged-PDF workflows.
-- A versioned extraction-plugin boundary for future source implementations.
+- Three versioned, built-in extraction adapters with a shared internal contract.
 
 The current profiles are:
 
@@ -46,9 +46,14 @@ semantic HTML whenever it is available.
 
 ## Installation
 
+Until a package registry release exists, install from an authenticated checkout
+or from a commit-pinned private Git URL:
+
 ```bash
-pip install hhs-nofo-metrics
+pip install "hhs-nofo-metrics @ git+ssh://git@github.com/mikec-ai/hhs-nofo-metrics.git@<commit-sha>"
 ```
+
+For local development, use the editable installation shown below.
 
 ## Python API
 
@@ -144,7 +149,7 @@ output is only a receipt and does not replace that stable result artifact.
 - [Current architecture](docs/ARCHITECTURE.md)
 - [Measurement methodology](docs/METHODOLOGY.md)
 - [Consumer-neutral integration contract](docs/INTEGRATION_CONTRACT.md)
-- [Adapter plugin contract](docs/ADAPTER_PLUGIN_CONTRACT.md)
+- [Release process](docs/RELEASE_PROCESS.md)
 - [NOFO Builder consumer guide](docs/consumers/NOFO_BUILDER.md)
 - [NOFO Checker integration](docs/NOFO_CHECKER_INTEGRATION.md)
 - [Public/private repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md)
@@ -163,3 +168,6 @@ python tools/check_wheel_contents.py dist/*.whl
 ```
 
 Private PDFs, Word captures, screenshots, Gartner data, review packets, and
+calibration receipts belong outside this repository. Run the public-boundary
+check before every release candidate and the history-aware form before any
+repository is made public.

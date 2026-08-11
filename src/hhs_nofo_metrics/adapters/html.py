@@ -108,6 +108,61 @@ _HEADING_TAGS = frozenset(
     }
 )
 _TEXT_BLOCK_TAGS = frozenset({"p", "blockquote", "dd", "figcaption", "pre"})
+_P_IMPLIED_CLOSE_TAGS = frozenset(
+    {
+        "address",
+        "article",
+        "aside",
+        "blockquote",
+        "div",
+        "dl",
+        "fieldset",
+        "footer",
+        "form",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "header",
+        "hr",
+        "main",
+        "nav",
+        "ol",
+        "p",
+        "pre",
+        "section",
+        "table",
+        "ul",
+    }
+)
+_SAME_FAMILY_IMPLIED_CLOSE = {
+    "li": frozenset({"li"}),
+    "dt": frozenset({"dt", "dd"}),
+    "dd": frozenset({"dt", "dd"}),
+    "tr": frozenset({"tr"}),
+    "td": frozenset({"td", "th"}),
+    "th": frozenset({"td", "th"}),
+    "thead": frozenset({"thead", "tbody", "tfoot"}),
+    "tbody": frozenset({"thead", "tbody", "tfoot"}),
+    "tfoot": frozenset({"thead", "tbody", "tfoot"}),
+    "option": frozenset({"option"}),
+    "optgroup": frozenset({"optgroup"}),
+}
+_IMPLIED_CLOSE_SCOPE_BARRIERS = {
+    "li": frozenset({"menu", "ol", "ul"}),
+    "dt": frozenset({"dl"}),
+    "dd": frozenset({"dl"}),
+    "tr": frozenset({"table"}),
+    "td": frozenset({"table", "tr"}),
+    "th": frozenset({"table", "tr"}),
+    "thead": frozenset({"table"}),
+    "tbody": frozenset({"table"}),
+    "tfoot": frozenset({"table"}),
+    "option": frozenset({"datalist", "optgroup", "select"}),
+    "optgroup": frozenset({"datalist", "select"}),
+}
 
 
 @dataclass(slots=True)
@@ -124,9 +179,19 @@ class _DomParser(HTMLParser):
         self._stack = [self.root]
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        node = _Node(
-            tag.casefold(), {key.casefold(): value or "" for key, value in attrs}
-        )
+        requested = tag.casefold()
+        implied_close = _SAME_FAMILY_IMPLIED_CLOSE.get(requested, frozenset())
+        if requested in _P_IMPLIED_CLOSE_TAGS:
+            implied_close = implied_close | {"p"}
+        if implied_close:
+            barriers = _IMPLIED_CLOSE_SCOPE_BARRIERS.get(requested, frozenset())
+            for index in range(len(self._stack) - 1, 0, -1):
+                if self._stack[index].tag in implied_close:
+                    del self._stack[index:]
+                    break
+                if self._stack[index].tag in barriers:
+                    break
+        node = _Node(requested, {key.casefold(): value or "" for key, value in attrs})
         self._stack[-1].children.append(node)
         if node.tag not in _VOID_TAGS:
             self._stack.append(node)

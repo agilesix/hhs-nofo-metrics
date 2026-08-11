@@ -52,6 +52,7 @@ branch = true
 source = ["hhs_nofo_metrics"]
 
 [tool.coverage.report]
+fail_under = 75
 show_missing = true
 skip_covered = true
 

@@ -149,6 +149,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
     link_annotation_group_count = 0
     unknown_group_count = 0
     textless_pages: list[int] = []
+    extraction_error_pages: list[int] = []
     page_count = 0
     try:
         with pdfplumber.open(path) as pdf:
@@ -300,7 +301,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
 
     metadata = {
         "observed_pdf_metadata": _metadata(PdfReader(path)),
-        "extraction_error_pages": textless_pages,
+        "extraction_error_pages": extraction_error_pages,
         "textless_pages": textless_pages,
         "dependencies": dependency_versions(),
         "tagged_pdf_resolution": {

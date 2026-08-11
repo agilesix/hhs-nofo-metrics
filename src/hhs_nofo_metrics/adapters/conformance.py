@@ -50,7 +50,7 @@ def run_adapter_conformance(
     *,
     config: Mapping[str, JsonValue] | None = None,
 ) -> AdapterConformanceReport:
-    """Validate one plugin against a caller-supplied frozen source bundle."""
+    """Validate one adapter against a caller-supplied frozen source bundle."""
 
     configuration = dict(config or {})
     configuration_sha256 = canonical_configuration_sha256(configuration)

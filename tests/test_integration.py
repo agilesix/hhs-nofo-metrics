@@ -79,6 +79,7 @@ def write_tagged_structured_pdf(
     body_text: str = "Applicants submit complete forms.",
     second_tag: str = "/LBody",
     second_text: str = "Describe your proposed approach.",
+    append_blank_page: bool = False,
 ) -> None:
     writer = PdfWriter()
     font = DictionaryObject(
@@ -127,6 +128,8 @@ def write_tagged_structured_pdf(
     writer.root_object[NameObject("/MarkInfo")] = DictionaryObject(
         {NameObject("/Marked"): BooleanObject(True)}
     )
+    if append_blank_page:
+        writer.add_blank_page(width=612, height=792)
     writer.add_metadata({"/Producer": "Synthetic tagged fixture"})
     with path.open("wb") as stream:
         writer.write(stream)
@@ -163,7 +166,6 @@ def test_generic_pdf_fallback_excludes_page_furniture_and_reports_low_reliabilit
     assert "Applicants submit complete forms" not in json.dumps(result.to_dict())
     assert result.source.observed_pdf_metadata == {
         "Producer": "Tests",
-        "Title": "Synthetic parity fixture",
     }
     assert "InternalReviewer" not in json.dumps(result.to_dict())
 
@@ -174,6 +176,43 @@ def test_generic_pdf_fallback_excludes_page_furniture_and_reports_low_reliabilit
         ).read_text(encoding="utf-8")
     )
     validate(result.to_dict(), schema)
+
+
+def test_tagged_pdf_blank_page_is_not_an_extraction_failure(tmp_path: Path) -> None:
+    source = tmp_path / "tagged-with-blank-page.pdf"
+    write_tagged_structured_pdf(source, append_blank_page=True)
+
+    result = analyze(source, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+
+    assert result.coverage.page_count == 2
+    assert result.coverage.pages_extracted == 2
+    assert result.coverage.pages_with_text == 1
+    assert result.coverage.extraction_error_pages == ()
+    assert all(
+        metric.reliability is not None
+        and "page_extraction_incomplete" not in metric.reliability.reason_codes
+        for metric in result.metrics.values()
+    )
+
+
+@pytest.mark.parametrize(
+    ("field_name", "field_value"),
+    (("document_id", ""), ("revision", "  ")),
+)
+def test_python_api_rejects_empty_optional_source_identifiers(
+    tmp_path: Path,
+    field_name: str,
+    field_value: str,
+) -> None:
+    source = tmp_path / "fixture.pdf"
+    write_three_page_pdf(source)
+
+    with pytest.raises(InputError, match=field_name):
+        analyze(
+            source,
+            profile="hhs-nofo-fy27-generic-pdf-estimate@0.4.0",
+            **{field_name: field_value},
+        )
 
 
 def test_runtime_package_and_engine_versions_share_one_identity() -> None:

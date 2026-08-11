@@ -18,6 +18,7 @@ from hhs_nofo_metrics.analysis_pipelines import resolve_profile_pipeline
 from hhs_nofo_metrics.errors import (
     AdapterContractError,
     AdapterExecutionError,
+    InputError,
     NofoMetricsError,
 )
 from hhs_nofo_metrics.models import AnalysisResult, MetricProfile
@@ -160,6 +161,13 @@ def analyze(
     revision: str | None = None,
     adapter_config: Mapping[str, JsonValue] | None = None,
 ) -> AnalysisResult:
+    for field_name, value in (
+        ("production_path", production_path),
+        ("document_id", document_id),
+        ("revision", revision),
+    ):
+        if value is not None and (not isinstance(value, str) or not value.strip()):
+            raise InputError(f"{field_name} must be a non-empty string")
     source_bundle = _coerce_source_bundle(source)
     profile_document, profile_sha256 = load_profile_record(profile)
     pipeline = resolve_profile_pipeline(profile_document)

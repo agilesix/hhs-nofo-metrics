@@ -93,31 +93,10 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "Author": {
-              "type": "string"
-            },
-            "CreationDate": {
-              "type": "string"
-            },
             "Creator": {
               "type": "string"
             },
-            "Keywords": {
-              "type": "string"
-            },
-            "ModDate": {
-              "type": "string"
-            },
             "Producer": {
-              "type": "string"
-            },
-            "Subject": {
-              "type": "string"
-            },
-            "Title": {
-              "type": "string"
-            },
-            "Trapped": {
               "type": "string"
             }
           }

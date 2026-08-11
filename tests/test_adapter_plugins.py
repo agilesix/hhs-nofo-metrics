@@ -33,7 +33,6 @@ from hhs_nofo_metrics.adapters import (
     run_adapter_conformance,
     validate_adapter_result,
 )
-from hhs_nofo_metrics.adapters import registry as registry_module
 from hhs_nofo_metrics.models import NormalizedDocument, Segment, SourceLocation
 from hhs_nofo_metrics.sources import materialize_source_bundle
 
@@ -245,6 +244,38 @@ def test_adapter_contract_rejects_policy_override_and_hash_mismatch() -> None:
             validate_adapter_result(plugin, materialized, leaking)
 
 
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"artifacts_consumed": ["primary"]}, "must be a tuple"),
+        ({"dependencies": ["dependency"]}, "must be a mapping"),
+        ({"warnings": ["warning"]}, "warnings must be a tuple"),
+        ({"evidence": ["evidence"]}, "evidence must be a tuple"),
+    ],
+)
+def test_adapter_contract_rejects_malformed_result_containers(
+    changes: dict[str, object], message: str
+) -> None:
+    plugin = SyntheticPlugin()
+    with materialize_source_bundle(synthetic_bundle()) as materialized:
+        result = replace(plugin.extract(materialized, config={}), **changes)
+        with pytest.raises(AdapterContractError, match=message):
+            validate_adapter_result(plugin, materialized, result)
+
+
+def test_adapter_contract_rejects_malformed_document_containers() -> None:
+    plugin = SyntheticPlugin()
+    with materialize_source_bundle(synthetic_bundle()) as materialized:
+        valid = plugin.extract(materialized, config={})
+        malformed_document = replace(
+            valid.document, segments=list(valid.document.segments)
+        )
+        result = replace(valid, document=malformed_document)
+
+        with pytest.raises(AdapterContractError, match="segments must be a tuple"):
+            validate_adapter_result(plugin, materialized, result)
+
+
 def test_public_adapter_errors_redact_materialized_paths() -> None:
     class PathLeakingPlugin(SyntheticPlugin):
         def inspect_support(self, source) -> SupportAssessment:
@@ -280,42 +311,6 @@ def test_registry_rejects_duplicates_and_resolves_explicit_versions() -> None:
     assert registry.resolve("synthetic-adapter@1.0.0") is plugin
     with pytest.raises(AdapterContractError, match="duplicate adapter reference"):
         registry.register(plugin)
-
-
-def test_entry_point_listing_does_not_construct_plugin(monkeypatch) -> None:
-    constructed = 0
-
-    class LazyPlugin(SyntheticPlugin):
-        def __init__(self) -> None:
-            nonlocal constructed
-            constructed += 1
-
-    class EntryPoint:
-        name = "synthetic"
-
-        def load(self):
-            return LazyPlugin
-
-    class EntryPoints(tuple):
-        def select(self, *, group):
-            assert group == registry_module.ENTRY_POINT_GROUP
-            return self
-
-    monkeypatch.setattr(
-        registry_module.metadata,
-        "entry_points",
-        lambda: EntryPoints((EntryPoint(),)),
-    )
-    registry = AdapterRegistry(load_entry_points=True)
-
-    assert registry.descriptors() == (LazyPlugin.descriptor,)
-    assert constructed == 0
-    plugin = registry.resolve("synthetic-adapter@1.0.0")
-    assert constructed == 0
-
-    with materialize_source_bundle(synthetic_bundle()) as materialized:
-        assert plugin.inspect_support(materialized).status == "supported"
-    assert constructed == 1
 
 
 def test_configuration_hash_is_canonical_and_rejects_non_json() -> None:
@@ -390,7 +385,7 @@ def test_adapter_inspection_is_advisory_and_generic_pdf_rejects_auxiliary(
 
 
 def test_default_registry_contains_supported_builtin_adapters() -> None:
-    registry = create_default_registry(load_entry_points=False)
+    registry = create_default_registry()
 
     assert registry.resolve("pdf").descriptor.id == "hhs-pdf-adapter"
     assert registry.resolve("tagged-pdf").descriptor.id == "hhs-tagged-pdf-adapter"

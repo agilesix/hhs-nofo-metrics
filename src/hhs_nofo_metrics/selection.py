@@ -11,6 +11,7 @@ from hhs_nofo_metrics.models import MetricSelectionRule, Segment, SelectionSumma
 @dataclass(frozen=True, slots=True)
 class SelectedText:
     text: str
+    included_segments: tuple[Segment, ...]
     summary: SelectionSummary
     unable_reason: str | None = None
 
@@ -47,6 +48,7 @@ def select_metric_text(
     excluded_counts = Counter(segment.role for segment in excluded)
     return SelectedText(
         text="".join(chunks),
+        included_segments=tuple(included),
         summary=SelectionSummary(
             included_segment_count=len(included),
             excluded_segment_count=len(excluded),

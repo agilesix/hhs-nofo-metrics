@@ -4,7 +4,7 @@
 
 `hhs-nofo-metrics` owns deterministic document measurement, versioned method and
 profile identities, source-bound provenance, status-aware metric results, and
-the extraction-plugin contract. Consumers own orchestration, persistence,
+the internal extraction-adapter contract. Consumers own orchestration, persistence,
 permissions, user interfaces, dashboards, pass/fail interpretation, and
 clearance decisions.
 
@@ -73,7 +73,7 @@ calculation boundary after resolution, not forced numerical parity.
 | `api.py` | Public orchestration and pipeline dispatch |
 | `analysis_pipelines.py` | Immutable profile-to-pipeline registry |
 | `sources.py` | Caller input normalization and isolated materialization |
-| `adapters/` | Supported generic PDF, tagged-PDF, and HTML adapters plus the external plugin contract |
+| `adapters/` | Supported generic PDF, tagged-PDF, and HTML adapters plus their internal contract |
 | `adapters/tagged_structure.py` | Minimal tagged-PDF structure and geometry extraction primitives |
 | `pdf_reflow.py` | Conservative flat-PDF line-to-paragraph reconstruction and diagnostics |
 | `metric_scopes.py` | Generic grouping of profile-declared metric rules into document and readability scopes |
@@ -95,11 +95,11 @@ kept outside the release repository and package distribution.
 
 ## Adapter policy
 
-The product distribution registers three supported built-in adapters:
+The product distribution registers exactly three supported built-in adapters:
 `hhs-pdf-adapter`, `hhs-tagged-pdf-adapter`, and
-`hhs-semantic-html-adapter`. Third-party adapters may use the versioned Python entry-point
-contract, but consumers that require the built-in text-free guarantee must
-allowlist reviewed plugins.
+`hhs-semantic-html-adapter`. The release does not discover or execute
+third-party adapters. A future extension mechanism requires a separately
+reviewed product contract and must preserve the source-free result boundary.
 
 Producer-specific experiments do not ship as built-ins. A production adapter
 must earn support through reviewed fixtures and the common conformance contract

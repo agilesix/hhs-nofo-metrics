@@ -49,7 +49,7 @@ class AdapterNotFoundError(AdapterError):
 
 
 class AdapterContractError(AdapterError):
-    """An adapter or its output violates the plugin contract."""
+    """An adapter or its output violates the adapter contract."""
 
     code = "adapter_contract_error"
 
