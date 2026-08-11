@@ -7,23 +7,11 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
-### Added
-
-- MIT licensing with Agile Six Applications, Inc. attribution.
-- Public package metadata, repository links, and explicit maintainer and
-  non-endorsement language.
-- Focused public-contract coverage for the CLI, source materialization,
-  tagged-PDF structure and geometry handling, and TOON output, with an 84%
-  enforced coverage floor.
-
-### Fixed
-
-- Rejected unpaired Unicode surrogates at the TOON output boundary instead of
-  allowing a terminal encoding failure outside the structured CLI envelope.
+No unreleased changes.
 
 ## [0.5.0] - 2026-08-11
 
-Initial private release.
+Initial public release.
 
 ### Added
 
@@ -39,6 +27,12 @@ Initial private release.
 - Three versioned built-in extraction adapters with one validated internal
   contract.
 - A compact CLI for analysis and contract inspection.
+- MIT licensing with Agile Six Applications, Inc. attribution.
+- Public package metadata, repository links, and explicit maintainer and
+  non-endorsement language.
+- Focused public-contract coverage for the CLI, source materialization,
+  tagged-PDF structure and geometry handling, and TOON output, with an 84%
+  enforced coverage floor.
 
 ### Changed
 
@@ -58,6 +52,11 @@ Initial private release.
 - The strict tagged-PDF profile and legacy no-profile API behavior.
 - Automatic third-party adapter discovery and two unused experimental
   classification modules.
+
+### Fixed
+
+- Rejected unpaired Unicode surrogates at the TOON output boundary instead of
+  allowing a terminal encoding failure outside the structured CLI envelope.
 
 ### Known limitations
 
