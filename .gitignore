@@ -1,0 +1,34 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+coverage.xml
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+evaluation-data/
+debug-artifacts/
+
+# Local/private evaluation inputs and generated evidence. Keep public,
+# synthetic fixtures in explicitly named test fixture directories instead.
+/private/
+/private-research/
+/corpus/
+/corpora/
+/outputs/
+/tmp/
+/reports/generated/
+/word-automation-workspace/
+/evidence/private/
+
+# Local configuration and credentials.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
