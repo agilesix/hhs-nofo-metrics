@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.1.0",
+  "profile_id": "hhs-nofo-fy27-generic-pdf-estimate",
+  "profile_version": "0.4.0",
+  "status": "provisional",
+  "description": "Low-reliability FY27 HHS fallback for PDFs without usable semantic tags. It reconstructs conservative paragraph blocks from visual text lines and reports every calculated metric as an estimate. Passive-sentence percentage uses the provisional deterministic HHS NOFO classifier.",
+  "pipeline": {
+    "id": "hhs-generic-pdf-estimate-analysis",
+    "version": "0.1.0"
+  },
+  "metrics": {
+    "word_count": {
+      "include_roles": [
+        "body",
+        "heading",
+        "table",
+        "list",
+        "unknown"
+      ],
+      "exclude_roles": [
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative"
+      ],
+      "unknown_role_policy": "warn_and_include"
+    },
+    "words_per_sentence": {
+      "include_roles": [
+        "body",
+        "table",
+        "list",
+        "unknown"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative"
+      ],
+      "unknown_role_policy": "warn_and_include"
+    },
+    "characters_per_word": {
+      "include_roles": [
+        "body",
+        "table",
+        "list",
+        "unknown"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative"
+      ],
+      "unknown_role_policy": "warn_and_include"
+    },
+    "flesch_reading_ease": {
+      "include_roles": [
+        "body",
+        "table",
+        "list",
+        "unknown"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative"
+      ],
+      "unknown_role_policy": "warn_and_include"
+    },
+    "flesch_kincaid_grade_level": {
+      "include_roles": [
+        "body",
+        "table",
+        "list",
+        "unknown"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative"
+      ],
+      "unknown_role_policy": "warn_and_include"
+    },
+    "passive_sentence_percentage": {
+      "include_roles": [
+        "body",
+        "table",
+        "list",
+        "unknown"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative"
+      ],
+      "unknown_role_policy": "warn_and_include"
+    }
+  },
+  "methods": {
+    "tokenizer": {
+      "status": "configured",
+      "id": "hhs-nofo-readability-token-stream",
+      "version": "0.1.0-internal"
+    },
+    "sentence_segmenter": {
+      "status": "configured",
+      "id": "hhs-semantic-block-sentence-segmentation",
+      "version": "0.1.0"
+    },
+    "character_counter": {
+      "status": "configured",
+      "id": "word-readability-character-token-candidate",
+      "version": "0.1.0"
+    },
+    "syllable_counter": {
+      "status": "configured",
+      "id": "word-syllable-candidate",
+      "version": "0.1.0"
+    },
+    "readability_formula": {
+      "status": "configured",
+      "id": "hhs-nofo-readability-arithmetic",
+      "version": "0.1.0-draft"
+    },
+    "passive_classifier": {
+      "status": "configured",
+      "id": "hhs-nofo-passive-sentence-rule",
+      "version": "0.3.0-provisional"
+    }
+  }
+}

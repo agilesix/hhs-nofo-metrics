@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hhs.gov/schemas/nofo-metrics/profile-1.1.0.json",
+  "title": "HHS NOFO Metrics pipeline profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile_id", "profile_version", "status", "description", "pipeline", "metrics", "methods"],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "profile_id": {"type": "string", "minLength": 1, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "profile_version": {"$ref": "#/$defs/semver"},
+    "status": {"enum": ["provisional", "approved", "retired"]},
+    "description": {"type": "string", "minLength": 1},
+    "pipeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "pattern": "^[a-z0-9]+(?:[a-z0-9._-]*[a-z0-9])?$"},
+        "version": {"$ref": "#/$defs/semver"}
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["word_count", "words_per_sentence", "characters_per_word", "flesch_reading_ease", "flesch_kincaid_grade_level", "passive_sentence_percentage"],
+      "properties": {
+        "word_count": {"$ref": "#/$defs/metricSelection"},
+        "words_per_sentence": {"$ref": "#/$defs/metricSelection"},
+        "characters_per_word": {"$ref": "#/$defs/metricSelection"},
+        "flesch_reading_ease": {"$ref": "#/$defs/metricSelection"},
+        "flesch_kincaid_grade_level": {"$ref": "#/$defs/metricSelection"},
+        "passive_sentence_percentage": {"$ref": "#/$defs/metricSelection"}
+      }
+    },
+    "methods": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tokenizer", "sentence_segmenter", "character_counter", "syllable_counter", "readability_formula", "passive_classifier"],
+      "properties": {
+        "tokenizer": {"$ref": "#/$defs/methodConfiguration"},
+        "sentence_segmenter": {"$ref": "#/$defs/methodConfiguration"},
+        "character_counter": {"$ref": "#/$defs/methodConfiguration"},
+        "syllable_counter": {"$ref": "#/$defs/methodConfiguration"},
+        "readability_formula": {"$ref": "#/$defs/methodConfiguration"},
+        "passive_classifier": {"$ref": "#/$defs/methodConfiguration"}
+      }
+    }
+  },
+  "$defs": {
+    "semver": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"},
+    "role": {"enum": ["body", "heading", "table", "list", "cover", "table_of_contents", "instruction", "header", "footer", "navigation", "decorative", "unknown"]},
+    "roleArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/role"}
+    },
+    "metricSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["include_roles", "exclude_roles", "unknown_role_policy"],
+      "properties": {
+        "include_roles": {"$ref": "#/$defs/roleArray"},
+        "exclude_roles": {"$ref": "#/$defs/roleArray"},
+        "unknown_role_policy": {"enum": ["warn_and_include", "warn_and_exclude", "unable_to_calculate"]}
+      }
+    },
+    "methodConfiguration": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "id", "version"],
+          "properties": {
+            "status": {"const": "configured"},
+            "id": {"type": "string", "minLength": 1},
+            "version": {"$ref": "#/$defs/semver"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {
+            "status": {"const": "unavailable"},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    }
+  }
+}

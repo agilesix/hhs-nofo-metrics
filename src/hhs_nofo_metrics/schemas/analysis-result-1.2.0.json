@@ -1,0 +1,829 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hhs.gov/schemas/nofo-metrics/analysis-result-1.2.0.json",
+  "title": "HHS NOFO Metrics analysis result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "analysis_id",
+    "generated_at",
+    "engine",
+    "source",
+    "adapter",
+    "profile",
+    "result_basis",
+    "methods",
+    "coverage",
+    "selection",
+    "metrics",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.2.0"
+    },
+    "analysis_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "sha256",
+        "byte_length",
+        "production_path",
+        "observed_pdf_metadata"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "production_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "document_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceArtifact"
+          }
+        },
+        "observed_pdf_metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "Creator": {
+              "type": "string"
+            },
+            "Producer": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "dependencies"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "contract_version": {
+          "$ref": "#/$defs/semver"
+        },
+        "distribution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "distribution_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "configuration_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "declared_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/adapterCapability"
+          }
+        },
+        "capabilities_used": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/adapterCapability"
+          }
+        },
+        "extraction_coverage": {
+          "$ref": "#/$defs/adapterCoverage"
+        },
+        "fallback_history": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "support_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/adapterEvidence"
+          }
+        },
+        "extraction_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/adapterEvidence"
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version",
+        "status",
+        "sha256"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "status": {
+          "enum": [
+            "provisional",
+            "approved",
+            "retired"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "result_basis": {
+      "enum": [
+        "rendered_pdf_measurement",
+        "structured_estimate"
+      ]
+    },
+    "methods": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tokenizer",
+        "sentence_segmenter",
+        "character_counter",
+        "syllable_counter",
+        "readability_formula",
+        "passive_classifier"
+      ],
+      "properties": {
+        "tokenizer": {
+          "$ref": "#/$defs/methodIdentity"
+        },
+        "sentence_segmenter": {
+          "$ref": "#/$defs/methodIdentity"
+        },
+        "character_counter": {
+          "$ref": "#/$defs/methodIdentity"
+        },
+        "syllable_counter": {
+          "$ref": "#/$defs/methodIdentity"
+        },
+        "readability_formula": {
+          "$ref": "#/$defs/methodIdentity"
+        },
+        "passive_classifier": {
+          "$ref": "#/$defs/methodIdentity"
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "page_count",
+        "pages_extracted",
+        "pages_with_text",
+        "extraction_error_pages",
+        "segments_total",
+        "role_counts",
+        "unknown_role_count",
+        "classification_coverage"
+      ],
+      "properties": {
+        "page_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pages_extracted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pages_with_text": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "extraction_error_pages": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "segments_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "role_counts": {
+          "$ref": "#/$defs/roleCounts"
+        },
+        "unknown_role_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "classification_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "selection": {
+      "$ref": "#/$defs/perMetricSelection"
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "word_count",
+        "words_per_sentence",
+        "characters_per_word",
+        "flesch_reading_ease",
+        "flesch_kincaid_grade_level",
+        "passive_sentence_percentage"
+      ],
+      "properties": {
+        "word_count": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "words_per_sentence": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "characters_per_word": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "flesch_reading_ease": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "flesch_kincaid_grade_level": {
+          "$ref": "#/$defs/metricResult"
+        },
+        "passive_sentence_percentage": {
+          "$ref": "#/$defs/metricResult"
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/warning"
+      }
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sourceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "sha256",
+        "byte_length"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "adapterCapability": {
+      "enum": [
+        "text",
+        "page_geometry",
+        "pdf_structure",
+        "logical_roles",
+        "reading_order",
+        "page_mapping",
+        "sidecar_alignment"
+      ]
+    },
+    "adapterCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "matched_blocks",
+        "unmatched_blocks",
+        "ambiguous_blocks"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed"
+          ]
+        },
+        "matched_blocks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unmatched_blocks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ambiguous_blocks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "adapterEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "value",
+        "confidence"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "role": {
+      "enum": [
+        "body",
+        "heading",
+        "table",
+        "list",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ]
+    },
+    "roleCounts": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/role"
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "configuredMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "id",
+        "version"
+      ],
+      "properties": {
+        "status": {
+          "const": "configured"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "unavailableMethod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reason"
+      ],
+      "properties": {
+        "status": {
+          "const": "unavailable"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "methodIdentity": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/configuredMethod"
+        },
+        {
+          "$ref": "#/$defs/unavailableMethod"
+        }
+      ]
+    },
+    "selectionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "included_segment_count",
+        "excluded_segment_count",
+        "included_role_counts",
+        "excluded_role_counts",
+        "unknown_role_policy"
+      ],
+      "properties": {
+        "included_segment_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded_segment_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "included_role_counts": {
+          "$ref": "#/$defs/roleCounts"
+        },
+        "excluded_role_counts": {
+          "$ref": "#/$defs/roleCounts"
+        },
+        "unknown_role_policy": {
+          "enum": [
+            "warn_and_include",
+            "warn_and_exclude",
+            "unable_to_calculate"
+          ]
+        }
+      }
+    },
+    "perMetricSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "word_count",
+        "words_per_sentence",
+        "characters_per_word",
+        "flesch_reading_ease",
+        "flesch_kincaid_grade_level",
+        "passive_sentence_percentage"
+      ],
+      "properties": {
+        "word_count": {
+          "$ref": "#/$defs/selectionSummary"
+        },
+        "words_per_sentence": {
+          "$ref": "#/$defs/selectionSummary"
+        },
+        "characters_per_word": {
+          "$ref": "#/$defs/selectionSummary"
+        },
+        "flesch_reading_ease": {
+          "$ref": "#/$defs/selectionSummary"
+        },
+        "flesch_kincaid_grade_level": {
+          "$ref": "#/$defs/selectionSummary"
+        },
+        "passive_sentence_percentage": {
+          "$ref": "#/$defs/selectionSummary"
+        }
+      }
+    },
+    "metricResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "value",
+            "unit",
+            "method",
+            "components"
+          ],
+          "properties": {
+            "status": {
+              "const": "calculated"
+            },
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "$ref": "#/$defs/configuredMethod"
+            },
+            "components": {
+              "$ref": "#/$defs/components"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "value",
+            "unit",
+            "method",
+            "components",
+            "reliability"
+          ],
+          "properties": {
+            "status": {
+              "const": "estimated"
+            },
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "$ref": "#/$defs/configuredMethod"
+            },
+            "components": {
+              "$ref": "#/$defs/components"
+            },
+            "reliability": {
+              "$ref": "#/$defs/metricReliability"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "unit",
+            "method",
+            "components",
+            "reason"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "unable_to_calculate",
+                "not_configured"
+              ]
+            },
+            "unit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "method": {
+              "$ref": "#/$defs/methodIdentity"
+            },
+            "components": {
+              "$ref": "#/$defs/components"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "warning": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "pages"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pages": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "metricSensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "included_unknown_value",
+        "excluded_unknown_value",
+        "absolute_delta",
+        "relative_delta_percent"
+      ],
+      "properties": {
+        "included_unknown_value": {
+          "type": "number"
+        },
+        "excluded_unknown_value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "absolute_delta": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "relative_delta_percent": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "metricReliability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "method",
+        "classification_coverage",
+        "unknown_segment_count",
+        "unknown_word_count",
+        "unknown_word_share",
+        "failed_page_count",
+        "sensitivity",
+        "reason_codes"
+      ],
+      "properties": {
+        "level": {
+          "enum": [
+            "high",
+            "moderate",
+            "low"
+          ]
+        },
+        "method": {
+          "$ref": "#/$defs/configuredMethod"
+        },
+        "classification_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unknown_segment_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown_word_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown_word_share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "failed_page_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sensitivity": {
+          "$ref": "#/$defs/metricSensitivity"
+        },
+        "reason_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.1.0",
+  "profile_id": "hhs-nofo-fy27-html",
+  "profile_version": "0.4.0",
+  "status": "provisional",
+  "description": "Provisional FY27 HHS source-native readability profile for semantic NOFO export HTML. HTML block order and element roles are authoritative; terminally punctuated body, list, and narrative table-cell text supplies the readability sentence scope. Passive-sentence percentage uses the provisional deterministic HHS NOFO classifier.",
+  "pipeline": {
+    "id": "hhs-semantic-html-analysis",
+    "version": "0.1.0"
+  },
+  "metrics": {
+    "word_count": {
+      "include_roles": [
+        "body",
+        "heading",
+        "table",
+        "list"
+      ],
+      "exclude_roles": [
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ],
+      "unknown_role_policy": "unable_to_calculate"
+    },
+    "words_per_sentence": {
+      "include_roles": [
+        "body",
+        "table",
+        "list"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ],
+      "unknown_role_policy": "unable_to_calculate"
+    },
+    "characters_per_word": {
+      "include_roles": [
+        "body",
+        "table",
+        "list"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ],
+      "unknown_role_policy": "unable_to_calculate"
+    },
+    "flesch_reading_ease": {
+      "include_roles": [
+        "body",
+        "table",
+        "list"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ],
+      "unknown_role_policy": "unable_to_calculate"
+    },
+    "flesch_kincaid_grade_level": {
+      "include_roles": [
+        "body",
+        "table",
+        "list"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ],
+      "unknown_role_policy": "unable_to_calculate"
+    },
+    "passive_sentence_percentage": {
+      "include_roles": [
+        "body",
+        "table",
+        "list"
+      ],
+      "exclude_roles": [
+        "heading",
+        "cover",
+        "table_of_contents",
+        "instruction",
+        "header",
+        "footer",
+        "navigation",
+        "decorative",
+        "unknown"
+      ],
+      "unknown_role_policy": "unable_to_calculate"
+    }
+  },
+  "methods": {
+    "tokenizer": {
+      "status": "configured",
+      "id": "hhs-nofo-readability-token-stream",
+      "version": "0.1.0-internal"
+    },
+    "sentence_segmenter": {
+      "status": "configured",
+      "id": "hhs-semantic-block-sentence-segmentation",
+      "version": "0.1.0"
+    },
+    "character_counter": {
+      "status": "configured",
+      "id": "word-readability-character-token-candidate",
+      "version": "0.1.0"
+    },
+    "syllable_counter": {
+      "status": "configured",
+      "id": "word-syllable-candidate",
+      "version": "0.1.0"
+    },
+    "readability_formula": {
+      "status": "configured",
+      "id": "hhs-nofo-readability-arithmetic",
+      "version": "0.1.0-draft"
+    },
+    "passive_classifier": {
+      "status": "configured",
+      "id": "hhs-nofo-passive-sentence-rule",
+      "version": "0.3.0-provisional"
+    }
+  }
+}
