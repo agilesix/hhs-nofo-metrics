@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hhs-nofo-metrics"
-version = "0.5.1"
+version = "0.5.2"
 description = "Versioned, reproducible readability metrics for HHS NOFO documents"
 readme = "README.md"
 license = "MIT"
@@ -17,10 +17,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mikec-ai/hhs-nofo-metrics"
-Repository = "https://github.com/mikec-ai/hhs-nofo-metrics"
-Issues = "https://github.com/mikec-ai/hhs-nofo-metrics/issues"
-Changelog = "https://github.com/mikec-ai/hhs-nofo-metrics/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/agilesix/hhs-nofo-metrics"
+Repository = "https://github.com/agilesix/hhs-nofo-metrics"
+Issues = "https://github.com/agilesix/hhs-nofo-metrics/issues"
+Changelog = "https://github.com/agilesix/hhs-nofo-metrics/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [

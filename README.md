@@ -55,7 +55,7 @@ semantic HTML whenever it is available.
 Until a package registry release exists, install from a commit-pinned Git URL:
 
 ```bash
-pip install "hhs-nofo-metrics @ git+https://github.com/mikec-ai/hhs-nofo-metrics.git@<commit-sha>"
+pip install "hhs-nofo-metrics @ git+https://github.com/agilesix/hhs-nofo-metrics.git@<commit-sha>"
 ```
 
 For local development, use the editable installation shown below.

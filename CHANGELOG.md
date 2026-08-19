@@ -9,6 +9,13 @@ package release may support more than one measurement contract.
 
 No unreleased changes.
 
+## [0.5.2] - 2026-08-19
+
+### Changed
+
+- Moved the canonical repository and package metadata to the Agile Six GitHub
+  organization. Measurement behavior and versioned profiles are unchanged.
+
 ## [0.5.1] - 2026-08-17
 
 ### Added
