@@ -195,6 +195,75 @@ def test_tagged_pdf_blank_page_is_not_an_extraction_failure(tmp_path: Path) -> N
     )
 
 
+@pytest.mark.parametrize("supporting_pages", [1, 2])
+def test_tagged_pdf_running_navigation_exclusion_preserves_instructions(
+    tmp_path: Path, supporting_pages: int
+) -> None:
+    """Exercise real PDF marks, geometry, adapter grouping and profile selection."""
+    writer = PdfWriter()
+    font = writer._add_object(
+        DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/Font"),
+                NameObject("/Subtype"): NameObject("/Type1"),
+                NameObject("/BaseFont"): NameObject("/Helvetica"),
+            }
+        )
+    )
+    root = DictionaryObject({NameObject("/Type"): NameObject("/StructTreeRoot")})
+    root_ref = writer._add_object(root)
+    children = []
+    for index in range(supporting_pages + 1):
+        page = writer.add_blank_page(width=612, height=792)
+        page[NameObject("/Resources")] = DictionaryObject(
+            {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
+        )
+        content = DecodedStreamObject()
+        nav_mark = "/LBody <</MCID 0>> BDC" if index == 0 else "/Artifact BMC"
+        content.set_data(
+            (
+                f"BT /F1 10 Tf {nav_mark} 1 0 0 1 72 778 Tm (Review) Tj EMC "
+                "/P <</MCID 1>> BDC 1 0 0 1 72 700 Tm "
+                "(Before You Begin. Review the application instructions.) Tj EMC ET"
+            ).encode("ascii")
+        )
+        page[NameObject("/Contents")] = writer._add_object(content)
+        page[NameObject("/StructParents")] = NumberObject(index)
+        tags = [("/P", 1)] + ([("/LBody", 0)] if index == 0 else [])
+        for tag, mcid in tags:
+            children.append(
+                writer._add_object(
+                    DictionaryObject(
+                        {
+                            NameObject("/Type"): NameObject("/StructElem"),
+                            NameObject("/S"): NameObject(tag),
+                            NameObject("/P"): root_ref,
+                            NameObject("/Pg"): page.indirect_reference,
+                            NameObject("/K"): NumberObject(mcid),
+                        }
+                    )
+                )
+            )
+    root[NameObject("/K")] = ArrayObject(children)
+    writer.root_object[NameObject("/StructTreeRoot")] = root_ref
+    source = tmp_path / "running-navigation.pdf"
+    writer.write(source)
+
+    with materialize_source_bundle(SourceBundle.from_pdf(source)) as materialized:
+        segments = (
+            TaggedPdfAdapterPlugin().extract(materialized, config={}).document.segments
+        )
+    top = next(s for s in segments if s.location.page == 1 and s.text == "Review")
+    assert top.role == ("navigation" if supporting_pages == 2 else "list")
+    instructions = [s for s in segments if s.text.startswith("Before You Begin.")]
+    assert len(instructions) == supporting_pages + 1
+    assert all(s.role == "body" for s in instructions)
+    result = analyze(source, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    assert result.metrics["word_count"].value == (
+        7 * (supporting_pages + 1) + (1 if supporting_pages == 1 else 0)
+    )
+
+
 @pytest.mark.parametrize(
     ("field_name", "field_value"),
     (("document_id", ""), ("revision", "  ")),
