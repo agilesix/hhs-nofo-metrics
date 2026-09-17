@@ -29,6 +29,36 @@ HTML = b"""<!doctype html>
 </body></html>"""
 
 
+def test_navigation_scope_survives_nested_headings_lists_and_tables():
+    content = b"<p>Applicants submit a complete plan.</p>"
+    navigation = b"""<nav><h2>Contents</h2><ul><li>Review</li></ul>
+      <table><tr><th>Step</th><td>Apply</td></tr></table></nav>"""
+    before = analyze(
+        SourceBundle.from_html(content), profile="hhs-nofo-fy27-html@0.4.0"
+    )
+    after = analyze(
+        SourceBundle.from_html(navigation + content),
+        profile="hhs-nofo-fy27-html@0.4.0",
+    )
+    assert {k: v.value for k, v in before.metrics.items()} == {
+        k: v.value for k, v in after.metrics.items()
+    }
+    with materialize_source_bundle(
+        SourceBundle.from_html(navigation + content)
+    ) as source:
+        segments = HtmlAdapterPlugin().extract(source, config={}).document.segments
+    assert all(s.role == "navigation" for s in segments[:-1])
+    assert segments[-1].role == "body"
+
+
+def test_reader_instructions_and_navigation_words_in_body_are_preserved():
+    html = b"""<h2>Before You Begin</h2><p>Review the steps before applying.</p>
+      <ul><li>Get ready by completing registration.</li></ul>"""
+    with materialize_source_bundle(SourceBundle.from_html(html)) as source:
+        segments = HtmlAdapterPlugin().extract(source, config={}).document.segments
+    assert [s.role for s in segments] == ["heading", "body", "list"]
+
+
 def test_semantic_sentence_method_respects_block_terminal_punctuation() -> None:
     split = split_semantic_block_sentences(
         "The U.S. Department offers $1.5 million. Apply now. Supporting material"
@@ -178,7 +208,7 @@ def test_html_pipeline_accepts_exact_builtin_adapter_reference() -> None:
     result = analyze(
         SourceBundle.from_html(HTML),
         profile="hhs-nofo-fy27-html@0.4.0",
-        adapter="hhs-semantic-html-adapter@0.1.0",
+        adapter="hhs-semantic-html-adapter@0.1.1",
         adapter_config={"root_id": "download_target"},
     )
 

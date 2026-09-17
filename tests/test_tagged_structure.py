@@ -9,6 +9,7 @@ from pypdf import PdfWriter
 from hhs_nofo_metrics import AdapterContractError, InputError
 from hhs_nofo_metrics.adapters.tagged_pdf import (
     TaggedPdfAdapterPlugin,
+    _artifact_supported_top_navigation,
     _is_standalone_link_annotation,
 )
 from hhs_nofo_metrics.adapters.tagged_structure import (
@@ -61,6 +62,40 @@ def write_blank_pdf(path: Path) -> None:
     writer.add_blank_page(width=612, height=792)
     with path.open("wb") as stream:
         writer.write(stream)
+
+
+def test_top_navigation_requires_two_other_artifact_pages_and_full_geometry_match():
+    nav = word("Review", left=20, top=10, native_index=0)
+    artifact = word("Review", left=20, top=11, native_index=0, tag_path=("Artifact",))
+    assert _artifact_supported_top_navigation([nav], 1, {2: [artifact], 3: [artifact]})
+    assert not _artifact_supported_top_navigation(
+        [nav], 1, {1: [artifact], 2: [artifact]}
+    )
+    assert not _artifact_supported_top_navigation([nav], 1, {2: [artifact]})
+    body = word("Review", left=20, top=100, native_index=0)
+    assert not _artifact_supported_top_navigation(
+        [body], 1, {2: [artifact], 3: [artifact]}
+    )
+    unmatched = word("Instructions", left=50, top=10, native_index=1)
+    assert not _artifact_supported_top_navigation(
+        [nav, unmatched], 1, {2: [artifact], 3: [artifact]}
+    )
+    moved = word("Review", left=100, top=10, native_index=0)
+    assert not _artifact_supported_top_navigation(
+        [moved], 1, {2: [artifact], 3: [artifact]}
+    )
+    assert not _artifact_supported_top_navigation([nav], 1, {2: [nav], 3: [nav]})
+    boundary = word("Review", left=20, top=26, native_index=0)
+    boundary_artifact = word(
+        "Review", left=20, top=26, native_index=0, tag_path=("Artifact",)
+    )
+    assert _artifact_supported_top_navigation(
+        [boundary], 1, {2: [boundary_artifact], 3: [boundary_artifact]}
+    )
+    outside = word("Review", left=20, top=26.1, native_index=0)
+    assert not _artifact_supported_top_navigation(
+        [outside], 1, {2: [boundary_artifact], 3: [boundary_artifact]}
+    )
 
 
 def test_observed_words_preserves_tagged_semantics_and_bounded_optional_values() -> (

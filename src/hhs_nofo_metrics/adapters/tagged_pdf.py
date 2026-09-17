@@ -39,8 +39,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.0"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.0"
+ADAPTER_VERSION: Final = "0.1.1"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.1"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -129,6 +129,39 @@ def _tagged_structure(
     return tagged_content_by_page(path, nested_container_groups=True)
 
 
+def _artifact_supported_top_navigation(words, page_number, artifact_words_by_page):
+    """Require repeated source-declared artifacts, not navigation keywords.
+
+    Builder sometimes tags the same running navigation as LBody on section
+    divider pages and Artifact elsewhere. Only reclassify a complete group
+    inside the top 36 points when two other pages declare matching text at
+    matching positions as artifacts. Keep all uncertain groups unchanged.
+    """
+    if not words or any(word.bottom > 36 for word in words):
+        return False
+    supporting_pages = 0
+    for other_page, artifacts in artifact_words_by_page.items():
+        if other_page == page_number:
+            continue
+        if all(
+            any(
+                artifact.tag_path
+                and artifact.tag_path[-1] == "Artifact"
+                and word.text == artifact.text
+                and abs(word.left - artifact.left) <= 2
+                and abs(word.top - artifact.top) <= 2
+                and abs(word.right - artifact.right) <= 2
+                and abs(word.bottom - artifact.bottom) <= 2
+                for artifact in artifacts
+            )
+            for word in words
+        ):
+            supporting_pages += 1
+            if supporting_pages >= 2:
+                return True
+    return False
+
+
 def _resolved_document(path: Path) -> NormalizedDocument:
     tagged_content, tag_error = _tagged_structure(path)
     if tag_error is not None:
@@ -154,8 +187,22 @@ def _resolved_document(path: Path) -> NormalizedDocument:
     try:
         with pdfplumber.open(path) as pdf:
             page_count = len(pdf.pages)
+            page_words = {
+                int(page.page_number): observed_words(page, tagged_content)
+                for page in pdf.pages
+            }
+            artifact_words_by_page = {
+                number: [
+                    word
+                    for word in words
+                    if word.tag_path
+                    and word.tag_path[-1] == "Artifact"
+                    and word.bottom <= 36
+                ]
+                for number, words in page_words.items()
+            }
             for page in pdf.pages:
-                words = observed_words(page, tagged_content)
+                words = page_words[int(page.page_number)]
                 if not words:
                     textless_pages.append(int(page.page_number))
                 panels = right_bleed_panel_boundaries(page)
@@ -204,6 +251,11 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         if any(inside_panel(word, panel) for word in ordered_words)
                     }
                     warnings = []
+                    if _artifact_supported_top_navigation(
+                        ordered_words, int(page.page_number), artifact_words_by_page
+                    ):
+                        role = "navigation"
+                        role_basis += ":repeated-top-artifact-support"
                     if panel_membership:
                         panel_group_count += 1
                         role_basis += ":right-bleed-panel"
