@@ -23,7 +23,7 @@ from .contracts import (
 )
 
 ADAPTER_ID = "hhs-semantic-html-adapter"
-ADAPTER_VERSION = "0.1.0"
+ADAPTER_VERSION = "0.1.1"
 
 _WHITESPACE_RE = re.compile(r"\s+")
 _VOID_TAGS = frozenset(
@@ -246,6 +246,8 @@ def _find_by_id(node: _Node, root_id: str) -> _Node | None:
 
 
 def _context_role(node: _Node, inherited: str) -> str:
+    if inherited in {"navigation", "header", "footer"}:
+        return inherited
     if node.tag == "nav":
         return "navigation"
     if node.tag == "header":
@@ -288,7 +290,11 @@ def _semantic_blocks(root: _Node) -> list[tuple[str, str, str]]:
             return
         role = _context_role(node, inherited_role)
         if node.tag in _HEADING_TAGS:
-            emit(_inline_text(node), "heading", node.tag)
+            emit(
+                _inline_text(node),
+                role if role in {"navigation", "header", "footer"} else "heading",
+                node.tag,
+            )
             return
         if node.tag in _TEXT_BLOCK_TAGS:
             emit(_inline_text(node), role, node.tag)
