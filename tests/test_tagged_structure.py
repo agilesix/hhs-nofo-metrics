@@ -11,6 +11,7 @@ from hhs_nofo_metrics import AdapterContractError, InputError
 from hhs_nofo_metrics.adapters.tagged_pdf import (
     TaggedPdfAdapterPlugin,
     _artifact_supported_top_navigation,
+    _is_numeric_list_label,
     _is_standalone_link_annotation,
     _ordered_group_words,
 )
@@ -64,6 +65,20 @@ def write_blank_pdf(path: Path) -> None:
     writer.add_blank_page(width=612, height=792)
     with path.open("wb") as stream:
         writer.write(stream)
+
+
+@pytest.mark.parametrize("text", ["1.", "20)", "(3)"])
+def test_numeric_list_marker_requires_explicit_list_label(text):
+    value = word(text, left=10, top=100, native_index=0, tag_path=("Document", "L", "LI", "Lbl"))
+    assert _is_numeric_list_label([value])
+    for path in [("Document", "P"), ("Document", "H2"), ("Document", "Lbl")]:
+        assert not _is_numeric_list_label([replace(value, tag_path=path)])
+
+
+@pytest.mark.parametrize("text", ["1. Eligibility", "2026", "Warning", "2.5", "A."])
+def test_numeric_list_marker_preserves_content_and_unsupported_labels(text):
+    value = word(text, left=10, top=100, native_index=0, tag_path=("L", "LI", "Lbl"))
+    assert not _is_numeric_list_label([value])
 
 
 def test_same_marked_content_orders_bold_words_on_their_visual_line():

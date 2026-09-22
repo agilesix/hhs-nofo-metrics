@@ -8,6 +8,7 @@ content remains ``unknown`` so profiles can fail closed.
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 from dataclasses import replace
 from pathlib import Path
@@ -40,8 +41,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.5"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.5"
+ADAPTER_VERSION: Final = "0.1.6"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.6"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -72,6 +73,14 @@ def _distribution_version() -> str:
 
 def _normalized(value: str) -> str:
     return " ".join(value.split())
+
+
+def _is_numeric_list_label(words):
+    # Require explicit list-label ancestry and a complete numeric marker, not
+    # a numeric prefix in prose. Retain textual or unsupported labels as-is.
+    return bool(words) and all(
+        word.tag_path[-3:] == ("L", "LI", "Lbl") for word in words
+    ) and re.fullmatch(r"(?:[0-9]+[.)]|\([0-9]+\))", _text(words)) is not None
 
 
 def _ordered_group_words(group):
@@ -261,6 +270,11 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         if any(inside_panel(word, panel) for word in ordered_words)
                     }
                     warnings = []
+                    if group_tag == "Lbl" and _is_numeric_list_label(ordered_words):
+                        # Metric-only non-content classification. Keep the text
+                        # and source provenance; do not change PDF accessibility tags.
+                        role = "decorative"
+                        role_basis += ":source-declared-numeric-list-label"
                     # Honor producer-declared containers, not page positions or
                     # title keywords. Nested paragraphs/headings retain their
                     # block boundaries but inherit the container's metric scope.
