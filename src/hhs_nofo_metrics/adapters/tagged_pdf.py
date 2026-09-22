@@ -405,8 +405,11 @@ def _resolved_document(path: Path) -> NormalizedDocument:
             text=" ".join(part.text for part in parts),
             # A multi-page paragraph has no single page bounding box.
             location=SourceLocation(page=first.location.page),
-            role_basis=first.role_basis + (
-                ":cross-page-list-body" if first.role == "list" else ":cross-page-paragraph"
+            role_basis=first.role_basis
+            + (
+                ":cross-page-list-body"
+                if first.role == "list"
+                else ":cross-page-paragraph"
             ),
         )
         merged_locations[first.id] = [part.location.to_dict() for part in parts]

@@ -40,7 +40,9 @@ CLI = (sys.executable, "-m", "hhs_nofo_metrics_cli")
 @pytest.mark.parametrize("shared_paragraph", [True, False])
 @pytest.mark.parametrize("page_count", [2, 3])
 @pytest.mark.parametrize("with_footer", [True, False])
-@pytest.mark.parametrize("block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")])
+@pytest.mark.parametrize(
+    "block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")]
+)
 def test_cross_page_paragraph_preserves_readability(
     tmp_path, shared_paragraph, page_count, with_footer, block_tag, role, html_tag
 ):

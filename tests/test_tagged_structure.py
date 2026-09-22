@@ -76,7 +76,11 @@ def test_same_marked_content_orders_bold_words_on_their_visual_line():
     ]
     values = [replace(w, structure_rank=1) for w in values]
     assert [w.text for w in _ordered_group_words(values)] == [
-        "Applicants", "are", "not", "eligible.", "Next"
+        "Applicants",
+        "are",
+        "not",
+        "eligible.",
+        "Next",
     ]
 
 
