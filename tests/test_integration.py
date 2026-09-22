@@ -137,7 +137,12 @@ def test_cross_page_paragraph_preserves_readability(
 
 @pytest.mark.parametrize(
     ("container", "expected_role"),
-    [("HHSNofoCover", "cover"), ("TOC", "table_of_contents"), ("Sect", None)],
+    [
+        ("HHSNofoCover", "cover"),
+        ("HHSNofoContents", "table_of_contents"),
+        ("TOC", "table_of_contents"),
+        ("Sect", None),
+    ],
 )
 def test_pdf_scope_follows_declared_container_not_text(
     tmp_path, container, expected_role
@@ -165,9 +170,9 @@ def test_pdf_scope_follows_declared_container_not_text(
     for child in children[:2]:
         child.get_object()[NameObject("/P")] = ref
     root[NameObject("/K")] = ArrayObject([ref, *children[2:]])
-    if container == "HHSNofoCover":
+    if container in {"HHSNofoCover", "HHSNofoContents"}:
         root[NameObject("/RoleMap")] = DictionaryObject(
-            {NameObject("/HHSNofoCover"): NameObject("/Sect")}
+            {NameObject("/" + container): NameObject("/Sect")}
         )
     path = tmp_path / "scoped.pdf"
     writer.write(path)

@@ -260,7 +260,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         "cover"
                         if "HHSNofoCover" in word.tag_path
                         else "table_of_contents"
-                        if "TOC" in word.tag_path
+                        if "TOC" in word.tag_path or "HHSNofoContents" in word.tag_path
                         else role
                         for word in ordered_words
                     }
