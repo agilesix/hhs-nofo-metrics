@@ -9,6 +9,7 @@ content remains ``unknown`` so profiles can fail closed.
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Final, Mapping
 
@@ -39,8 +40,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.1"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.1"
+ADAPTER_VERSION: Final = "0.1.2"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.2"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -175,6 +176,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
         )
 
     segments: list[Segment] = []
+    paragraph_parts: dict[str, list[Segment]] = defaultdict(list)
     reading_order = 0
     tagged_group_count = 0
     panel_group_count = 0
@@ -289,6 +291,10 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                             warnings=tuple(warnings),
                         )
                     )
+                    if group_tag == "P":
+                        paragraph_parts[ordered_words[0].structure_group_id].append(
+                            segments[-1]
+                        )
 
                 for line_index, line in enumerate(visual_lines(remainder), start=1):
                     line_tags = {
@@ -351,7 +357,38 @@ def _resolved_document(path: Path) -> NormalizedDocument:
             f"Tagged PDF resolution failed: {type(exc).__name__}."
         ) from exc
 
+    # A single source-declared paragraph may have marked content on multiple
+    # pages. Page-local extraction must not turn its opening text into an
+    # unterminated fragment. Never infer continuity from text or geometry.
+    merged_locations = {}
+    replacements = {}
+    removed = set()
+    for parts in paragraph_parts.values():
+        if (
+            len(parts) < 2
+            or len({part.location.page for part in parts}) != len(parts)
+            or any(part.role != "body" or part.warnings for part in parts)
+            or len({part.role_basis for part in parts}) != 1
+        ):
+            continue
+        first = parts[0]
+        replacements[first.id] = replace(
+            first,
+            text=" ".join(part.text for part in parts),
+            # A multi-page paragraph has no single page bounding box.
+            location=SourceLocation(page=first.location.page),
+            role_basis=first.role_basis + ":cross-page-paragraph",
+        )
+        merged_locations[first.id] = [part.location.to_dict() for part in parts]
+        removed.update(part.id for part in parts[1:])
+    segments = [
+        replacements.get(segment.id, segment)
+        for segment in segments
+        if segment.id not in removed
+    ]
+
     metadata = {
+        "cross_page_paragraph_locations": merged_locations,
         "observed_pdf_metadata": _metadata(PdfReader(path)),
         "extraction_error_pages": extraction_error_pages,
         "textless_pages": textless_pages,
