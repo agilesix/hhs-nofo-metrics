@@ -39,8 +39,9 @@ CLI = (sys.executable, "-m", "hhs_nofo_metrics_cli")
 
 @pytest.mark.parametrize("shared_paragraph", [True, False])
 @pytest.mark.parametrize("page_count", [2, 3])
+@pytest.mark.parametrize("with_footer", [True, False])
 def test_cross_page_paragraph_preserves_readability(
-    tmp_path, shared_paragraph, page_count
+    tmp_path, shared_paragraph, page_count, with_footer
 ):
     writer = PdfWriter()
     font = writer._add_object(
@@ -64,10 +65,10 @@ def test_cross_page_paragraph_preserves_readability(
             {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
         )
         content = DecodedStreamObject()
+        footer = "/Artifact BMC 0 -650 Td (Footer) Tj EMC" if with_footer else ""
         content.set_data(
             (
-                "BT /F1 10 Tf /P <</MCID 0>> BDC 72 700 Td "
-                f"({text}) Tj EMC /Artifact BMC 0 -650 Td (Footer) Tj EMC ET"
+                f"BT /F1 10 Tf /P <</MCID 0>> BDC 72 700 Td ({text}) Tj EMC {footer} ET"
             ).encode()
         )
         page[NameObject("/Contents")] = writer._add_object(content)
@@ -118,6 +119,7 @@ def test_cross_page_paragraph_preserves_readability(
     html = "".join(f"<p>{text}</p>" for text in paragraphs).encode()
     expected = analyze(SourceBundle.from_html(html), profile="hhs-nofo-fy27-html@0.4.0")
     actual = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    assert actual.coverage.pages_with_text == page_count
     if shared_paragraph:
         assert actual.metrics["words_per_sentence"].components["word_count"] == 9
         assert actual.metrics["words_per_sentence"].components["paragraph_count"] == 1
