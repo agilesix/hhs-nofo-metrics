@@ -40,8 +40,9 @@ CLI = (sys.executable, "-m", "hhs_nofo_metrics_cli")
 @pytest.mark.parametrize("shared_paragraph", [True, False])
 @pytest.mark.parametrize("page_count", [2, 3])
 @pytest.mark.parametrize("with_footer", [True, False])
+@pytest.mark.parametrize("block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")])
 def test_cross_page_paragraph_preserves_readability(
-    tmp_path, shared_paragraph, page_count, with_footer
+    tmp_path, shared_paragraph, page_count, with_footer, block_tag, role, html_tag
 ):
     writer = PdfWriter()
     font = writer._add_object(
@@ -68,7 +69,7 @@ def test_cross_page_paragraph_preserves_readability(
         footer = "/Artifact BMC 0 -650 Td (Footer) Tj EMC" if with_footer else ""
         content.set_data(
             (
-                f"BT /F1 10 Tf /P <</MCID 0>> BDC 72 700 Td ({text}) Tj EMC {footer} ET"
+                f"BT /F1 10 Tf /{block_tag} <</MCID 0>> BDC 72 700 Td ({text}) Tj EMC {footer} ET"
             ).encode()
         )
         page[NameObject("/Contents")] = writer._add_object(content)
@@ -89,7 +90,7 @@ def test_cross_page_paragraph_preserves_readability(
                 DictionaryObject(
                     {
                         NameObject("/Type"): NameObject("/StructElem"),
-                        NameObject("/S"): NameObject("/P"),
+                        NameObject("/S"): NameObject("/" + block_tag),
                         NameObject("/P"): root_ref,
                         NameObject("/K"): ArrayObject(group),
                     }
@@ -103,7 +104,7 @@ def test_cross_page_paragraph_preserves_readability(
     writer.write(path)
     with materialize_source_bundle(SourceBundle.from_pdf(path)) as source:
         doc = TaggedPdfAdapterPlugin().extract(source, config={}).document
-    body = [s for s in doc.segments if s.role == "body"]
+    body = [s for s in doc.segments if s.role == role]
     assert len(body) == (1 if shared_paragraph else page_count)
     locations = doc.metadata["cross_page_paragraph_locations"]
     if shared_paragraph:
@@ -116,7 +117,7 @@ def test_cross_page_paragraph_preserves_readability(
     else:
         assert not locations
     paragraphs = [" ".join(texts)] if shared_paragraph else texts
-    html = "".join(f"<p>{text}</p>" for text in paragraphs).encode()
+    html = "".join(f"<{html_tag}>{text}</{html_tag}>" for text in paragraphs).encode()
     expected = analyze(SourceBundle.from_html(html), profile="hhs-nofo-fy27-html@0.4.0")
     actual = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
     assert actual.coverage.pages_with_text == page_count

@@ -40,8 +40,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.4"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.4"
+ADAPTER_VERSION: Final = "0.1.5"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.5"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -318,7 +318,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                             warnings=tuple(warnings),
                         )
                     )
-                    if group_tag == "P":
+                    if group_tag in {"P", "LBody"}:
                         paragraph_parts[ordered_words[0].structure_group_id].append(
                             segments[-1]
                         )
@@ -384,7 +384,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
             f"Tagged PDF resolution failed: {type(exc).__name__}."
         ) from exc
 
-    # A single source-declared paragraph may have marked content on multiple
+    # A single source-declared paragraph or list body may span multiple
     # pages. Page-local extraction must not turn its opening text into an
     # unterminated fragment. Never infer continuity from text or geometry.
     merged_locations = {}
@@ -394,7 +394,8 @@ def _resolved_document(path: Path) -> NormalizedDocument:
         if (
             len(parts) < 2
             or len({part.location.page for part in parts}) != len(parts)
-            or any(part.role != "body" or part.warnings for part in parts)
+            or any(part.role not in {"body", "list"} or part.warnings for part in parts)
+            or len({part.role for part in parts}) != 1
             or len({part.role_basis for part in parts}) != 1
         ):
             continue
@@ -404,7 +405,9 @@ def _resolved_document(path: Path) -> NormalizedDocument:
             text=" ".join(part.text for part in parts),
             # A multi-page paragraph has no single page bounding box.
             location=SourceLocation(page=first.location.page),
-            role_basis=first.role_basis + ":cross-page-paragraph",
+            role_basis=first.role_basis + (
+                ":cross-page-list-body" if first.role == "list" else ":cross-page-paragraph"
+            ),
         )
         merged_locations[first.id] = [part.location.to_dict() for part in parts]
         removed.update(part.id for part in parts[1:])
