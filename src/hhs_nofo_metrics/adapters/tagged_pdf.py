@@ -8,7 +8,9 @@ content remains ``unknown`` so profiles can fail closed.
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Final, Mapping
 
@@ -39,8 +41,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.1"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.1"
+ADAPTER_VERSION: Final = "0.1.6"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.6"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -71,6 +73,32 @@ def _distribution_version() -> str:
 
 def _normalized(value: str) -> str:
     return " ".join(value.split())
+
+
+def _is_numeric_list_label(words):
+    # Require explicit list-label ancestry and a complete numeric marker, not
+    # a numeric prefix in prose. Retain textual or unsupported labels as-is.
+    return (
+        bool(words)
+        and all(word.tag_path[-3:] == ("L", "LI", "Lbl") for word in words)
+        and re.fullmatch(r"(?:[0-9]+[.)]|\([0-9]+\))", _text(words)) is not None
+    )
+
+
+def _ordered_group_words(group):
+    # Keep source-declared marked-content order. Within a single marked-content
+    # item, font-dependent glyph tops can differ on the same baseline; sorting
+    # by exact top would move bold words to the end of the line. Apply the
+    # existing line tolerance only inside that item, never across tagged blocks.
+    by_rank = defaultdict(list)
+    for word in group:
+        by_rank[word.structure_rank].append(word)
+    return [
+        word
+        for rank in sorted(by_rank)
+        for line in visual_lines(by_rank[rank])
+        for word in line.words
+    ]
 
 
 def _bbox(words) -> tuple[float, float, float, float]:
@@ -175,6 +203,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
         )
 
     segments: list[Segment] = []
+    paragraph_parts: dict[str, list[Segment]] = defaultdict(list)
     reading_order = 0
     tagged_group_count = 0
     panel_group_count = 0
@@ -224,15 +253,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                 )
                 for group_index, group in enumerate(ordered_groups, start=1):
                     tagged_group_count += 1
-                    ordered_words = sorted(
-                        group,
-                        key=lambda word: (
-                            word.structure_rank,
-                            word.top,
-                            word.left,
-                            word.native_index,
-                        ),
-                    )
+                    ordered_words = _ordered_group_words(group)
                     group_tags = {
                         word.structure_group_tag
                         for word in ordered_words
@@ -251,6 +272,30 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         if any(inside_panel(word, panel) for word in ordered_words)
                     }
                     warnings = []
+                    if group_tag == "Lbl" and _is_numeric_list_label(ordered_words):
+                        # Metric-only non-content classification. Keep the text
+                        # and source provenance; do not change PDF accessibility tags.
+                        role = "decorative"
+                        role_basis += ":source-declared-numeric-list-label"
+                    # Honor producer-declared containers, not page positions or
+                    # title keywords. Nested paragraphs/headings retain their
+                    # block boundaries but inherit the container's metric scope.
+                    scope_roles = {
+                        "cover"
+                        if "HHSNofoCover" in word.tag_path
+                        else "table_of_contents"
+                        if "TOC" in word.tag_path or "HHSNofoContents" in word.tag_path
+                        else role
+                        for word in ordered_words
+                    }
+                    if len(scope_roles) == 1:
+                        scoped_role = next(iter(scope_roles))
+                        if scoped_role != role:
+                            role = scoped_role
+                            role_basis += ":source-declared-container"
+                    else:
+                        role = "unknown"
+                        warnings.append("structure_group_crosses_scope_boundary")
                     if _artifact_supported_top_navigation(
                         ordered_words, int(page.page_number), artifact_words_by_page
                     ):
@@ -289,6 +334,10 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                             warnings=tuple(warnings),
                         )
                     )
+                    if group_tag in {"P", "LBody"}:
+                        paragraph_parts[ordered_words[0].structure_group_id].append(
+                            segments[-1]
+                        )
 
                 for line_index, line in enumerate(visual_lines(remainder), start=1):
                     line_tags = {
@@ -351,7 +400,44 @@ def _resolved_document(path: Path) -> NormalizedDocument:
             f"Tagged PDF resolution failed: {type(exc).__name__}."
         ) from exc
 
+    # A single source-declared paragraph or list body may span multiple
+    # pages. Page-local extraction must not turn its opening text into an
+    # unterminated fragment. Never infer continuity from text or geometry.
+    merged_locations = {}
+    replacements = {}
+    removed = set()
+    for parts in paragraph_parts.values():
+        if (
+            len(parts) < 2
+            or len({part.location.page for part in parts}) != len(parts)
+            or any(part.role not in {"body", "list"} or part.warnings for part in parts)
+            or len({part.role for part in parts}) != 1
+            or len({part.role_basis for part in parts}) != 1
+        ):
+            continue
+        first = parts[0]
+        replacements[first.id] = replace(
+            first,
+            text=" ".join(part.text for part in parts),
+            # A multi-page paragraph has no single page bounding box.
+            location=SourceLocation(page=first.location.page),
+            role_basis=first.role_basis
+            + (
+                ":cross-page-list-body"
+                if first.role == "list"
+                else ":cross-page-paragraph"
+            ),
+        )
+        merged_locations[first.id] = [part.location.to_dict() for part in parts]
+        removed.update(part.id for part in parts[1:])
+    segments = [
+        replacements.get(segment.id, segment)
+        for segment in segments
+        if segment.id not in removed
+    ]
+
     metadata = {
+        "cross_page_paragraph_locations": merged_locations,
         "observed_pdf_metadata": _metadata(PdfReader(path)),
         "extraction_error_pages": extraction_error_pages,
         "textless_pages": textless_pages,

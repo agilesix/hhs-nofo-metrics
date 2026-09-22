@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -10,7 +11,9 @@ from hhs_nofo_metrics import AdapterContractError, InputError
 from hhs_nofo_metrics.adapters.tagged_pdf import (
     TaggedPdfAdapterPlugin,
     _artifact_supported_top_navigation,
+    _is_numeric_list_label,
     _is_standalone_link_annotation,
+    _ordered_group_words,
 )
 from hhs_nofo_metrics.adapters.tagged_structure import (
     ObservedWord,
@@ -62,6 +65,46 @@ def write_blank_pdf(path: Path) -> None:
     writer.add_blank_page(width=612, height=792)
     with path.open("wb") as stream:
         writer.write(stream)
+
+
+@pytest.mark.parametrize("text", ["1.", "20)", "(3)"])
+def test_numeric_list_marker_requires_explicit_list_label(text):
+    value = word(
+        text, left=10, top=100, native_index=0, tag_path=("Document", "L", "LI", "Lbl")
+    )
+    assert _is_numeric_list_label([value])
+    for path in [("Document", "P"), ("Document", "H2"), ("Document", "Lbl")]:
+        assert not _is_numeric_list_label([replace(value, tag_path=path)])
+
+
+@pytest.mark.parametrize("text", ["1. Eligibility", "2026", "Warning", "2.5", "A."])
+def test_numeric_list_marker_preserves_content_and_unsupported_labels(text):
+    value = word(text, left=10, top=100, native_index=0, tag_path=("L", "LI", "Lbl"))
+    assert not _is_numeric_list_label([value])
+
+
+def test_same_marked_content_orders_bold_words_on_their_visual_line():
+    values = [
+        word("Applicants", left=10, top=100, native_index=0),
+        word("eligible.", left=120, top=100, native_index=1),
+        word("are", left=60, top=101.067, native_index=2),
+        word("not", left=90, top=101.067, native_index=3),
+        word("Next", left=10, top=116, native_index=4),
+    ]
+    values = [replace(w, structure_rank=1) for w in values]
+    assert [w.text for w in _ordered_group_words(values)] == [
+        "Applicants",
+        "are",
+        "not",
+        "eligible.",
+        "Next",
+    ]
+
+
+def test_group_order_preserves_structure_rank_over_visual_position():
+    first = replace(word("First", left=100, top=200, native_index=0), structure_rank=1)
+    second = replace(word("Second", left=10, top=100, native_index=1), structure_rank=2)
+    assert _ordered_group_words([second, first]) == [first, second]
 
 
 def test_top_navigation_requires_two_other_artifact_pages_and_full_geometry_match():

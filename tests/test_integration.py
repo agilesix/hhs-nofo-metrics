@@ -37,6 +37,159 @@ from hhs_nofo_metrics.version import PACKAGE_VERSION
 CLI = (sys.executable, "-m", "hhs_nofo_metrics_cli")
 
 
+@pytest.mark.parametrize("shared_paragraph", [True, False])
+@pytest.mark.parametrize("page_count", [2, 3])
+@pytest.mark.parametrize("with_footer", [True, False])
+@pytest.mark.parametrize(
+    "block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")]
+)
+def test_cross_page_paragraph_preserves_readability(
+    tmp_path, shared_paragraph, page_count, with_footer, block_tag, role, html_tag
+):
+    writer = PdfWriter()
+    font = writer._add_object(
+        DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/Font"),
+                NameObject("/Subtype"): NameObject("/Type1"),
+                NameObject("/BaseFont"): NameObject("/Helvetica"),
+            }
+        )
+    )
+    root = DictionaryObject({NameObject("/Type"): NameObject("/StructTreeRoot")})
+    root_ref = writer._add_object(root)
+    marks = []
+    texts = ["Applications must be", "reviewed by staff. Submit complete forms."]
+    if page_count == 3:
+        texts = ["Applications must", "be reviewed by", "staff. Submit complete forms."]
+    for index, text in enumerate(texts):
+        page = writer.add_blank_page(width=612, height=792)
+        page[NameObject("/Resources")] = DictionaryObject(
+            {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
+        )
+        content = DecodedStreamObject()
+        footer = "/Artifact BMC 0 -650 Td (Footer) Tj EMC" if with_footer else ""
+        content.set_data(
+            (
+                f"BT /F1 10 Tf /{block_tag} <</MCID 0>> BDC 72 700 Td ({text}) Tj EMC {footer} ET"
+            ).encode()
+        )
+        page[NameObject("/Contents")] = writer._add_object(content)
+        page[NameObject("/StructParents")] = NumberObject(index)
+        marks.append(
+            DictionaryObject(
+                {
+                    NameObject("/Type"): NameObject("/MCR"),
+                    NameObject("/Pg"): page.indirect_reference,
+                    NameObject("/MCID"): NumberObject(0),
+                }
+            )
+        )
+    groups = [marks] if shared_paragraph else [[mark] for mark in marks]
+    root[NameObject("/K")] = ArrayObject(
+        [
+            writer._add_object(
+                DictionaryObject(
+                    {
+                        NameObject("/Type"): NameObject("/StructElem"),
+                        NameObject("/S"): NameObject("/" + block_tag),
+                        NameObject("/P"): root_ref,
+                        NameObject("/K"): ArrayObject(group),
+                    }
+                )
+            )
+            for group in groups
+        ]
+    )
+    writer.root_object[NameObject("/StructTreeRoot")] = root_ref
+    path = tmp_path / "cross-page.pdf"
+    writer.write(path)
+    with materialize_source_bundle(SourceBundle.from_pdf(path)) as source:
+        doc = TaggedPdfAdapterPlugin().extract(source, config={}).document
+    body = [s for s in doc.segments if s.role == role]
+    assert len(body) == (1 if shared_paragraph else page_count)
+    locations = doc.metadata["cross_page_paragraph_locations"]
+    if shared_paragraph:
+        assert body[0].text == " ".join(texts)
+        assert body[0].location.page == 1
+        assert body[0].location.bbox is None
+        assert [loc["page"] for loc in locations[body[0].id]] == list(
+            range(1, page_count + 1)
+        )
+    else:
+        assert not locations
+    paragraphs = [" ".join(texts)] if shared_paragraph else texts
+    html = "".join(f"<{html_tag}>{text}</{html_tag}>" for text in paragraphs).encode()
+    expected = analyze(SourceBundle.from_html(html), profile="hhs-nofo-fy27-html@0.4.0")
+    actual = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    assert actual.coverage.pages_with_text == page_count
+    if shared_paragraph:
+        assert actual.metrics["words_per_sentence"].components["word_count"] == 9
+        assert actual.metrics["words_per_sentence"].components["paragraph_count"] == 1
+        assert (
+            actual.metrics["passive_sentence_percentage"].components[
+                "passive_sentence_count"
+            ]
+            == 1
+        )
+    for key in expected.metrics:
+        assert expected.metrics[key].value is not None
+        assert actual.metrics[key].value == expected.metrics[key].value
+        assert actual.metrics[key].components == expected.metrics[key].components
+
+
+@pytest.mark.parametrize(
+    ("container", "expected_role"),
+    [
+        ("HHSNofoCover", "cover"),
+        ("HHSNofoContents", "table_of_contents"),
+        ("TOC", "table_of_contents"),
+        ("Sect", None),
+    ],
+)
+def test_pdf_scope_follows_declared_container_not_text(
+    tmp_path, container, expected_role
+):
+    from pypdf import PdfReader
+
+    source = tmp_path / "original.pdf"
+    write_tagged_structured_pdf(
+        source,
+        body_text="Before you begin. Read these instructions.",
+        second_text="Cover and contents are discussed here.",
+    )
+    writer = PdfWriter(clone_from=PdfReader(source))
+    root = writer.root_object["/StructTreeRoot"]
+    children = root["/K"]
+    wrapper = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/StructElem"),
+            NameObject("/S"): NameObject("/" + container),
+            NameObject("/P"): root.indirect_reference,
+            NameObject("/K"): ArrayObject(children[:2]),
+        }
+    )
+    ref = writer._add_object(wrapper)
+    for child in children[:2]:
+        child.get_object()[NameObject("/P")] = ref
+    root[NameObject("/K")] = ArrayObject([ref, *children[2:]])
+    if container in {"HHSNofoCover", "HHSNofoContents"}:
+        root[NameObject("/RoleMap")] = DictionaryObject(
+            {NameObject("/" + container): NameObject("/Sect")}
+        )
+    path = tmp_path / "scoped.pdf"
+    writer.write(path)
+    with materialize_source_bundle(SourceBundle.from_pdf(path)) as materialized:
+        doc = TaggedPdfAdapterPlugin().extract(materialized, config={}).document
+    assert [s.role for s in doc.segments] == (
+        [expected_role, expected_role, "heading"]
+        if expected_role
+        else ["body", "list", "heading"]
+    )
+    result = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    assert result.metrics["word_count"].value == (2 if expected_role else 14)
+
+
 def write_three_page_pdf(path: Path) -> None:
     writer = PdfWriter()
     font = DictionaryObject(
@@ -133,6 +286,69 @@ def write_tagged_structured_pdf(
     writer.add_metadata({"/Producer": "Synthetic tagged fixture"})
     with path.open("wb") as stream:
         writer.write(stream)
+
+
+@pytest.mark.parametrize(
+    "marker,excluded", [("1.", True), ("1. Eligibility", False), ("Warning", False)]
+)
+def test_list_label_scope_preserves_numbered_prose_and_headings(
+    tmp_path, marker, excluded
+):
+    from pypdf import PdfReader
+
+    original = tmp_path / "original.pdf"
+    write_tagged_structured_pdf(
+        original, body_text="1. Submit forms.", second_text=marker, second_tag="/Lbl"
+    )
+    writer = PdfWriter(clone_from=PdfReader(original))
+    root = writer.root_object["/StructTreeRoot"]
+    children = root["/K"]
+    label = children[1]
+    item = writer._add_object(
+        DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/StructElem"),
+                NameObject("/S"): NameObject("/LI"),
+                NameObject("/K"): ArrayObject([label]),
+            }
+        )
+    )
+    listing = writer._add_object(
+        DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/StructElem"),
+                NameObject("/S"): NameObject("/L"),
+                NameObject("/P"): root.indirect_reference,
+                NameObject("/K"): ArrayObject([item]),
+            }
+        )
+    )
+    item.get_object()[NameObject("/P")] = listing
+    label.get_object()[NameObject("/P")] = item
+    root[NameObject("/K")] = ArrayObject([children[0], listing, children[2]])
+    path = tmp_path / "labels.pdf"
+    writer.write(path)
+    with materialize_source_bundle(SourceBundle.from_pdf(path)) as source:
+        doc = TaggedPdfAdapterPlugin().extract(source, config={}).document
+    assert [s.role for s in doc.segments] == [
+        "body",
+        "decorative" if excluded else "heading",
+        "heading",
+    ]
+    assert doc.segments[0].text == "1. Submit forms."
+    assert doc.segments[1].text == marker
+    if excluded:
+        assert doc.segments[1].role_basis.endswith(
+            ":source-declared-numeric-list-label"
+        )
+    result = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    html = "<p>1. Submit forms.</p><h2>Application review.</h2>"
+    if not excluded:
+        html += f"<h2>{marker}</h2>"
+    expected = analyze(
+        SourceBundle.from_html(html.encode()), profile="hhs-nofo-fy27-html@0.4.0"
+    )
+    assert result.metrics["word_count"].value == expected.metrics["word_count"].value
 
 
 def test_generic_pdf_fallback_excludes_page_furniture_and_reports_low_reliability(
@@ -262,6 +478,30 @@ def test_tagged_pdf_running_navigation_exclusion_preserves_instructions(
     assert result.metrics["word_count"].value == (
         7 * (supporting_pages + 1) + (1 if supporting_pages == 1 else 0)
     )
+
+    # Compare identical reader-facing content through the public HTML and PDF
+    # paths. Insufficient PDF artifact evidence deliberately retains one nav word.
+    html = (
+        '<div id="download_target"><nav>Review</nav>'
+        + "<p>Before You Begin. Review the application instructions.</p>"
+        * (supporting_pages + 1)
+        + "</div>"
+    )
+    html_result = analyze(
+        SourceBundle.from_html(html.encode()),
+        profile="hhs-nofo-fy27-html@0.4.0",
+        adapter_config={"root_id": "download_target"},
+        production_path="nofo_builder_export_html",
+    )
+    assert result.metrics["word_count"].value - html_result.metrics[
+        "word_count"
+    ].value == (1 if supporting_pages == 1 else 0)
+    for metric_id, html_metric in html_result.metrics.items():
+        if metric_id == "word_count":
+            continue
+        assert html_metric.value is not None, metric_id
+        assert result.metrics[metric_id].value == html_metric.value, metric_id
+        assert result.metrics[metric_id].components == html_metric.components, metric_id
 
 
 @pytest.mark.parametrize(
