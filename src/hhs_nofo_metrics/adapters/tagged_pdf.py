@@ -40,8 +40,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.3"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.3"
+ADAPTER_VERSION: Final = "0.1.4"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.4"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -72,6 +72,22 @@ def _distribution_version() -> str:
 
 def _normalized(value: str) -> str:
     return " ".join(value.split())
+
+
+def _ordered_group_words(group):
+    # Keep source-declared marked-content order. Within a single marked-content
+    # item, font-dependent glyph tops can differ on the same baseline; sorting
+    # by exact top would move bold words to the end of the line. Apply the
+    # existing line tolerance only inside that item, never across tagged blocks.
+    by_rank = defaultdict(list)
+    for word in group:
+        by_rank[word.structure_rank].append(word)
+    return [
+        word
+        for rank in sorted(by_rank)
+        for line in visual_lines(by_rank[rank])
+        for word in line.words
+    ]
 
 
 def _bbox(words) -> tuple[float, float, float, float]:
@@ -226,15 +242,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                 )
                 for group_index, group in enumerate(ordered_groups, start=1):
                     tagged_group_count += 1
-                    ordered_words = sorted(
-                        group,
-                        key=lambda word: (
-                            word.structure_rank,
-                            word.top,
-                            word.left,
-                            word.native_index,
-                        ),
-                    )
+                    ordered_words = _ordered_group_words(group)
                     group_tags = {
                         word.structure_group_tag
                         for word in ordered_words
