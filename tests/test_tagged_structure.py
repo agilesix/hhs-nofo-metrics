@@ -69,7 +69,9 @@ def write_blank_pdf(path: Path) -> None:
 
 @pytest.mark.parametrize("text", ["1.", "20)", "(3)"])
 def test_numeric_list_marker_requires_explicit_list_label(text):
-    value = word(text, left=10, top=100, native_index=0, tag_path=("Document", "L", "LI", "Lbl"))
+    value = word(
+        text, left=10, top=100, native_index=0, tag_path=("Document", "L", "LI", "Lbl")
+    )
     assert _is_numeric_list_label([value])
     for path in [("Document", "P"), ("Document", "H2"), ("Document", "Lbl")]:
         assert not _is_numeric_list_label([replace(value, tag_path=path)])
@@ -91,7 +93,11 @@ def test_same_marked_content_orders_bold_words_on_their_visual_line():
     ]
     values = [replace(w, structure_rank=1) for w in values]
     assert [w.text for w in _ordered_group_words(values)] == [
-        "Applicants", "are", "not", "eligible.", "Next"
+        "Applicants",
+        "are",
+        "not",
+        "eligible.",
+        "Next",
     ]
 
 

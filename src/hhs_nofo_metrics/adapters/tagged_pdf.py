@@ -78,9 +78,11 @@ def _normalized(value: str) -> str:
 def _is_numeric_list_label(words):
     # Require explicit list-label ancestry and a complete numeric marker, not
     # a numeric prefix in prose. Retain textual or unsupported labels as-is.
-    return bool(words) and all(
-        word.tag_path[-3:] == ("L", "LI", "Lbl") for word in words
-    ) and re.fullmatch(r"(?:[0-9]+[.)]|\([0-9]+\))", _text(words)) is not None
+    return (
+        bool(words)
+        and all(word.tag_path[-3:] == ("L", "LI", "Lbl") for word in words)
+        and re.fullmatch(r"(?:[0-9]+[.)]|\([0-9]+\))", _text(words)) is not None
+    )
 
 
 def _ordered_group_words(group):
@@ -419,8 +421,11 @@ def _resolved_document(path: Path) -> NormalizedDocument:
             text=" ".join(part.text for part in parts),
             # A multi-page paragraph has no single page bounding box.
             location=SourceLocation(page=first.location.page),
-            role_basis=first.role_basis + (
-                ":cross-page-list-body" if first.role == "list" else ":cross-page-paragraph"
+            role_basis=first.role_basis
+            + (
+                ":cross-page-list-body"
+                if first.role == "list"
+                else ":cross-page-paragraph"
             ),
         )
         merged_locations[first.id] = [part.location.to_dict() for part in parts]

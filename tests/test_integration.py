@@ -40,7 +40,9 @@ CLI = (sys.executable, "-m", "hhs_nofo_metrics_cli")
 @pytest.mark.parametrize("shared_paragraph", [True, False])
 @pytest.mark.parametrize("page_count", [2, 3])
 @pytest.mark.parametrize("with_footer", [True, False])
-@pytest.mark.parametrize("block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")])
+@pytest.mark.parametrize(
+    "block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")]
+)
 def test_cross_page_paragraph_preserves_readability(
     tmp_path, shared_paragraph, page_count, with_footer, block_tag, role, html_tag
 ):
@@ -286,27 +288,41 @@ def write_tagged_structured_pdf(
         writer.write(stream)
 
 
-@pytest.mark.parametrize("marker,excluded", [("1.", True), ("1. Eligibility", False), ("Warning", False)])
-def test_list_label_scope_preserves_numbered_prose_and_headings(tmp_path, marker, excluded):
+@pytest.mark.parametrize(
+    "marker,excluded", [("1.", True), ("1. Eligibility", False), ("Warning", False)]
+)
+def test_list_label_scope_preserves_numbered_prose_and_headings(
+    tmp_path, marker, excluded
+):
     from pypdf import PdfReader
 
     original = tmp_path / "original.pdf"
-    write_tagged_structured_pdf(original, body_text="1. Submit forms.", second_text=marker, second_tag="/Lbl")
+    write_tagged_structured_pdf(
+        original, body_text="1. Submit forms.", second_text=marker, second_tag="/Lbl"
+    )
     writer = PdfWriter(clone_from=PdfReader(original))
     root = writer.root_object["/StructTreeRoot"]
     children = root["/K"]
     label = children[1]
-    item = writer._add_object(DictionaryObject({
-        NameObject("/Type"): NameObject("/StructElem"),
-        NameObject("/S"): NameObject("/LI"),
-        NameObject("/K"): ArrayObject([label]),
-    }))
-    listing = writer._add_object(DictionaryObject({
-        NameObject("/Type"): NameObject("/StructElem"),
-        NameObject("/S"): NameObject("/L"),
-        NameObject("/P"): root.indirect_reference,
-        NameObject("/K"): ArrayObject([item]),
-    }))
+    item = writer._add_object(
+        DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/StructElem"),
+                NameObject("/S"): NameObject("/LI"),
+                NameObject("/K"): ArrayObject([label]),
+            }
+        )
+    )
+    listing = writer._add_object(
+        DictionaryObject(
+            {
+                NameObject("/Type"): NameObject("/StructElem"),
+                NameObject("/S"): NameObject("/L"),
+                NameObject("/P"): root.indirect_reference,
+                NameObject("/K"): ArrayObject([item]),
+            }
+        )
+    )
     item.get_object()[NameObject("/P")] = listing
     label.get_object()[NameObject("/P")] = item
     root[NameObject("/K")] = ArrayObject([children[0], listing, children[2]])
@@ -314,16 +330,24 @@ def test_list_label_scope_preserves_numbered_prose_and_headings(tmp_path, marker
     writer.write(path)
     with materialize_source_bundle(SourceBundle.from_pdf(path)) as source:
         doc = TaggedPdfAdapterPlugin().extract(source, config={}).document
-    assert [s.role for s in doc.segments] == ["body", "decorative" if excluded else "heading", "heading"]
+    assert [s.role for s in doc.segments] == [
+        "body",
+        "decorative" if excluded else "heading",
+        "heading",
+    ]
     assert doc.segments[0].text == "1. Submit forms."
     assert doc.segments[1].text == marker
     if excluded:
-        assert doc.segments[1].role_basis.endswith(":source-declared-numeric-list-label")
+        assert doc.segments[1].role_basis.endswith(
+            ":source-declared-numeric-list-label"
+        )
     result = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
     html = "<p>1. Submit forms.</p><h2>Application review.</h2>"
     if not excluded:
         html += f"<h2>{marker}</h2>"
-    expected = analyze(SourceBundle.from_html(html.encode()), profile="hhs-nofo-fy27-html@0.4.0")
+    expected = analyze(
+        SourceBundle.from_html(html.encode()), profile="hhs-nofo-fy27-html@0.4.0"
+    )
     assert result.metrics["word_count"].value == expected.metrics["word_count"].value
 
 
