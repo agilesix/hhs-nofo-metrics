@@ -172,6 +172,11 @@ def analyze_semantic_document(
         for segment in document.segments
         if segment.location.page is not None and segment.text.strip()
     }
+    # Merged paragraphs keep their continuation-page locations in metadata.
+    for locations in document.metadata.get(
+        "cross_page_paragraph_locations", {}
+    ).values():
+        pages_with_text.update(location["page"] for location in locations)
     coverage = CoverageSummary(
         page_count=page_count,
         pages_extracted=max(0, page_count - len(extraction_error_pages)),

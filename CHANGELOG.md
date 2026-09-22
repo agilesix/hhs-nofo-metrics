@@ -7,7 +7,15 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
-No unreleased changes.
+### Fixed
+
+- Preserve sentences and paragraph counts when one source-tagged PDF paragraph
+  continues across pages. Join only parts of the same declared paragraph with
+  consistent body roles and no extraction warnings; retain all original page
+  locations in normalized-document metadata.
+- Tagged-PDF adapter is now 0.1.2 and its resolver is 0.3.2. Profile policies and
+  formulas are unchanged. Explicit adapter @0.1.1 consumers must select @0.1.2
+  (or the current alias) when adopting this change.
 
 ## [0.5.3] - 2026-09-17
 
