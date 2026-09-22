@@ -135,6 +135,53 @@ def test_cross_page_paragraph_preserves_readability(
         assert actual.metrics[key].components == expected.metrics[key].components
 
 
+@pytest.mark.parametrize(
+    ("container", "expected_role"),
+    [("HHSNofoCover", "cover"), ("TOC", "table_of_contents"), ("Sect", None)],
+)
+def test_pdf_scope_follows_declared_container_not_text(
+    tmp_path, container, expected_role
+):
+    from pypdf import PdfReader
+
+    source = tmp_path / "original.pdf"
+    write_tagged_structured_pdf(
+        source,
+        body_text="Before you begin. Read these instructions.",
+        second_text="Cover and contents are discussed here.",
+    )
+    writer = PdfWriter(clone_from=PdfReader(source))
+    root = writer.root_object["/StructTreeRoot"]
+    children = root["/K"]
+    wrapper = DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/StructElem"),
+            NameObject("/S"): NameObject("/" + container),
+            NameObject("/P"): root.indirect_reference,
+            NameObject("/K"): ArrayObject(children[:2]),
+        }
+    )
+    ref = writer._add_object(wrapper)
+    for child in children[:2]:
+        child.get_object()[NameObject("/P")] = ref
+    root[NameObject("/K")] = ArrayObject([ref, *children[2:]])
+    if container == "HHSNofoCover":
+        root[NameObject("/RoleMap")] = DictionaryObject(
+            {NameObject("/HHSNofoCover"): NameObject("/Sect")}
+        )
+    path = tmp_path / "scoped.pdf"
+    writer.write(path)
+    with materialize_source_bundle(SourceBundle.from_pdf(path)) as materialized:
+        doc = TaggedPdfAdapterPlugin().extract(materialized, config={}).document
+    assert [s.role for s in doc.segments] == (
+        [expected_role, expected_role, "heading"]
+        if expected_role
+        else ["body", "list", "heading"]
+    )
+    result = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    assert result.metrics["word_count"].value == (2 if expected_role else 14)
+
+
 def write_three_page_pdf(path: Path) -> None:
     writer = PdfWriter()
     font = DictionaryObject(
