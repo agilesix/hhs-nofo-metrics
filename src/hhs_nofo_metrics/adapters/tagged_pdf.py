@@ -40,8 +40,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.2"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.2"
+ADAPTER_VERSION: Final = "0.1.3"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.3"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -253,6 +253,25 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         if any(inside_panel(word, panel) for word in ordered_words)
                     }
                     warnings = []
+                    # Honor producer-declared containers, not page positions or
+                    # title keywords. Nested paragraphs/headings retain their
+                    # block boundaries but inherit the container's metric scope.
+                    scope_roles = {
+                        "cover"
+                        if "HHSNofoCover" in word.tag_path
+                        else "table_of_contents"
+                        if "TOC" in word.tag_path or "HHSNofoContents" in word.tag_path
+                        else role
+                        for word in ordered_words
+                    }
+                    if len(scope_roles) == 1:
+                        scoped_role = next(iter(scope_roles))
+                        if scoped_role != role:
+                            role = scoped_role
+                            role_basis += ":source-declared-container"
+                    else:
+                        role = "unknown"
+                        warnings.append("structure_group_crosses_scope_boundary")
                     if _artifact_supported_top_navigation(
                         ordered_words, int(page.page_number), artifact_words_by_page
                     ):
