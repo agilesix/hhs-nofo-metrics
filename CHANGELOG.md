@@ -7,6 +7,8 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+## [0.5.4] - 2026-09-23
+
 ### Fixed
 
 - Preserve sentences and paragraph counts when one source-tagged PDF paragraph
