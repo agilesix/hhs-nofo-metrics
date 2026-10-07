@@ -7,6 +7,15 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+### Fixed
+
+- Preserve sentence scope when one explicitly tagged table cell continues across
+  pages. Join only parts of that cell with consistent table roles and no
+  extraction warnings; never infer continuity between different cells.
+- Tagged-PDF adapter is now 0.1.7 and its resolver is 0.3.7. Formulas and released
+  profiles are unchanged. Retain package 0.5.4 to reproduce earlier extraction;
+  explicit adapter consumers must adopt the new version after its release.
+
 ## [0.5.4] - 2026-09-23
 
 ### Fixed

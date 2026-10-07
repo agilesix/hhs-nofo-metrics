@@ -41,7 +41,8 @@ CLI = (sys.executable, "-m", "hhs_nofo_metrics_cli")
 @pytest.mark.parametrize("page_count", [2, 3])
 @pytest.mark.parametrize("with_footer", [True, False])
 @pytest.mark.parametrize(
-    "block_tag,role,html_tag", [("P", "body", "p"), ("LBody", "list", "li")]
+    "block_tag,role,html_tag",
+    [("P", "body", "p"), ("LBody", "list", "li"), ("TD", "table", "td")],
 )
 def test_cross_page_paragraph_preserves_readability(
     tmp_path, shared_paragraph, page_count, with_footer, block_tag, role, html_tag
@@ -119,7 +120,10 @@ def test_cross_page_paragraph_preserves_readability(
     else:
         assert not locations
     paragraphs = [" ".join(texts)] if shared_paragraph else texts
-    html = "".join(f"<{html_tag}>{text}</{html_tag}>" for text in paragraphs).encode()
+    html = "".join(f"<{html_tag}>{text}</{html_tag}>" for text in paragraphs)
+    if block_tag == "TD":
+        html = f"<table><tr>{html}</tr></table>"
+    html = html.encode()
     expected = analyze(SourceBundle.from_html(html), profile="hhs-nofo-fy27-html@0.4.0")
     actual = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
     assert actual.coverage.pages_with_text == page_count
