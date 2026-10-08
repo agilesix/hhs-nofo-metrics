@@ -204,6 +204,7 @@ def _resolved_document(path: Path) -> NormalizedDocument:
 
     segments: list[Segment] = []
     paragraph_parts: dict[str, list[Segment]] = defaultdict(list)
+    nested_cell_groups: set[str] = set()
     reading_order = 0
     tagged_group_count = 0
     panel_group_count = 0
@@ -260,6 +261,19 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         if word.structure_group_tag is not None
                     }
                     group_tag = next(iter(group_tags)) if len(group_tags) == 1 else None
+                    if group_tag == "TD":
+                        # Container grouping hides nested paragraph identities.
+                        # Do not infer continuity across their explicit boundaries,
+                        # even when another page has direct cell content.
+                        for word in ordered_words:
+                            cell_index = (
+                                len(word.tag_path) - 1 - word.tag_path[::-1].index("TD")
+                            )
+                            if any(
+                                tag in _ROLE_BY_GROUP_TAG
+                                for tag in word.tag_path[cell_index + 1 :]
+                            ):
+                                nested_cell_groups.add(word.structure_group_id)
                     role = _ROLE_BY_GROUP_TAG.get(group_tag or "", "unknown")
                     role_basis = (
                         RESOLVER_METHOD
@@ -406,9 +420,10 @@ def _resolved_document(path: Path) -> NormalizedDocument:
     merged_locations = {}
     replacements = {}
     removed = set()
-    for parts in paragraph_parts.values():
+    for group_id, parts in paragraph_parts.items():
         if (
-            len(parts) < 2
+            group_id in nested_cell_groups
+            or len(parts) < 2
             or len({part.location.page for part in parts}) != len(parts)
             or any(
                 part.role not in {"body", "list", "table"} or part.warnings

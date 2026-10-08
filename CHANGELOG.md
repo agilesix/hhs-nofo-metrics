@@ -12,6 +12,10 @@ package release may support more than one measurement contract.
 - Preserve sentence scope when one explicitly tagged table cell continues across
   pages. Join only parts of that cell with consistent table roles and no
   extraction warnings; never infer continuity between different cells.
+- Keep cells with nested paragraphs or headings page-local because container
+  grouping does not expose their individual block identities. Inline spans do
+  not prevent continuity. A single nested paragraph that spans pages remains
+  subject to the earlier page-local limitation.
 - Tagged-PDF adapter is now 0.1.7 and its resolver is 0.3.7. Formulas and released
   profiles are unchanged. Retain package 0.5.4 to reproduce earlier extraction;
   explicit adapter consumers must adopt the new version after its release.

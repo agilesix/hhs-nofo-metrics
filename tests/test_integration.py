@@ -142,6 +142,60 @@ def test_cross_page_paragraph_preserves_readability(
         assert actual.metrics[key].components == expected.metrics[key].components
 
 
+@pytest.mark.parametrize("nested_tag", ["P", "H2", "Span"])
+@pytest.mark.parametrize("shared_nested_block", [False, True])
+@pytest.mark.parametrize("mixed_direct_content", [False, True])
+def test_cross_page_cell_does_not_merge_nested_blocks(
+    tmp_path, nested_tag, mixed_direct_content, shared_nested_block
+):
+    test_cross_page_paragraph_preserves_readability(
+        tmp_path, True, 2, False, "TD", "table", "td"
+    )
+    path = tmp_path / "cross-page.pdf"
+    writer = PdfWriter(clone_from=path)
+    root = writer.root_object["/StructTreeRoot"]
+    cell_ref = root["/K"][0]
+    cell = cell_ref.get_object()
+    marks = list(cell["/K"])
+    children = []
+    for index, mark in enumerate(marks):
+        if mixed_direct_content and index == 0:
+            children.append(mark)
+        else:
+            children.append(
+                writer._add_object(
+                    DictionaryObject(
+                        {
+                            NameObject("/Type"): NameObject("/StructElem"),
+                            NameObject("/S"): NameObject("/" + nested_tag),
+                            NameObject("/P"): cell_ref,
+                            NameObject("/K"): ArrayObject([mark]),
+                        }
+                    )
+                )
+            )
+    if shared_nested_block and not mixed_direct_content:
+        children = [children[0]]
+        children[0].get_object()[NameObject("/K")] = ArrayObject(marks)
+    cell[NameObject("/K")] = ArrayObject(children)
+    writer.write(path)
+    with materialize_source_bundle(SourceBundle.from_pdf(path)) as source:
+        doc = TaggedPdfAdapterPlugin().extract(source, config={}).document
+    cells = [segment for segment in doc.segments if segment.role == "table"]
+    joined = nested_tag == "Span"
+    assert [segment.text for segment in cells] == (
+        ["Applications must be reviewed by staff. Submit complete forms."]
+        if joined
+        else ["Applications must be", "reviewed by staff. Submit complete forms."]
+    )
+    assert bool(doc.metadata["cross_page_paragraph_locations"]) == joined
+    result = analyze(path, profile="hhs-nofo-fy27-pdf-estimate@0.5.0")
+    assert result.metrics["words_per_sentence"].components["word_count"] == (
+        9 if joined else 6
+    )
+    assert result.metrics["passive_sentence_percentage"].value == (50 if joined else 0)
+
+
 @pytest.mark.parametrize(
     ("container", "expected_role"),
     [
