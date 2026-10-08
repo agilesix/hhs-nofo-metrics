@@ -7,6 +7,8 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+## [0.5.5] - 2026-10-07
+
 ### Fixed
 
 - Preserve sentence scope when one explicitly tagged table cell continues across
