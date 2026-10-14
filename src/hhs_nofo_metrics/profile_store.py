@@ -11,6 +11,9 @@ from hhs_nofo_metrics.errors import ProfileError
 from hhs_nofo_metrics.models import MetricProfile
 
 _PROFILE_FILES = {
+    "hhs-nofo-fy27-html@0.5.0": "hhs-nofo-fy27-html-0.5.0.json",
+    "hhs-nofo-fy27-pdf-estimate@0.6.0": "hhs-nofo-fy27-pdf-estimate-0.6.0.json",
+    "hhs-nofo-fy27-generic-pdf-estimate@0.5.0": "hhs-nofo-fy27-generic-pdf-estimate-0.5.0.json",
     "hhs-nofo-fy27-html@0.4.0": "hhs-nofo-fy27-html-0.4.0.json",
     "hhs-nofo-fy27-pdf-estimate@0.5.0": "hhs-nofo-fy27-pdf-estimate-0.5.0.json",
     "hhs-nofo-fy27-generic-pdf-estimate@0.4.0": (

@@ -74,6 +74,13 @@ readability, and passive-voice kernel after source-specific resolution.
 
 ## Passive sentences
 
+Corrected profiles use method `0.4.0-provisional`; earlier profiles retain
+`0.3.0-provisional` unchanged. The corrected method recognizes contracted be
+auxiliaries, excludes `need` and `indeed` as participles, and accepts `indeed` as
+an intervening modifier. Ambiguous pronoun `'s` retains previous behavior because
+it can mean either `is` or `has`. See [adoption notes](PASSIVE_V4_ADOPTION.md)
+for explicit profile selection, release gates, and historical result handling.
+
 The current provisional classifier recognizes a form of `be` or `get` followed
 by a likely past participle, with bounded intervening modifiers. It includes
 explicit irregular participles and excludes bounded adjectival-state and

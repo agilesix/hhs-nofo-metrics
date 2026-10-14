@@ -12,6 +12,12 @@ from hhs_nofo_metrics.methods import (
     count_passive_sentences,
     tokenize_hhs_readability_draft,
 )
+from hhs_nofo_metrics.methods.passive_voice_v4 import (
+    METHOD_REFERENCE as PASSIVE_V4_REFERENCE,
+)
+from hhs_nofo_metrics.methods.passive_voice_v4 import (
+    count_passive_sentences as count_passive_sentences_v4,
+)
 
 RESOLVED_SCOPE_CONTRACT_VERSION: Final = "0.1.0-internal"
 SCOPE_STATUSES: Final = frozenset({"eligible", "provisional", "unable"})
@@ -92,6 +98,7 @@ def calculate_resolved_measurement_scope(
     scope: ResolvedMeasurementScope,
     *,
     classify_passive_voice: bool = False,
+    passive_method_reference: str | None = None,
 ) -> ResolvedMeasurementCalculation:
     """Calculate both HHS scopes after an adapter has resolved their content."""
 
@@ -109,7 +116,11 @@ def calculate_resolved_measurement_scope(
             character_count=characters,
             syllable_count=syllables,
             passive_sentence_count=(
-                count_passive_sentences(scope.readability_sentences)
+                (
+                    count_passive_sentences_v4
+                    if passive_method_reference == PASSIVE_V4_REFERENCE
+                    else count_passive_sentences
+                )(scope.readability_sentences)
                 if classify_passive_voice
                 else None
             ),
