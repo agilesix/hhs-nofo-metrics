@@ -22,6 +22,9 @@ from hhs_nofo_metrics.methods import (
     split_semantic_block_sentences,
     tokenize_hhs_readability_draft,
 )
+from hhs_nofo_metrics.methods.passive_voice_v4 import (
+    METHOD_REFERENCE as PASSIVE_V4_REFERENCE,
+)
 from hhs_nofo_metrics.methods.token_candidates import (
     READABILITY_CHARACTER_CANDIDATE_REFERENCE,
     SYLLABLE_CANDIDATE_METHOD_REFERENCE,
@@ -116,10 +119,13 @@ def _validate_profile(profile: MetricProfile) -> None:
         if passive_method.status == "configured"
         else passive_method.status
     )
-    if passive_reference != PASSIVE_SENTENCE_METHOD_REFERENCE:
+    if passive_reference not in {
+        PASSIVE_SENTENCE_METHOD_REFERENCE,
+        PASSIVE_V4_REFERENCE,
+    }:
         raise ProfileError(
             "Semantic block pipeline requires passive_classifier method "
-            f"{PASSIVE_SENTENCE_METHOD_REFERENCE!r}; profile "
+            f"{PASSIVE_SENTENCE_METHOD_REFERENCE!r} or {PASSIVE_V4_REFERENCE!r}; profile "
             f"declares {passive_reference!r}"
         )
     resolve_profile_metric_scopes(profile)
@@ -227,6 +233,7 @@ def analyze_semantic_document(
             ),
         ),
         classify_passive_voice=True,
+        passive_method_reference=f"{profile.methods['passive_classifier'].id}@{profile.methods['passive_classifier'].version}",
     )
     unknown_segments = tuple(
         segment for segment in document.segments if segment.role == "unknown"
@@ -262,6 +269,7 @@ def analyze_semantic_document(
                 readability_sentences=excluded_readability_sentences,
             ),
             classify_passive_voice=True,
+            passive_method_reference=f"{profile.methods['passive_classifier'].id}@{profile.methods['passive_classifier'].version}",
         )
     metrics = {}
     for metric_id in METRIC_IDS:

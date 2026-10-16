@@ -29,12 +29,12 @@ def test_home_and_profile_commands_expose_compact_public_contracts(
     home = capsys.readouterr()
     assert home.err == ""
     assert "description: Calculate versioned HHS NOFO readability metrics." in home.out
-    assert "profiles[3]:" in home.out
+    assert "profiles[6]:" in home.out
     assert "adapters[3]{reference,source_kinds,capability_count}:" in home.out
 
     assert cli.main(["profiles", "list", "--json"]) == 0
     listed = json_stdout(capsys)
-    assert listed["count"] == 3
+    assert listed["count"] == 6
     assert "help" not in listed
 
     assert cli.main(["profiles", "show", "hhs-nofo-fy27-html@0.4.0", "--json"]) == 0
@@ -277,4 +277,4 @@ def test_json_only_home_view_and_executable_path_collapsing(
     assert cli.main(["--json"]) == 0
     home = json_stdout(capsys)
     assert home["bin"] == "~/.local/bin/hhs-nofo-metrics"
-    assert len(home["profiles"]) == 3
+    assert len(home["profiles"]) == 6

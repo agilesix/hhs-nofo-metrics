@@ -15,6 +15,10 @@ FORBIDDEN_PARTS = {
     "research",
 }
 REQUIRED_FILES = {
+    "hhs_nofo_metrics/methods/passive_voice_v4.py",
+    "hhs_nofo_metrics/profiles/hhs-nofo-fy27-html-0.5.0.json",
+    "hhs_nofo_metrics/profiles/hhs-nofo-fy27-pdf-estimate-0.6.0.json",
+    "hhs_nofo_metrics/profiles/hhs-nofo-fy27-generic-pdf-estimate-0.5.0.json",
     "hhs_nofo_metrics_cli.py",
     "hhs_nofo_metrics/profiles/hhs-nofo-fy27-generic-pdf-estimate-0.4.0.json",
     "hhs_nofo_metrics/profiles/hhs-nofo-fy27-html-0.4.0.json",

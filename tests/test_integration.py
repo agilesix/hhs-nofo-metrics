@@ -937,7 +937,7 @@ def test_cli_without_arguments_returns_content_first_home() -> None:
     assert "description: Calculate versioned HHS NOFO readability metrics." in (
         completed.stdout
     )
-    assert "profiles[3]:" in completed.stdout
+    assert "profiles[6]:" in completed.stdout
     assert "adapters[3]{reference,source_kinds,capability_count}:" in completed.stdout
     assert "help[3]:" in completed.stdout
     assert completed.stderr == ""

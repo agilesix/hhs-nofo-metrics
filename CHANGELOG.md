@@ -7,6 +7,23 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+### Added
+
+- Candidate package 0.6.0 adds passive method `0.4.0-provisional` and opt-in
+  profiles HTML `0.5.0`, tagged PDF `0.6.0`, and generic PDF `0.5.0`. The
+  released profiles and passive method `0.3.0-provisional` remain available
+  unchanged; existing CLI profile defaults retain the old method.
+
+### Fixed
+
+- Under the new profiles, recognize bounded passive constructions with
+  contracted be auxiliaries and exclude `need` and `indeed` from participle
+  detection. Treat `indeed` as an intervening modifier. Ambiguous pronoun `'s`
+  forms retain previous behavior; explicit `been` and `being` remain supported.
+- Sentence segmentation, percentage arithmetic, and other readability measures
+  are unchanged. These corrections do not establish Word parity or recalibrate
+  the passive-sentence target.
+
 ## [0.5.5] - 2026-10-07
 
 ### Fixed
