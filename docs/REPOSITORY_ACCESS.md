@@ -1,34 +1,39 @@
 # Repository access and approvals
 
-Ben (`@benbrasso`) and Mike (`@mikec-ai`) are the designated mergers and
-release operators. Contributors can propose changes and leave reviews. PR
-approval is optional: either designated merger may merge their own PR after
-required CI passes and review discussions are resolved. GitHub does not allow
-authors to approve their own PRs, but an approval is not required here.
-Request the other's review when a change would benefit from it.
+## Who can merge
+
+Merge permission follows GitHub repository access: people with Write, Maintain,
+or Admin access can merge PRs. Read and Triage access do not grant merging
+permission. A public visitor can propose a PR or leave feedback but cannot
+merge without the necessary repository access.
+
+PR approval is optional. A person with merge permission may merge their own PR
+after required CI passes and review discussions are resolved. GitHub does not
+allow authors to approve their own PRs, but no approval is required here.
+Request independent review when a change would benefit from it. An
+agent-generated review is not independent human approval.
 
 ## Repository settings
 
-Enforcement lives in [repository rulesets](https://github.com/agilesix/hhs-nofo-metrics/settings/rules),
+Enforcement lives in [repository rulesets](https://github.com/agilesix/hhs-nofo-metrics/settings/rules)
+and [repository access](https://github.com/agilesix/hhs-nofo-metrics/settings/access),
 not in this document. The rulesets configured on October 27, 2026 are:
 
-- **Main merges - Ben and Mike:** only these two users can update `main`,
-  through a PR. This exception applies only to this ruleset.
 - **Main review and CI requirements:** no bypass actors; require a PR and
   resolved review threads, with zero required approvals. Code-owner and
   latest-push approvals are not required. Require up-to-date branches and
-  the GitHub Actions checks `Python 3.11`,
-  `Python 3.14`, `Public boundary and package smoke test`, and `Secret scan`.
+  the GitHub Actions checks `Python 3.11`, `Python 3.14`,
+  `Public boundary and package smoke test`, and `Secret scan`.
   Block deletion and force pushes to `main`.
-- **Release tags - Ben and Mike:** only these two users can create `v*` tags.
+- **Release tags - Ben and Mike:** only `@benbrasso` and `@mikec-ai` can create
+  `v*` tags.
 - **Release tags are immutable:** block updating or deleting existing `v*` tags,
   with no bypass actors. Corrections require a new version, not a moved tag.
 
-A CODEOWNERS file is not needed for this policy. The restriction on who may
-merge is enforced by the separate main-update ruleset, not by PR approvals.
-Optional human review remains useful; an agent-generated review is not
-independent human approval. Review policy changes do not waive the release
-process's separate agreement and evidence requirements.
+There is no separate main-update restriction or required CODEOWNERS file.
+Eligible users use the normal merge button without a bypass checkbox once
+requirements pass. Review policy changes do not waive the release process's
+separate agreement and evidence requirements.
 
 ## Release approval and deployment limits
 
@@ -50,22 +55,20 @@ or deployments in consumer repositories. Those require their own access
 controls. Follow [the release process](RELEASE_PROCESS.md) and obtain explicit
 release/deployment authorization before acting.
 
-## Administrator access and follow-up
+## Administrator access
 
-Existing administrator access was retained for `mutsuoara` and `a6-admin`, in
-addition to Ben and Mike. Under the active rules, these other administrators
-cannot merge to `main` or create version tags, but administrators can change
-or remove repository rules and environments. They also retain manual GitHub
-Release publishing permissions through their repository role. Organization
-owners can retain administrative authority regardless of direct access.
+Administrator access is retained for `benbrasso`, `mikec-ai`, `mutsuoara`, and
+`a6-admin`. All four can merge PRs after the main-branch requirements pass,
+change repository settings, and manually publish GitHub Releases. The
+maintainers have accepted retaining this access. The tag-creation and release
+environment restrictions above remain separate from merge permission.
+Organization owners can retain administrative authority regardless of direct
+access.
 
-For exclusive release-publishing access, an organization administrator must
-review [repository access](https://github.com/agilesix/hhs-nofo-metrics/settings/access),
-reduce other accounts to read/triage where appropriate, and check inherited
-team/organization access and external registry/deployment credentials. Do not
-remove organizational administration or emergency access without identifying
-its owner and purpose. Changes to designated owners require coordinated updates
-to ruleset actors, environment reviewers, and downstream permissions.
+Review direct and inherited team/organization access when granting or changing
+permissions. Read or Triage is appropriate for contributors who should not
+merge; Write, Maintain, and Admin grant merge access. Changes to designated
+release operators require coordinated updates to tag-rule actors, environment
+reviewers, and any external registry or downstream deployment permissions.
 
-For GitHub's behavior, see [rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets),
-and [deployment environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).
+For GitHub's behavior, see [rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) and [deployment environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).

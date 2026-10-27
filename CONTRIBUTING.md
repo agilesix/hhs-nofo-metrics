@@ -149,9 +149,9 @@ its manifest.
 
 ## Pull requests
 
-Only Ben (`@benbrasso`) or Mike (`@mikec-ai`) may merge PRs. Approval by another
-person is optional; either may merge their own PR once required CI passes and
-review discussions are resolved. Request review when useful. See
+People with repository Write, Maintain, or Admin access may merge PRs. Approval
+by another person is optional; eligible users may merge their own PRs once
+required CI passes and review discussions are resolved. Request review when useful. See
 [repository access](docs/REPOSITORY_ACCESS.md) for enforced settings and limits.
 
 Use the [PR template](.github/pull_request_template.md). Keep changes focused and

@@ -9,8 +9,8 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
-- Document Ben/Mike-only merges with optional PR approval, required CI,
-  release-tag and release-environment controls, and remaining access limits.
+- Document merging through repository access permissions, optional PR approval,
+  required CI, and separate release-tag and release-environment controls.
 - Explain the package's deterministic calculations and AI-assisted contribution
   practices, with explicit deference to applicable HHS and Office of Finance
   policies. Link the guidance from the README, contributor guide, documentation
