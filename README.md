@@ -15,9 +15,26 @@ measurement profile.
 - Passive-sentence percentage
 
 Results also include sentence-bearing block counts and average sentences per
-paragraph for consumer display. The
-[methodology](docs/METHODOLOGY.md) explains how the measurements work, which
-content is counted, and the limitations of each input path.
+paragraph for consumer display.
+
+## How the metrics are calculated
+
+The package measures the applicant-facing text of a whole NOFO with published,
+versioned rules. Word Count includes body text, lists, tables and headings.
+The other five metrics use only sentences that end in `.`, `!` or `?`, so
+headings and short fragments do not skew them. Text the input marks as a cover,
+table of contents, navigation, page header or footer, or writer instructions is
+left out.
+
+Word documents are converted to HTML by NOFO Builder before measurement; HTML
+is the preferred input because its structure is clearly marked. PDFs are
+measured from their structure tags when available, or rebuilt from lines of
+text when not, so PDF results are estimates with a reliability rating. Numbers
+can differ from Microsoft Word's readability statistics, which use Word's own
+counting rules and content selection. The
+[methodology summary](docs/METHODOLOGY.md#in-brief) explains what is excluded
+and why; the rest of the [methodology](docs/METHODOLOGY.md) gives the exact
+rules and the limitations of each input path.
 
 A numeric result does not establish clearance, compliance, accessibility, or
 document quality. The package does not perform generative-AI review, and its

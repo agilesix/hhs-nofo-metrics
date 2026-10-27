@@ -2,6 +2,51 @@
 
 Status: **provisional implementation; not formally HHS-approved**
 
+## In brief
+
+The package measures the text an applicant reads in a whole NOFO. It follows
+published, versioned rules, so the same input and profile always produce the
+same numbers.
+
+- **What counts:** body paragraphs, list items and table cells. Word Count also
+  includes headings and labels. The other five metrics (words per sentence,
+  characters per word, both Flesch scores and passive sentences) use only
+  sentences, which the rules recognize by ending punctuation: `.`, `!` or `?`.
+- **What does not count:** text the input marks as a cover, table of contents,
+  navigation, page header or footer, decoration or writer instructions.
+  Headings and unpunctuated fragments are left out of the sentence metrics.
+- **Why:** the goal is to measure applicant-facing writing, not page layout or
+  notes for authors. Leaving headings and fragments out of the sentence metrics
+  keeps short labels from making sentences look shorter or easier than they are.
+
+The input format affects what the package can recognize:
+
+- **Word documents** are not read directly. NOFO Builder first converts Word
+  content to HTML (web page structure), and the package measures that HTML.
+  HTML is the preferred path because headings, lists, tables and navigation are
+  clearly marked.
+- **Tagged PDFs** are measured from the structure tags inside the PDF. Results
+  are estimates with a reliability rating, because tags can be missing or
+  assigned to the wrong kind of content.
+- **PDFs without usable tags**, such as some PDFs saved from Word, are rebuilt
+  from the lines of text on each page. Results are always low-reliability
+  estimates, and repeated headers, footers or table-of-contents rows may still
+  be counted.
+
+The same NOFO can therefore produce different numbers in different formats.
+
+**Why results differ from Microsoft Word.** Word's readability statistics use
+Word's own counting rules and dictionary. They cover the text Word's proofing
+tools check, which is not the same content selection this package makes.
+Opening a PDF in Word can also split or join sentences
+differently from the original. Word served as a reference point during
+calibration, but this package does not aim to match Word's numbers, and neither
+set of numbers is a pass/fail or clearance decision.
+
+The rest of this page gives the exact rules and their limits.
+
+## About this document
+
 This describes the whole-NOFO calculations implemented by the bundled profiles,
 not a new calculation policy. The HHS Office of Grants directs the work and
 measurement decisions; Agile Six implements and maintains the code as a
