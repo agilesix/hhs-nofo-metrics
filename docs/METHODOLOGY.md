@@ -1,108 +1,178 @@
 # Measurement methodology
 
-Status: **provisional implementation; not HHS-approved**
+Status: **provisional implementation; not formally HHS-approved**
 
-This document is the human-readable specification for the measurement policy
-implemented by the bundled HHS NOFO profiles. Immutable profile and method
-identifiers in each result remain the machine-readable authority.
+This describes the whole-NOFO calculations implemented by the bundled profiles,
+not a new calculation policy. The HHS Office of Grants directs the work and
+measurement decisions; Agile Six implements and maintains the code as a
+contractor. This does not establish legal ownership of code or change its
+[license](../LICENSE).
+
+Each result identifies its package, profile, methods, adapter and input. Those
+versioned contracts define what was calculated. See the
+[integration contract](INTEGRATION_CONTRACT.md) for API/CLI entrypoints, result
+fields and consumer responsibilities.
 
 ## Measurement scopes
 
-The package resolves two independent scopes:
+The package calculates one result for the supplied content scope. Consumers
+must supply the whole NOFO, not average section-level scores: ratios and Flesch
+formulas calculated from aggregate counts need not equal an average of sections.
 
-1. **Document content** supplies standalone Word Count. It can include selected
-   headings, labels, list items, table content, and applicant-facing fragments.
-2. **Readability sentences** supply average words per sentence, characters per
-   word, both Flesch metrics, and passive-sentence percentage. Only words in
-   complete accepted sentences enter this scope.
+Two independent scopes serve different purposes:
 
-This separation prevents structural fragments from increasing a readability
-numerator without increasing its sentence denominator.
+1. **Document content** supplies standalone Word Count. Selected headings,
+   labels, list items, table content and fragments can contribute words even
+   when they do not form a sentence. This measures the amount of selected text.
+2. **Readability sentences** supply the other five metrics. Only tokens in
+   accepted sentence candidates contribute. This keeps a heading or fragment
+   from increasing a numerator without increasing the sentence denominator.
+
+Every sentence-scoped metric reuses the same accepted inventory. "Accepted"
+means the boundary rules found terminal `.`, `!` or `?`, with protection for
+recognized abbreviations, decimals and URLs. It is not a grammatical-completeness
+test: a punctuated fragment can pass, while an unterminated instruction can be
+excluded. Separate semantic blocks are not joined to manufacture a sentence.
+
+## Content selection and rationale
+
+The provisional purpose is to measure applicant-facing content while limiting
+the effect of navigation, layout furniture and writer-only instructions.
+Profiles select **normalized roles**; adapters must first recognize those roles.
+This is implemented behavior, not a claim that every format reliably identifies
+each content category.
+
+| Content represented by recognized roles | Document words | Sentence metrics | Reason |
+| --- | --- | --- | --- |
+| Body prose, list items and table cells | Include | Include accepted sentences only | Count selected text without treating every fragment as a sentence |
+| Headings and heading-like labels | Include | Exclude | Account for length without distorting sentence ratios |
+| Cover, TOC, navigation, header, footer, decorative or writer-instruction roles | Exclude | Exclude | Keep recognized non-body material outside scope |
+| Unknown role | HTML cannot calculate if unknown segments occur; PDF estimates include with sensitivity reporting | Same role policy, then sentence selection | Expose uncertainty about structure |
+
+Recognition depends on the input path:
+
+- **HTML** uses DOM order and element boundaries. `<nav>`, `<header>` and
+  `<footer>` establish excluded roles, including for descendants. Heading tags,
+  `<th>`, `<caption>`, `<dt>`, `<legend>` and `<summary>` become headings;
+  `<li>` establishes list content and `<td>` table content. Ordinary paragraphs
+  are body content unless nested in another recognized context. Hidden elements
+  and non-content elements such as scripts are skipped. The adapter does not
+  infer covers, writer instructions, citations or TOCs from visual styling,
+  arbitrary CSS class names or arbitrary `role` attributes.
+- **Tagged PDFs** use source-declared structure and selected producer/profile
+  rules. For example, `TOCI` maps to table of contents, `Note` to body and
+  `Caption` to heading. Unknown content contributes to estimates, with coverage
+  and include/exclude-unknown sensitivity reported. A tag is evidence of source
+  structure, not proof that the producer assigned the right meaning.
+- **Generic PDFs** reconstruct conservative blocks from visual text lines.
+  Without reliable semantic roles, their metrics remain low-reliability
+  estimates. Do not assume every repeated header, footer or TOC row is removed.
+
+Common cases illustrate the limits:
+
+- A TOC inside HTML `<nav>` is excluded from **both** scopes. The same text in
+  ordinary paragraphs can add document words and, if punctuated, accepted
+  sentences. An unpunctuated TOC row can add words without a sentence. Tagged-PDF
+  `TOCI` is excluded, but a visually identical unrecognized PDF row need not be.
+  There is no universal TOC-removal guarantee.
+- An accepted instruction in a list or table cell contributes to sentence
+  metrics; an unpunctuated fragment contributes only document words. A `<th>`
+  is a heading, while an ordinary `<td>` label is not automatically recognized
+  as a label.
+- Substantive footnotes/endnotes may be applicant-facing prose; pure citations
+  are not the intended sentence-reading target. Neither the HTML adapter nor a
+  PDF `Note` tag automatically distinguishes them. A punctuated citation
+  represented as body content can count. HTML `<caption>` and PDF `Caption`
+  are headings even when substantive; HTML `<figcaption>` ordinarily remains
+  body content.
+- Writer instructions and covers are excluded only when supplied scope or
+  recognized structure separates them. Text that merely looks like a cover or
+  instruction can count as body content. Consumers that prepare a narrower HTML
+  scope must record that preparation for reproducibility.
+
+Retain adapter/input provenance and test the real consumer path. These limits
+are not new automatic exclusion rules.
 
 ## Metric definitions
 
-| Metric | Definition |
-| --- | --- |
-| Word Count | Word units in selected document content |
-| Average words per sentence | Readability words divided by accepted sentences |
-| Characters per word | Readability characters divided by readability words |
-| Flesch Reading Ease | `206.835 - 1.015 × words/sentence - 84.6 × syllables/word` |
-| Flesch-Kincaid Grade Level | `0.39 × words/sentence + 11.8 × syllables/word - 15.59` |
-| Passive sentences | Sentences classified passive divided by accepted sentences |
+Let `W` be word units in accepted sentences, `S` accepted sentences, `C` their
+characters, `Y` their syllables and `P` sentences classified passive. Standalone
+Word Count uses its own selected inventory, not `W`.
 
-Arithmetic uses unrounded components. Display rounding and preferred bands are
-presentation policy. An unusable denominator produces `unable_to_calculate`,
-not numeric zero.
+| Metric | Definition | Purpose and limit |
+| --- | --- | --- |
+| Word Count | Word units in selected document content | Selected text volume, not reading difficulty |
+| Average words per sentence | `W / S` | Sentence-length signal; does not measure clarity or grammatical complexity |
+| Characters per word | `C / W` | Word-length signal; does not determine whether a term is familiar |
+| Flesch Reading Ease | `206.835 - 1.015 × W/S - 84.6 × Y/W` | Higher scores suggest easier reading under this sentence/syllable formula, not demonstrated comprehension |
+| Flesch-Kincaid Grade Level | `0.39 × W/S + 11.8 × Y/W - 15.59` | Expresses those length signals on an estimated US school-grade scale, not a required reader qualification |
+| Passive sentences (%) | `100 × P/S` | Frequency of recognized passive constructions, not a judgment that every passive is inappropriate |
 
-## Sentence selection
+Sentence-metric components also include sentence-bearing paragraph/block count
+and `sentences_per_paragraph = S / paragraph_count`. These are logical blocks
+after source resolution, not rendered lines. This is not a seventh top-level metric.
 
-| Content class | Default disposition |
-| --- | --- |
-| Complete applicant-facing body sentence | Include |
-| Heading, section title, label, or navigation text | Exclude |
-| Unterminated prose or list fragment | Exclude |
-| Complete bullet, numbered item, or checklist instruction | Include |
-| Table header or key/value label | Exclude |
-| Complete applicant-facing sentence in a narrative table cell | Include |
-| Bibliographic citation or reference entry | Exclude |
-| Substantive applicant-facing footnote or endnote sentence | Include |
-| Pure citation footnote or endnote | Exclude |
-| Caption or figure note | Include only when it contains substantive prose |
-| Repeated header, footer, page number, or table-of-contents row | Exclude |
-| Sentence split only by supported layout reconstruction | Include once |
-| Ambiguous denominator-changing boundary | Treat according to the selected profile's reliability contract |
+Arithmetic uses unrounded components. The engine publishes sentence-metric
+values rounded to two decimal places and retains `unrounded_value`; standalone
+Word Count is an integer. Consumer display bands and further rounding are
+presentation decisions. An unusable denominator produces `unable_to_calculate`,
+not fabricated zero. A measured zero, such as no passive sentences in a usable
+inventory, is valid.
 
-A label followed by a complete instruction contributes the instruction, not
-the label. Text from separate source blocks is not joined merely to manufacture
-a sentence. Every sentence-scoped metric reuses the same accepted inventory.
+## Word, character and syllable units
 
-## Source behavior
+Current profiles share `word-readability-character-token-candidate@0.1.0`.
+It starts from whitespace chunks, splits bounded separators including
+URL/slash boundaries and en/em dashes, ignores bullet/check markers, and
+normalizes bounded edge punctuation while preserving supported abbreviations
+and numeric outlines. Character count sums the resulting token surface lengths,
+not all raw document characters or whitespace. See the exact
+[token rules](../src/hhs_nofo_metrics/methods/token_candidates.py).
 
-Semantic HTML uses DOM order and semantic element boundaries. It is the
-preferred source when the content system owns ordered HTML.
-
-Tagged PDFs use source-declared structure groups. Unknown roles are handled by
-the selected profile and remain visible through coverage, reliability, and
-sensitivity fields.
-
-Generic PDFs reconstruct conservative paragraph blocks from visual text lines.
-That path is useful when no better source exists, but its metrics are always
-reported as low-reliability estimates.
-
-All paths converge on the same internal token, character, syllable,
-readability, and passive-voice kernel after source-specific resolution.
+Syllables use `word-syllable-candidate@0.1.0`: dictionary exceptions plus a
+Unicode-normalized vowel-group heuristic, with bounded treatment of numbers,
+mixed identifiers, URLs and email addresses. This is a reproducible estimate,
+not a dictionary lookup for every English or technical term. See the
+[readability token methods](../src/hhs_nofo_metrics/methods/readability_tokens.py).
 
 ## Passive sentences
 
-Corrected profiles use method `0.4.0-provisional`; earlier profiles retain
-`0.3.0-provisional` unchanged. The corrected method recognizes contracted be
-auxiliaries, excludes `need` and `indeed` as participles, and accepts `indeed` as
-an intervening modifier. Ambiguous pronoun `'s` retains previous behavior because
-it can mean either `is` or `has`. See [adoption notes](PASSIVE_V4_ADOPTION.md)
-for explicit profile selection, release gates, and historical result handling.
+Released v0.6.0 includes corrected profiles: HTML `0.5.0`, tagged PDF estimate
+`0.6.0` and generic PDF estimate `0.5.0`. They use
+`hhs-nofo-passive-sentence-rule@0.4.0-provisional`; historical profiles retain
+`0.3.0-provisional` unchanged. Installing a release does not select a profile
+or upgrade a deployed consumer. See [adoption notes](PASSIVE_V4_ADOPTION.md).
 
-The current provisional classifier recognizes a form of `be` or `get` followed
-by a likely past participle, with bounded intervening modifiers. It includes
-explicit irregular participles and excludes bounded adjectival-state and
-existential noun-modifier patterns. Broader reduced passives are outside the
-current rule.
+The deterministic classifier recognizes a form of `be` or `get` followed by a
+likely past participle, with bounded intervening modifiers. It includes explicit
+irregular participles and excludes bounded adjectival-state and existential
+noun-modifier patterns. A sentence counts once if any recognized passive occurs.
+Broader reduced passives are outside the current rule.
 
-The classifier is deterministic and independently versioned. It does not claim
-to reproduce Microsoft Word's private grammar checker. PassivePy was used as
-an attributed calibration reference; it is not a runtime dependency and its
-code is not copied into this package.
+The corrected method recognizes contracted be auxiliaries, excludes `need` and
+`indeed` as participles, and accepts `indeed` as an intervening modifier.
+Ambiguous pronoun `'s` retains previous behavior because it can mean either
+`is` or `has`. PassivePy was an attributed calibration reference, not a runtime
+dependency; its code is not copied into this package.
 
-## Relationship to Microsoft Word
+## Reuse, comparison and change control
+
+HTML is preferred when the consumer owns ordered content. Supported paths
+converge on the same calculation kernel after source-specific resolution, but
+this does not guarantee equal inventories or values across formats. DOCX is
+not a built-in core input: Builder's Word-to-HTML conversion and import
+transforms remain consumer-side adapters. Record their revisions with the
+package/profile/input identities when comparing reports.
 
 Microsoft Word is a calibration baseline, not the product definition. Its
-proofing scope, private lexicon, and PDF-to-Word conversion can produce
-different sentence and syllable totals. This package prioritizes a transparent,
-versioned, reproducible method over undocumented Word compatibility.
+proofing scope, private lexicon and PDF-to-Word conversion can produce different
+totals. These results do not assert Word parity, passive classifier accuracy
+or clearance/accessibility approval.
 
-## Approval and change control
-
-The initial HHS policy still requires approval or revision of token edge cases,
-character and syllable treatment, display bands, and passive-voice uncertainty
-language. A policy change that can alter output requires a new immutable
-profile or method version and focused regression tests; a released contract is
-never edited in place.
+Output-changing policy requires a new immutable profile or method version
+and regression tests. Existing results retain original identities and values;
+recalculate explicitly under a named new profile rather than rewriting history.
+Follow [consumer update steps](INTEGRATION_CONTRACT.md#consumer-updates) for
+release notifications, verified artifact pins, regression checks and deliberate
+adoption. Future HHS decisions about token edge cases, presentation bands and
+uncertainty wording remain distinct from this provisional implementation.

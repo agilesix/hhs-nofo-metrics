@@ -20,7 +20,7 @@ from hhs_nofo_metrics import NofoMetricsError, SourceBundle, analyze
 try:
     result = analyze(
         SourceBundle.from_html(render_current_export_html(nofo)),
-        profile="hhs-nofo-fy27-html@0.4.0",
+        profile="hhs-nofo-fy27-html@0.5.0",
         adapter_config={"root_id": "download_target"},
         production_path="nofo_builder_export_html",
         document_id=str(nofo.pk),
@@ -62,10 +62,14 @@ The provisional HTML profile:
 - excludes unpunctuated trailing fragments instead of joining neighboring
   elements; and
 - calculates passive-sentence percentage from that same accepted sentence
-  inventory using `hhs-nofo-passive-sentence-rule@0.3.0-provisional`.
+  inventory using `hhs-nofo-passive-sentence-rule@0.4.0-provisional`.
 
 The profile and warnings must remain visible to consumers. Numeric output is a
 versioned measurement, not HHS approval or a pass/fail determination.
+See [measurement scope and recognition limits](../METHODOLOGY.md#content-selection-and-rationale)
+before assuming that visually similar Word, HTML and PDF inputs have identical
+included content. Word conversion and import transformations are NOFO Builder
+responsibilities, not a DOCX adapter in this package.
 
 ## Suggested persistence
 

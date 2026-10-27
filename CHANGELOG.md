@@ -7,12 +7,20 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+### Documentation
+
+- Correct recommended release/profile examples and artifact integrity guidance.
+- Explain whole-NOFO content scopes, recognition limits, program and maintenance
+  roles, and explicit consumer upgrades without changing calculations.
+
+## [0.6.0] - 2026-10-16
+
 ### Added
 
-- Candidate package 0.6.0 adds passive method `0.4.0-provisional` and opt-in
+- Package 0.6.0 adds passive method `0.4.0-provisional` and opt-in
   profiles HTML `0.5.0`, tagged PDF `0.6.0`, and generic PDF `0.5.0`. The
   released profiles and passive method `0.3.0-provisional` remain available
-  unchanged; existing CLI profile defaults retain the old method.
+  unchanged. The CLI still requires an explicit profile selection.
 
 ### Fixed
 
