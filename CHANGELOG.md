@@ -9,6 +9,9 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
+- Define Ben/Mike ownership for PR reviews and document configured merge, CI,
+  release-tag, and release-environment controls and remaining access limits.
+
 - Explain the package's deterministic calculations and AI-assisted contribution
   practices, with explicit deference to applicable HHS and Office of Finance
   policies. Link the guidance from the README, contributor guide, documentation

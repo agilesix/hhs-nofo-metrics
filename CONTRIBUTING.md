@@ -149,6 +149,10 @@ its manifest.
 
 ## Pull requests
 
+Ben (`@benbrasso`) or Mike (`@mikec-ai`) must provide the required owner
+approval and perform merges. Authors cannot approve their own PRs. See
+[repository access](docs/REPOSITORY_ACCESS.md) for enforced settings and limits.
+
 Use the [PR template](.github/pull_request_template.md). Keep changes focused and
 describe:
 
