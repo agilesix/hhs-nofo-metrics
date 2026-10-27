@@ -36,6 +36,17 @@ publicly released source corpora remain outside Git under
 requires separately approved systems and workflows; moving a file outside Git
 does not by itself authorize its use.
 
+## AI assistance
+
+Follow [AI use and contribution guidance](docs/AI_USE.md). It does not supersede
+applicable HHS or HHS Office of Finance policies or authorize a tool/data flow.
+Keep the built-in metric paths deterministic and versioned; introducing runtime
+AI needs a separate explicit proposal, evaluation, and applicable approvals.
+Do not fabricate evidence or treat generated tests/reviews as independent human
+validation. State material AI assistance and checks actually performed in PRs;
+keep sensitive prompts and transcripts out of the public repository. Human
+accountability and release/deployment authorization requirements remain in force.
+
 ## Code map
 
 - `src/hhs_nofo_metrics/api.py`: public analysis and inspection entry points.

@@ -21,7 +21,9 @@ content is counted, and the limitations of each input path.
 
 A numeric result does not establish clearance, compliance, accessibility, or
 document quality. The package does not perform generative-AI review, and its
-measurement profiles and methods remain provisional.
+measurement profiles and methods remain provisional. See
+[AI use and contribution guidance](docs/AI_USE.md) for the package boundary and
+contributor responsibilities.
 
 ## How it can be used
 

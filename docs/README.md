@@ -23,6 +23,7 @@ on a development branch may include changes that have not been released.
 | Document | Use it for |
 | --- | --- |
 | [Contributing](../CONTRIBUTING.md) | Setup, checks, versioning, tests, and evidence expectations |
+| [AI use and contributions](AI_USE.md) | Deterministic metric calculations, AI-assisted development, data boundaries, and accountability |
 | [Agent guidance](../AGENTS.md) | Repository-specific instructions for coding agents |
 | [Release process](RELEASE_PROCESS.md) | Release decisions, patch/minor/major versions, dependencies, tags, publication, and gates |
 | [Public repository boundary](PUBLIC_REPOSITORY_BOUNDARY.md) | What belongs in Git and what must remain private |
