@@ -30,12 +30,14 @@ and approving a measurement policy are separate decisions.
 
 The initial lightweight working convention is **Ben and Mike agree on release
 scope and timing**, with Ben coordinating the consumer need and Mike reviewing
-technical readiness, or designated maintainers filling those roles. Record the
+technical readiness. Agree explicitly on any change to designated maintainers
+and reflect it in [repository access controls](REPOSITORY_ACCESS.md). Record the
 agreement in a release-preparation PR or linked release issue, rather than
 leaving the decision only in a local chat. This convention does not appoint new
-organizational authorities or change repository permissions.
+organizational authorities. See [repository access](REPOSITORY_ACCESS.md) for
+review, merge, tag, and release-environment controls and their limits.
 
-A maintainer with publication permissions performs the explicitly authorized
+Ben or Mike performs the explicitly authorized
 tag/release action after the gates pass. Agents may prepare the candidate,
 checks, notes, and artifacts within the requested task. A request to implement
 or merge a fix alone does not authorize an agent to publish a release, select

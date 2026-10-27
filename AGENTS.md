@@ -87,6 +87,15 @@ Paths above are relative to `src/hhs_nofo_metrics/` unless explicitly prefixed.
 
 ## Release decisions and versioning
 
+Follow [repository access and approvals](docs/REPOSITORY_ACCESS.md). Merge
+permission follows repository Write, Maintain, or Admin access. Another person's
+PR approval is optional; eligible users may merge their own PRs after required
+CI passes and review discussions are resolved. Ben and Mike remain the designated
+release operators. Do not bypass CI, change access controls
+to unblock a merge, or treat agent review as independent human approval. The release
+environment must be used by future publishing jobs; it does not gate manual
+GitHub Releases or downstream deployments.
+
 Read [the release policy](docs/RELEASE_PROCESS.md) before preparing a release.
 A merge is not a publication or consumer deployment. Do not wait for unrelated
 open PRs; identify actual dependencies and freeze the intended release scope.

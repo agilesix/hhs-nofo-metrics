@@ -149,6 +149,11 @@ its manifest.
 
 ## Pull requests
 
+People with repository Write, Maintain, or Admin access may merge PRs. Approval
+by another person is optional; eligible users may merge their own PRs once
+required CI passes and review discussions are resolved. Request review when useful. See
+[repository access](docs/REPOSITORY_ACCESS.md) for enforced settings and limits.
+
 Use the [PR template](.github/pull_request_template.md). Keep changes focused and
 describe:
 
