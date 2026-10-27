@@ -9,8 +9,8 @@ on a development branch may include changes that have not been released.
 
 | Document | Use it for |
 | --- | --- |
-| [Installation and release verification](INSTALLATION.md) | Published artifacts, hashes, source pins, and environment reproducibility |
-| [Reuse and updates](REUSE_AND_UPDATES.md) | Program/maintenance roles, API/CLI options, Word boundary, notifications, and consumer upgrades |
+| [Installation](../README.md#installation) | Published artifact pins, hashes, and environment reproducibility |
+| [Consumer updates](INTEGRATION_CONTRACT.md#consumer-updates) | Release notifications, explicit upgrades, and preservation of historical identities |
 | [Integration contract](INTEGRATION_CONTRACT.md) | Inputs, profiles, result schemas, statuses, errors, and consumer responsibilities |
 | [Methodology](METHODOLOGY.md) | Measurement scopes, formulas, sentence selection, and provisional policy limits |
 | [Architecture](ARCHITECTURE.md) | Runtime paths, module responsibilities, adapters, and invariants |

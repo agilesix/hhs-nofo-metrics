@@ -17,7 +17,7 @@ assets. A tag alone does not mean an installable wheel was uploaded, a private
 cohort passed, or a consumer upgraded. GitHub's automatically generated source
 ZIP/tar archives are snapshots of the repository; they are distinct from the
 built wheel and Python source distribution whose hashes appear in
-[installation guidance](INSTALLATION.md). See
+[installation guidance](../README.md#installation). See
 [GitHub's release explanation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
 
 These version tags are separate from issue/PR labels such as `documentation`,
@@ -110,7 +110,7 @@ After the package, private real-document, and public-release gates pass:
 6. Update the release/install and adoption documentation to distinguish the
    published version from future candidates, then notify consumers through the
    release record. Consumers upgrade explicitly; see
-   [reuse and updates](REUSE_AND_UPDATES.md).
+   [consumer updates](INTEGRATION_CONTRACT.md#consumer-updates).
 
 The [CI workflow](../.github/workflows/ci.yml) runs on PRs, pushes to `main`,
 manual dispatch, and pushes of `v*` tags containing this workflow. Older tagged

@@ -7,8 +7,16 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+### Documentation
+
+- Correct recommended release/profile examples and artifact integrity guidance.
+- Explain whole-NOFO content scopes, recognition limits, program and maintenance
+  roles, and explicit consumer upgrades without changing calculations.
+
 ### Added
 
+- Repository-specific agent guidance, bug/change issue templates, a PR template,
+  and a documentation index.
 - Explicit public-repository prohibition on using, saving, or publishing
   pre-decisional NOFOs/information, including temporary files and sensitive
   derivatives. Agent/contributor guidance and issue/PR templates identify user
@@ -16,14 +24,6 @@ package release may support more than one measurement contract.
 - Document release-tag naming, purpose, and publication steps. CI now checks
   `v*` tag pushes and validates package/fallback version consistency plus a
   matching dated changelog entry for tagged releases. Publication remains manual.
-- Repository-specific agent guidance, bug/change issue templates, a PR template,
-  and a documentation guide. README and integration notes now distinguish all
-  six bundled profiles, historical evidence, and pending adoption checks.
-- Whole-NOFO methodology now explains counts, formulas, token/syllable rules,
-  rounding, metric-specific content selection, and adapter recognition limits.
-  Reuse/install guidance records verified 0.6.0 artifacts, program/maintenance
-  roles, Word conversion boundaries, and explicit consumer update handling.
-  This documentation work changes no calculations or license attribution.
 
 ### Fixed
 
@@ -48,7 +48,7 @@ package release may support more than one measurement contract.
 - Package 0.6.0 adds passive method `0.4.0-provisional` and opt-in
   profiles HTML `0.5.0`, tagged PDF `0.6.0`, and generic PDF `0.5.0`. The
   released profiles and passive method `0.3.0-provisional` remain available
-  unchanged; existing CLI profile defaults retain the old method.
+  unchanged. The CLI still requires an explicit profile selection.
 
 ### Fixed
 

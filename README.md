@@ -5,11 +5,13 @@ reproducible plain-language measurements from an HHS Notice of Funding
 Opportunity. It supports source-native semantic HTML, tagged PDFs, and an
 explicitly lower-confidence fallback for untagged PDFs.
 
-HHS Office of Grants directs this work and decisions about the measurement
-approach. Agile Six implements and maintains the code on its behalf as a
-contractor. Hosting does not define program authority or legal/IP ownership;
-the existing MIT license and attribution remain unchanged. The bundled profiles
-and methods are provisional and do not establish formal HHS approval.
+HHS Office of Grants owns and directs this work and decisions about the
+measurement approach. Agile Six implements and maintains the code on its behalf
+as a contractor. Hosting the public package in the Agile Six repository does
+not establish legal/IP ownership or formal approval of a measurement method.
+The bundled profiles are provisional implementations, not an official HHS
+policy interpretation, certification, or endorsement. The existing
+[license and attribution](LICENSE) are unchanged.
 
 It produces measurements and provenance. It does not make clearance,
 compliance, accessibility, legal, policy, or document-quality determinations,
@@ -29,25 +31,21 @@ and it does not perform generative-AI review.
 - Reliability-aware PDF estimates for tagged-PDF workflows.
 - Three versioned, built-in extraction adapters with a shared internal contract.
 
-Six profiles are bundled. Each source has a corrected passive-classifier
-profile introduced in package 0.6.0 and a retained earlier profile:
+The recommended profiles in released package **v0.6.0** are:
 
-| Source | Corrected profile | Retained earlier profile |
-| --- | --- | --- |
-| Semantic HTML | `hhs-nofo-fy27-html@0.5.0` | `hhs-nofo-fy27-html@0.4.0` |
-| Tagged PDF | `hhs-nofo-fy27-pdf-estimate@0.6.0` | `hhs-nofo-fy27-pdf-estimate@0.5.0` |
-| Generic PDF | `hhs-nofo-fy27-generic-pdf-estimate@0.5.0` | `hhs-nofo-fy27-generic-pdf-estimate@0.4.0` |
+- `hhs-nofo-fy27-html@0.5.0`: provisional source-native behavior for semantic
+  export HTML.
+- `hhs-nofo-fy27-pdf-estimate@0.6.0`: recommended PDF-only profile for PDFs
+  with a usable structure tree; returns numeric estimates with metric-specific
+  reliability and include/exclude sensitivity when tagged content is unknown.
+- `hhs-nofo-fy27-generic-pdf-estimate@0.5.0`: fallback for untagged or
+  Word-saved PDFs; reconstructs conservative paragraph blocks from visual text
+  lines and always labels configured metrics as low-reliability estimates.
 
-The corrected profiles select passive method `0.4.0-provisional`; the retained
-profiles use `0.3.0-provisional`. The examples below select corrected profiles.
-All profiles remain provisional. Existing integrations should make an explicit
-adoption decision and retain earlier result identities; see
-[passive-classifier adoption](docs/PASSIVE_V4_ADOPTION.md).
-
-Repository version tags such as `v0.6.0` mark release source commits; GitHub
-Releases attach notes and downloadable packages to those tags. See
-[tags and the release process](docs/RELEASE_PROCESS.md#what-the-tags-mean) for
-naming, component-version differences, automated checks, and publication steps.
+These profiles select passive method `0.4.0-provisional`. Historical profiles
+remain available unchanged for interpreting earlier results; see the
+[profile comparison](docs/PASSIVE_V4_ADOPTION.md#profile-selection). Installing
+a new package does not select a new profile or upgrade a deployed consumer.
 
 For PDF-only workflows that need useful numeric estimates without a separate
 manual review artifact, use the PDF-estimate profile. It preserves
@@ -61,28 +59,33 @@ generic-PDF estimate profile. It never presents reconstructed flat-PDF
 paragraphs as authoritative source structure. Builder integrations should use
 semantic HTML whenever it is available.
 
-## Reuse and installation
+## Installation
 
-The existing Python API and CLI support whole-NOFO reuse. Start with
-[installation and artifact verification](docs/INSTALLATION.md),
-[how and why the measurements work](docs/METHODOLOGY.md), and
-[consumer roles and updates](docs/REUSE_AND_UPDATES.md). A new engine or hosted
-service is not required. The package accepts PDF or explicit semantic HTML;
-Word conversion is currently a Builder adapter outside this package.
-
-As verified on October 27, 2026, the published release is
-[0.6.0](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.6.0).
-Install its pinned wheel with its recorded SHA-256:
+Use Python 3.11 or newer. Install the pinned wheel from the
+[v0.6.0 release](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.6.0).
+The URL fragment makes pip verify the downloaded wheel's SHA-256:
 
 ```bash
-python3 -m pip install 'hhs-nofo-metrics @ https://github.com/agilesix/hhs-nofo-metrics/releases/download/v0.6.0/hhs_nofo_metrics-0.6.0-py3-none-any.whl#sha256=7fc342f8bc0b7f78cf876ef41de847cf09404cdfe1045db10bd908df338ca81c'
+python -m pip install "https://github.com/agilesix/hhs-nofo-metrics/releases/download/v0.6.0/hhs_nofo_metrics-0.6.0-py3-none-any.whl#sha256=7fc342f8bc0b7f78cf876ef41de847cf09404cdfe1045db10bd908df338ca81c"
 ```
 
-Use a virtual environment and lock extraction dependencies for production;
-[the installation guide](docs/INSTALLATION.md) includes a separate download,
-checksum comparison, and inventory checks. The local 0.6.1 candidate is
-unpublished. Release availability, consumer deployment, and policy approval are
-separate facts. For local development, use the editable installation below.
+The release also provides a source distribution. Its published SHA-256 is
+`f6b6c3a8c36b9500d6bdf00300be2b530a7226d1db759dd6ff2ccad47181b721`.
+Verify the selected artifact against the release metadata before use; do not
+substitute a digest from a local candidate build. Lock transitive dependencies
+in the consumer's environment too: verifying the wheel does not pin them.
+
+A commit-pinned Git installation is another option for a reviewed source revision:
+
+```bash
+pip install "hhs-nofo-metrics @ git+https://github.com/agilesix/hhs-nofo-metrics.git@<commit-sha>"
+```
+
+For local development, use the editable installation below. For learning about
+and adopting later releases, see [consumer updates](docs/INTEGRATION_CONTRACT.md#consumer-updates).
+This package has no built-in DOCX adapter. NOFO Builder converts Word content
+to semantic HTML before calling the same API; that conversion, UI, storage,
+targets and upload controls are outside this package.
 
 ## Python API
 
@@ -136,13 +139,6 @@ result = analyze(
 
 ## CLI
 
-For the HTML example, save this optional root-selection configuration as
-`html-adapter.json`:
-
-```json
-{"root_id": "download_target"}
-```
-
 ```bash
 hhs-nofo-metrics analyze notice.pdf \
   --profile hhs-nofo-fy27-pdf-estimate@0.6.0 \
@@ -179,28 +175,24 @@ hhs-nofo-metrics profiles list --json
 The analysis result file itself is always written as versioned JSON. Terminal
 output is only a receipt and does not replace that stable result artifact.
 
-## Documentation and contributing
+## Architecture and contracts
 
-[The documentation guide](docs/README.md) maps the contracts, methodology,
-integration guides, and adoption records. Development-branch documentation may
-include unreleased behavior; the changelog and installed package identities
-identify the version being evaluated.
-
-- [Verified release installation](docs/INSTALLATION.md)
-- [Reuse, program/maintenance roles, and consumer updates](docs/REUSE_AND_UPDATES.md)
-- [Contributing and reporting issues](CONTRIBUTING.md)
-- [Repository guidance for agents](AGENTS.md)
-- [Security reporting](SECURITY.md)
 - [Changelog](CHANGELOG.md)
 - [Current architecture](docs/ARCHITECTURE.md)
 - [Measurement methodology](docs/METHODOLOGY.md)
 - [Consumer-neutral integration contract](docs/INTEGRATION_CONTRACT.md)
 - [Release process](docs/RELEASE_PROCESS.md)
-- [Passive-classifier adoption](docs/PASSIVE_V4_ADOPTION.md)
 - [Nested table continuity candidate and validation](docs/NESTED_TABLE_ADOPTION.md)
 - [NOFO Builder consumer guide](docs/consumers/NOFO_BUILDER.md)
 - [NOFO Checker integration](docs/NOFO_CHECKER_INTEGRATION.md)
 - [Public/private repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md)
+
+## Repository guidance
+
+See the [documentation index](docs/README.md),
+[contributor guide](CONTRIBUTING.md), and [agent instructions](AGENTS.md).
+Repository version tags identify release source commits; see
+[tags and release checks](docs/RELEASE_PROCESS.md#what-the-tags-mean).
 
 ## Public information only
 
@@ -215,18 +207,14 @@ cybersecurity requirements. Use synthetic examples; see the
 
 ```bash
 python3.11 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
-.venv/bin/pre-commit install
+.venv/bin/pip install -e '.[dev]'
+.venv/bin/pytest
 .venv/bin/ruff format --check .
 .venv/bin/ruff check .
-.venv/bin/pytest --cov=hhs_nofo_metrics --cov-report=term-missing
-.venv/bin/python tools/check_public_repo.py
-.venv/bin/pre-commit run --all-files
+python tools/check_public_repo.py
+python -m build
+python tools/check_wheel_contents.py dist/*.whl
 ```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for distribution checks and
-[the release process](docs/RELEASE_PROCESS.md) for clean-install and
-private-cohort gates.
 
 Private PDFs, Word captures, screenshots, Gartner data, review packets, and
 calibration receipts belong outside this repository. Run the public-boundary
