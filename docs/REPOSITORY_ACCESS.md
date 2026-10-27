@@ -1,33 +1,34 @@
 # Repository access and approvals
 
-Ben (`@benbrasso`) and Mike (`@mikec-ai`) are the designated PR reviewers,
-mergers, and release operators. Contributors can propose changes and leave
-reviews; only a designated owner's approval satisfies the code-owner gate.
-GitHub does not allow authors to approve their own PRs. A PR authored by Ben
-therefore needs Mike's approval, and vice versa.
+Ben (`@benbrasso`) and Mike (`@mikec-ai`) are the designated mergers and
+release operators. Contributors can propose changes and leave reviews. PR
+approval is optional: either designated merger may merge their own PR after
+required CI passes and review discussions are resolved. GitHub does not allow
+authors to approve their own PRs, but an approval is not required here.
+Request the other's review when a change would benefit from it.
 
-## Settings and ownership file
+## Repository settings
 
 Enforcement lives in [repository rulesets](https://github.com/agilesix/hhs-nofo-metrics/settings/rules),
 not in this document. The rulesets configured on October 27, 2026 are:
 
 - **Main merges - Ben and Mike:** only these two users can update `main`,
   through a PR. This exception applies only to this ruleset.
-- **Main review and CI requirements:** no bypass actors; require a PR, one
-  code-owner approval, approval after the latest push by someone other than
-  that pusher, resolved review threads, and dismissal of stale approvals.
-  Require up-to-date branches and the GitHub Actions checks `Python 3.11`,
+- **Main review and CI requirements:** no bypass actors; require a PR and
+  resolved review threads, with zero required approvals. Code-owner and
+  latest-push approvals are not required. Require up-to-date branches and
+  the GitHub Actions checks `Python 3.11`,
   `Python 3.14`, `Public boundary and package smoke test`, and `Secret scan`.
   Block deletion and force pushes to `main`.
 - **Release tags - Ben and Mike:** only these two users can create `v*` tags.
 - **Release tags are immutable:** block updating or deleting existing `v*` tags,
   with no bypass actors. Corrections require a new version, not a moved tag.
 
-[CODEOWNERS](../.github/CODEOWNERS) names both reviewers for all files, including
-itself and workflows. GitHub uses the file on the PR's base branch. The
-owner-specific approval gate becomes effective only after this file first
-merges into `main`; before that, the required approval is not owner-specific.
-Do not treat an agent-generated review as independent human approval.
+A CODEOWNERS file is not needed for this policy. The restriction on who may
+merge is enforced by the separate main-update ruleset, not by PR approvals.
+Optional human review remains useful; an agent-generated review is not
+independent human approval. Review policy changes do not waive the release
+process's separate agreement and evidence requirements.
 
 ## Release approval and deployment limits
 
@@ -64,8 +65,7 @@ reduce other accounts to read/triage where appropriate, and check inherited
 team/organization access and external registry/deployment credentials. Do not
 remove organizational administration or emergency access without identifying
 its owner and purpose. Changes to designated owners require coordinated updates
-to CODEOWNERS, ruleset actors, environment reviewers, and downstream permissions.
+to ruleset actors, environment reviewers, and downstream permissions.
 
 For GitHub's behavior, see [rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets),
-[code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners),
 and [deployment environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).
