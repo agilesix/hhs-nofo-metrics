@@ -19,6 +19,11 @@ Describe what happened, the expected behavior, and who or what is affected.
 ## Reproduction
 
 Provide a minimal command or API call and a synthetic input or fixture generator.
+Do not include pre-decisional NOFOs or information about them, including
+excerpts or sensitive derivatives. You are responsible for confirming that
+anything supplied is eligible for public release under applicable HHS and HHS
+Office of Finance requirements; use synthetic examples when uncertain.
+
 State whether this was reproduced against the current package, and identify
 historical evidence separately. Keep private source documents, local absolute
 paths, credentials, and source-bearing reports out of public issues. Follow

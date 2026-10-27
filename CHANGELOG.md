@@ -9,6 +9,10 @@ package release may support more than one measurement contract.
 
 ### Added
 
+- Explicit public-repository prohibition on using, saving, or publishing
+  pre-decisional NOFOs/information, including temporary files and sensitive
+  derivatives. Agent/contributor guidance and issue/PR templates identify user
+  responsibility under applicable HHS and Office of Finance requirements.
 - Document release-tag naming, purpose, and publication steps. CI now checks
   `v*` tag pushes and validates package/fallback version consistency plus a
   matching dated changelog entry for tagged releases. Publication remains manual.

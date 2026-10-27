@@ -74,6 +74,18 @@ packaged API and CLI as additional smoke tests.
   required approval and validation evidence.
 - Record user-visible changes in `CHANGELOG.md`.
 
+## Public information only
+
+This is a public repository. Do not use, save, commit, or publish pre-decisional
+NOFOs or pre-decisional information about NOFOs here, including sensitive
+extracts and derivatives in temporary/ignored files, reports, issues, PRs, or
+attachments. Each user/contributor is responsible for confirming public-release
+eligibility and following applicable HHS and HHS Office of Finance Rules of
+Behavior, data-sensitivity/information-handling requirements, and cybersecurity
+policies. Use synthetic examples when eligibility is unclear. Automated checks
+do not replace that responsibility. See the
+[public repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md).
+
 ## Tests and evidence
 
 Product tests live under `tests/`. The release repository does not contain the

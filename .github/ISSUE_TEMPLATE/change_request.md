@@ -30,5 +30,8 @@ need to change, and how should historical results remain reproducible? Use
 ## Evidence and dependencies
 
 Link supporting evidence and related work. Mark assumptions, unavailable
-validation, and decisions that still need an owner. Do not attach private NOFO
-content, credentials, local paths, or source-bearing reports.
+validation, and decisions that still need an owner. Do not include
+pre-decisional NOFOs or information about them, private NOFO content, credentials,
+local paths, or source-bearing reports. You are responsible for public-release
+eligibility under applicable HHS and HHS Office of Finance requirements; use
+synthetic examples when uncertain.

@@ -10,6 +10,32 @@ This package calculates deterministic NOFO metrics and provenance. Consumers
 own orchestration, persistence, permissions, UI, thresholds, and clearance
 interpretation. Keep those responsibilities outside the package.
 
+## Public repository: no pre-decisional NOFO information
+
+This repository is public. Do not use pre-decisional NOFOs or pre-decisional
+information about NOFOs as inputs, fixtures, examples, evidence, or context for
+work in this repository. Do not copy, extract, save, stage, commit, or publish
+that material here, including excerpts, metadata, reviewer comments, screenshots,
+logs, generated reports, and other derivatives that disclose it. This applies
+to local, temporary, untracked, and ignored files as well as Git history and
+public issues, PRs, comments, and attachments. A `.gitignore` entry is not a
+sensitivity safeguard or permission to store the material here.
+
+Each user/contributor is responsible for confirming that information they supply
+or authorize for this work is not pre-decisional and is eligible for public
+release under applicable HHS and HHS Office of Finance Rules of Behavior,
+data-sensitivity and information-handling requirements, and cybersecurity
+policies. An agent, repository check, or successful test cannot make that
+clearance decision or establish policy compliance on the user's behalf.
+
+Use synthetic examples by default. If a source's status is unclear, do not
+access, process, or save it for repository work; use a synthetic substitute
+until the responsible user confirms its public-release eligibility. Even
+publicly released source corpora remain outside Git under
+[the public boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md). Private evaluation
+requires separately approved systems and workflows; moving a file outside Git
+does not by itself authorize its use.
+
 ## Code map
 
 - `src/hhs_nofo_metrics/api.py`: public analysis and inspection entry points.
