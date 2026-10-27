@@ -89,6 +89,13 @@ and the verification performed in the PR. Do not include sensitive prompts,
 transcripts, or source material as a disclosure mechanism. Model output alone is
 not a citation, policy decision, or validation receipt.
 
+Contributions that do not follow this guidance may be returned for revision or
+declined. Suspected sensitive-data disclosures should be handled through
+applicable organizational reporting procedures, without repeating sensitive
+information in public issues or comments. Any personnel, contractual, or other
+consequences are governed by applicable HHS, Office of Finance, and employer
+policies—not this page.
+
 ## Proposing AI in an analysis path
 
 Introducing AI into runtime analysis would require a separate explicit proposal
