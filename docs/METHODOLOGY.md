@@ -4,6 +4,10 @@ Status: **provisional implementation; not formally HHS-approved**
 
 ## In brief
 
+<!-- Plain-language summary for non-technical readers. Keep it and the README's
+"How the metrics are calculated" section accurate whenever measurement behavior
+changes; see CONTRIBUTING.md "Documentation changes". -->
+
 The package measures the text an applicant reads in a whole NOFO. It follows
 published, versioned rules, so the same input and profile always produce the
 same numbers.

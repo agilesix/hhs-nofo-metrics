@@ -26,6 +26,7 @@ Identify required release and adoption/verification dependencies, or state
 
 - [ ] Appropriate checks pass, with limitations recorded above.
 - [ ] User-visible behavior and version changes appear in the changelog and relevant docs.
+- [ ] If measurement behavior changed, the plain-language summaries in the methodology "In brief" section and the README still match it.
 - [ ] Released contracts are preserved, or versioning is explained above.
 - [ ] The public-boundary check passes; private evidence and generated artifacts are excluded.
 - [ ] I confirmed submitted material contains no pre-decisional NOFOs or information about them and is eligible for public release under applicable HHS requirements. Automated checks do not replace this responsibility.

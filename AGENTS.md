@@ -74,6 +74,13 @@ Paths above are relative to `src/hhs_nofo_metrics/` unless explicitly prefixed.
   behavior needs an explicit new identity at the layer that changed, focused
   regressions, and a changelog entry. Retain historical profiles and methods
   needed to reproduce old results.
+- When a change affects what is counted, sentence rules, formulas, input
+  handling or reliability (for example `methods/`, `adapters/`, `profiles/`,
+  `metric_scopes.py`, `resolved_scope.py` or `semantic_html_engine.py` under
+  `src/hhs_nofo_metrics/`), re-read the plain-language summaries in
+  [the methodology "In brief" section](docs/METHODOLOGY.md#in-brief) and the
+  README's "How the metrics are calculated" section, and update them in the
+  same PR if they are no longer accurate.
 - For adapter changes, update adapter and resolver identities as applicable;
   record which package consumers need. Package identity is declared in
   `pyproject.toml` and the fallback in `version.py`; align CI smoke expectations.

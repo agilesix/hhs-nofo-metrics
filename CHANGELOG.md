@@ -12,7 +12,9 @@ package release may support more than one measurement contract.
 - Add a plain-language summary to the top of the methodology and a short README
   section describing what the metrics include and exclude, why, how Word, HTML,
   tagged-PDF and untagged-PDF inputs are measured, and why results can differ
-  from Microsoft Word's readability statistics. Calculations are unchanged.
+  from Microsoft Word's readability statistics. Agent guidance, the contributor
+  guide and the PR template now ask contributors to keep these summaries
+  accurate when measurement behavior changes. Calculations are unchanged.
 - Correct the Office of Finance attribution in repository guidance and templates;
   cite official HHS strategy, compliance-plan, inventory, and federal executive
   order references while preserving applicable organizational requirements and

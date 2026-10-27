@@ -138,6 +138,11 @@ Update docs alongside the contract they describe. In particular:
 - keep getting-started profile references and examples aligned with packaged resources;
 - update the integration contract for API, status, or result-shape changes;
 - update methodology and adoption notes for output-changing behavior;
+- when content selection, sentence rules, formulas, input handling or
+  reliability change, check the plain-language summaries in the
+  [methodology "In brief" section](docs/METHODOLOGY.md#in-brief) and the README's
+  "How the metrics are calculated" section, and update them if they are no
+  longer accurate;
 - keep release publication, private-cohort validation, and consumer adoption
   distinct, with unavailable evidence explicitly pending; and
 - link new guides from `docs/README.md`.
