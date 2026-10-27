@@ -9,6 +9,10 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
+- Explain the package's deterministic calculations and AI-assisted contribution
+  practices, with explicit deference to applicable HHS and Office of Finance
+  policies. Link the guidance from the README, contributor guide, documentation
+  index, and agent instructions; no runtime AI or calculation change is added.
 - Keep the README focused on the project overview and move detailed installation,
   profile selection, Python API, and CLI examples into `docs/GETTING_STARTED.md`.
   Update the documentation index and links to the relocated instructions.

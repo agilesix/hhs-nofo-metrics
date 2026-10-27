@@ -18,6 +18,15 @@ applicable. Prefer a small synthetic reproduction with independently checked
 expected behavior. Keep sensitive details out of public issues; follow
 [SECURITY.md](SECURITY.md) for vulnerability reports.
 
+## AI-assisted contributions
+
+Read [AI use and contribution guidance](docs/AI_USE.md) before using AI for
+repository work. Applicable HHS and HHS Office of Finance policies and required
+approvals continue to apply; this repository does not supersede them or approve
+a tool. Contributors remain responsible for generated changes and independent
+verification. Briefly describe material AI assistance and the checks performed
+in the PR without including sensitive prompts or source material.
+
 ## Development setup
 
 Use Python 3.11 or newer:
