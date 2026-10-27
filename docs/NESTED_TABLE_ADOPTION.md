@@ -70,12 +70,31 @@ existing limitations. The repair uses source structure, never punctuation,
 visual proximity, or matching cell text. Formulas, released profiles, passive
 methods, and result schemas are unchanged.
 
-No authorized Word-generated equivalent was supplied with this issue or found
-in the repository. Actual Word-export structure has **not** been verified;
-synthetic results are not Word parity evidence. Private examples and receipts
-must stay outside Git. Follow the private real-document gate in
-[the release process](RELEASE_PROCESS.md) before designating an integration
-release.
+## Preliminary Word export observation
+
+On October 27, 2026, an invented-text DOCX was generated outside this repository
+and exported with Microsoft Word for Mac 16.114.1. It has one paragraph inside
+one splittable table cell, continued naturally across two pages. Its independent
+reference contains 165 document words (including a three-word title), 162
+sentence words, 36 sentences in one sentence-bearing paragraph, 18 passive
+sentences, 270 syllables, and 936 sentence-token characters. Those counts imply
+4.5 words per sentence, 36 sentences per paragraph, FK grade 5.83, and 50%
+passive sentences. The HTML reference agrees with those counts.
+
+Word's local **Best for printing** export preserves the exact reference text
+across two pages but has **no structure tree**. The tagged-PDF profile correctly
+rejects it. This observes an actual Word export route; it does **not** exercise
+the nested tagged-paragraph repair or verify the five measures on a Word-tagged
+PDF. The accessible/tagged export route has not yet been evaluated. The source,
+PDFs, visual QA, and detailed receipt remain outside Git; only this synthetic
+aggregate observation is recorded here.
+
+Tagged Word-export validation and the broader real-document release checks are
+still pending. Synthetic results are not Word parity evidence. Follow the
+private real-document gate in [the release process](RELEASE_PROCESS.md) before
+designating an integration release, using eligible sources and separately
+approved systems/workflows under [the public boundary](PUBLIC_REPOSITORY_BOUNDARY.md).
+
 
 ## Release and Builder dependency
 
