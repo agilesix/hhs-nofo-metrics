@@ -23,7 +23,7 @@ sensitivity safeguard or permission to store the material here.
 
 Each user/contributor is responsible for confirming that information they supply
 or authorize for this work is not pre-decisional and is eligible for public
-release under applicable HHS and HHS Office of Finance Rules of Behavior,
+release under applicable HHS Rules of Behavior,
 data-sensitivity and information-handling requirements, and cybersecurity
 policies. An agent, repository check, or successful test cannot make that
 clearance decision or establish policy compliance on the user's behalf.
@@ -39,7 +39,7 @@ does not by itself authorize its use.
 ## AI assistance
 
 Follow [AI use and contribution guidance](docs/AI_USE.md). It does not supersede
-applicable HHS or HHS Office of Finance policies or authorize a tool/data flow.
+applicable HHS or organizational policies or authorize a tool/data flow.
 Keep the built-in metric paths deterministic and versioned; introducing runtime
 AI needs a separate explicit proposal, evaluation, and applicable approvals.
 Do not fabricate evidence or treat generated tests/reviews as independent human

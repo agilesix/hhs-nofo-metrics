@@ -28,4 +28,4 @@ Identify required release and adoption/verification dependencies, or state
 - [ ] User-visible behavior and version changes appear in the changelog and relevant docs.
 - [ ] Released contracts are preserved, or versioning is explained above.
 - [ ] The public-boundary check passes; private evidence and generated artifacts are excluded.
-- [ ] I confirmed submitted material contains no pre-decisional NOFOs or information about them and is eligible for public release under applicable HHS and HHS Office of Finance requirements. Automated checks do not replace this responsibility.
+- [ ] I confirmed submitted material contains no pre-decisional NOFOs or information about them and is eligible for public release under applicable HHS requirements. Automated checks do not replace this responsibility.

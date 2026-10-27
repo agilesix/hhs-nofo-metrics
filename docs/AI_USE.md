@@ -4,11 +4,40 @@ This page explains how this package calculates metrics and how AI assistance
 fits into contributing. It applies to this repository and its built-in analysis
 paths, not to every feature of NOFO Builder or another consuming application.
 
-This guidance does not supersede applicable HHS or HHS Office of Finance policies
-on AI use, data handling, cybersecurity, or Rules of Behavior. It does not
+This guidance does not supersede applicable HHS policies or organizational
+requirements, including applicable Office of Grants requirements, on AI use,
+data handling, cybersecurity, or Rules of Behavior. It does not
 approve a tool, authorize particular data processing, or replace required
 organizational approvals. Contributors remain responsible for following those
 requirements alongside the repository rules below.
+
+## Official references and their scope
+
+The following public sources provide federal and departmental context:
+
+- [HHS Super Intelligence Strategy & Implementation](https://www.hhs.gov/programs/research/super-intelligence/strategy/index.html)
+  links to HHS's AI strategy and compliance plan. Use this departmental landing
+  page to find those publications.
+- [HHS Compliance Plan for OMB Memorandum M-25-21](https://www.hhs.gov/sites/default/files/2025-hhs-ai-compliance-plan.pdf),
+  issued September 30, 2025, describes departmental AI governance and risk
+  management. Page 6 discusses the Chief AI Officer, AI Governance Board, and
+  OCIO, and states that a generative-AI policy was being developed at publication.
+  The plan is not a complete employee generative-AI acceptable-use policy.
+- [Executive Order 13960: Promoting the Use of Trustworthy Artificial Intelligence
+  in the Federal Government](https://www.federalregister.gov/documents/2020/12/08/2020-27065/promoting-the-use-of-trustworthy-artificial-intelligence-in-the-federal-government),
+  signed December 3, 2020, supplies federal background: section 3 sets out
+  principles for government AI use, and section 5 addresses agency inventories.
+  Read it alongside applicable subsequent guidance and HHS requirements.
+- [HHS Super Intelligence Use Cases Inventory](https://www.hhs.gov/programs/research/super-intelligence/use-cases/index.html)
+  describes HHS's inventory process and links to reported use cases. An inventory
+  listing does not establish permission to use a tool or disclose information.
+
+These references were checked October 27, 2026. They are not an exhaustive list
+of applicable requirements, a tool approval list, or authorization to process
+particular information. Contributors must follow current requirements and
+approved-tool/data instructions supplied by the responsible HHS and
+organizational authorities. This repository does not assign HHS-wide AI policy
+ownership to the Office of Grants or another program office.
 
 ## How the package calculates metrics
 
@@ -93,7 +122,7 @@ Contributions that do not follow this guidance may be returned for revision or
 declined. Suspected sensitive-data disclosures should be handled through
 applicable organizational reporting procedures, without repeating sensitive
 information in public issues or comments. Any personnel, contractual, or other
-consequences are governed by applicable HHS, Office of Finance, and employer
+consequences are governed by applicable HHS, organizational, and employer
 policies—not this page.
 
 ## Proposing AI in an analysis path

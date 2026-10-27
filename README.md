@@ -54,6 +54,7 @@ The [documentation index](docs/README.md) maps all guides. Useful starting point
 | [Getting started](docs/GETTING_STARTED.md) | Installation and engineering examples |
 | [Integration contract](docs/INTEGRATION_CONTRACT.md) | Inputs, results, statuses, and consumer responsibilities |
 | [Builder guide](docs/consumers/NOFO_BUILDER.md) | Using the package in NOFO Builder |
+| [AI use and contribution guidance](docs/AI_USE.md) | Deterministic calculations, AI-assisted contributions, and applicable policy responsibilities |
 | [Contributing](CONTRIBUTING.md) | Development setup, checks, and issue/PR guidance |
 | [Release process](docs/RELEASE_PROCESS.md) | Release decisions, version tags, publication, and adoption |
 
@@ -72,9 +73,8 @@ an official HHS policy interpretation, certification, or endorsement.
 
 Do not use or save pre-decisional NOFOs or information about them in this public
 repository, including temporary files, commits, issues, and PRs. Users are
-responsible for public-release eligibility and applicable HHS and HHS Office of
-Finance Rules of Behavior, data-sensitivity, information-handling, and
-cybersecurity requirements. Use synthetic examples; see the
+responsible for public-release eligibility and applicable HHS Rules of Behavior,
+data-sensitivity, information-handling, and cybersecurity requirements. Use synthetic examples; see the
 [public repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md) and
 [security reporting guidance](SECURITY.md).
 

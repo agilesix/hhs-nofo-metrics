@@ -16,7 +16,7 @@ ignored files in this repository are not an approved place for that material.
 
 Each user/contributor is responsible for ensuring that information supplied or
 authorized for this work is not pre-decisional and is eligible for public
-release under applicable HHS and HHS Office of Finance Rules of Behavior,
+release under applicable HHS Rules of Behavior,
 data-sensitivity and information-handling requirements, and cybersecurity
 policies. When eligibility is unclear, do not access, process, or save the source
 for repository work; use synthetic material until the responsible user confirms

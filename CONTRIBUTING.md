@@ -21,7 +21,7 @@ expected behavior. Keep sensitive details out of public issues; follow
 ## AI-assisted contributions
 
 Read [AI use and contribution guidance](docs/AI_USE.md) before using AI for
-repository work. Applicable HHS and HHS Office of Finance policies and required
+repository work. Applicable HHS and organizational policies and required
 approvals continue to apply; this repository does not supersede them or approve
 a tool. Contributors remain responsible for generated changes and independent
 verification. Briefly describe material AI assistance and the checks performed
@@ -89,7 +89,7 @@ This is a public repository. Do not use, save, commit, or publish pre-decisional
 NOFOs or pre-decisional information about NOFOs here, including sensitive
 extracts and derivatives in temporary/ignored files, reports, issues, PRs, or
 attachments. Each user/contributor is responsible for confirming public-release
-eligibility and following applicable HHS and HHS Office of Finance Rules of
+eligibility and following applicable HHS Rules of
 Behavior, data-sensitivity/information-handling requirements, and cybersecurity
 policies. Use synthetic examples when eligibility is unclear. Automated checks
 do not replace that responsibility. See the
