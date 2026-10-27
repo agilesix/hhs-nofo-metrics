@@ -70,31 +70,59 @@ existing limitations. The repair uses source structure, never punctuation,
 visual proximity, or matching cell text. Formulas, released profiles, passive
 methods, and result schemas are unchanged.
 
-## Preliminary Word export observation
+## Word export observation
 
 On October 27, 2026, an invented-text DOCX was generated outside this repository
 and exported with Microsoft Word for Mac 16.114.1. It has one paragraph inside
 one splittable table cell, continued naturally across two pages. Its independent
 reference contains 165 document words (including a three-word title), 162
 sentence words, 36 sentences in one sentence-bearing paragraph, 18 passive
-sentences, 270 syllables, and 936 sentence-token characters. Those counts imply
-4.5 words per sentence, 36 sentences per paragraph, FK grade 5.83, and 50%
-passive sentences. The HTML reference agrees with those counts.
+sentences, 270 syllables, and 936 sentence-token characters. The HTML reference
+agrees with those counts. No real or pre-decisional NOFO information was used.
 
 Word's local **Best for printing** export preserves the exact reference text
 across two pages but has **no structure tree**. The tagged-PDF profile correctly
-rejects it. This observes an actual Word export route; it does **not** exercise
-the nested tagged-paragraph repair or verify the five measures on a Word-tagged
-PDF. The accessible/tagged export route has not yet been evaluated. The source,
-PDFs, visual QA, and detailed receipt remain outside Git; only this synthetic
-aggregate observation is recorded here.
+rejects it; that route cannot exercise the repair.
 
-Tagged Word-export validation and the broader real-document release checks are
-still pending. Synthetic results are not Word parity evidence. Follow the
-private real-document gate in [the release process](RELEASE_PROCESS.md) before
-designating an integration release, using eligible sources and separately
-approved systems/workflows under [the public boundary](PUBLIC_REPOSITORY_BOUNDARY.md).
+The **Best for electronic distribution and accessibility** route, using
+Microsoft's online service, returns a tagged two-page PDF. However, it represents
+the continuing source cell as **two distinct TH/P objects**, one on each page,
+under Table/THead/TR. The same nested P identity is not retained across pages.
+Both the published 0.6.0 / adapter 0.1.7 and candidate 0.6.1 / adapter 0.1.8
+therefore preserve two sentence-bearing blocks and perform no continuity merge.
+They produce identical values under tagged-PDF profile `0.6.0`:
 
+| Builder-displayed measure | Source reference | Released 0.6.0 | Candidate 0.6.1 |
+| --- | --- | --- | --- |
+| Word Count | 165 | 165 | 165 |
+| Words per sentence | 4.5 | 4.5 | 4.5 |
+| Sentences per paragraph | 36 | 18 | 18 |
+| Flesch-Kincaid Grade Level | 5.83 | 5.83 | 5.83 |
+| Passive-sentence percentage | 50 | 50 | 50 |
+
+The page boundary happens between complete sentences in this fixture, so all
+162 sentence words and 36 sentences are recovered. That coincidence does not
+prove that a sentence split by the same exporter would be recovered correctly.
+The paragraph-count mismatch remains, even though four displayed values agree.
+Raw PDF text recovery matches the reference, but the normalized adapter also
+treats the producer's Title tag as unknown and emits that title after the first
+tagged table group. Full normalized reading-order fidelity is not established.
+
+This is a **documented unsupported producer structure**, not a passing Word
+continuity validation and not a regression introduced by the candidate. Joining
+these distinct objects based on matching text, geometry, or shared table ancestry
+would violate the repair's identity guard and could combine genuinely different
+cells. The arithmetic was not changed to hide the mismatch. The stable-identity
+repair remains covered by the programmatically generated tagged-PDF fixtures;
+this Word route does not provide a matching positive producer example.
+
+The source, PDFs, visual QA, and detailed receipts remain outside Git; only this
+synthetic aggregate observation is recorded here. Word parity, a positive real
+producer example of the repaired structure, the broader real-document release
+gate, and authenticated Builder verification remain unestablished. Follow
+[the release process](RELEASE_PROCESS.md) before designating an integration
+release, using eligible sources and separately approved systems/workflows under
+[the public boundary](PUBLIC_REPOSITORY_BOUNDARY.md).
 
 ## Release and Builder dependency
 
