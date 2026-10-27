@@ -126,7 +126,7 @@ maintainer/consumer actions; CI does not publish a release automatically.
 
 Update docs alongside the contract they describe. In particular:
 
-- keep README profile references and examples aligned with packaged resources;
+- keep getting-started profile references and examples aligned with packaged resources;
 - update the integration contract for API, status, or result-shape changes;
 - update methodology and adoption notes for output-changing behavior;
 - keep release publication, private-cohort validation, and consumer adoption

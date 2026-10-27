@@ -9,6 +9,9 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
+- Keep the README focused on the project overview and move detailed installation,
+  profile selection, Python API, and CLI examples into `docs/GETTING_STARTED.md`.
+  Update the documentation index and links to the relocated instructions.
 - Correct recommended release/profile examples and artifact integrity guidance.
 - Explain whole-NOFO content scopes, recognition limits, program and maintenance
   roles, and explicit consumer upgrades without changing calculations.
