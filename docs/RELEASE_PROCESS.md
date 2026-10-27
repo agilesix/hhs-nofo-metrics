@@ -47,7 +47,7 @@ separate actions when it has not already been given in the conversation.
 HHS Office of Grants program direction and formal decisions about measurement
 policy remain separate from this technical release convention. A maintainer
 release decision does not turn provisional methods into approved HHS policy.
-Existing HHS and Office of Finance public-information requirements still apply;
+Existing HHS and organizational public-information requirements still apply;
 see [the public boundary](PUBLIC_REPOSITORY_BOUNDARY.md).
 
 Use this compact decision record in the release-preparation PR or linked issue:

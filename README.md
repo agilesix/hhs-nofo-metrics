@@ -73,9 +73,8 @@ an official HHS policy interpretation, certification, or endorsement.
 
 Do not use or save pre-decisional NOFOs or information about them in this public
 repository, including temporary files, commits, issues, and PRs. Users are
-responsible for public-release eligibility and applicable HHS and HHS Office of
-Finance Rules of Behavior, data-sensitivity, information-handling, and
-cybersecurity requirements. Use synthetic examples; see the
+responsible for public-release eligibility and applicable HHS Rules of Behavior,
+data-sensitivity, information-handling, and cybersecurity requirements. Use synthetic examples; see the
 [public repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md) and
 [security reporting guidance](SECURITY.md).
 

@@ -9,10 +9,14 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
+- Correct the Office of Finance attribution in repository guidance and templates;
+  cite official HHS strategy, compliance-plan, inventory, and federal executive
+  order references while preserving applicable organizational requirements and
+  the need for tool/data authorization.
 - Document merging through repository access permissions, optional PR approval,
   required CI, and separate release-tag and release-environment controls.
 - Explain the package's deterministic calculations and AI-assisted contribution
-  practices, with explicit deference to applicable HHS and Office of Finance
+  practices, with explicit deference to applicable HHS and organizational
   policies. Link the guidance from the README, contributor guide, documentation
   index, and agent instructions; no runtime AI or calculation change is added.
 - Keep the README focused on the project overview and move detailed installation,
@@ -32,7 +36,7 @@ package release may support more than one measurement contract.
 - Explicit public-repository prohibition on using, saving, or publishing
   pre-decisional NOFOs/information, including temporary files and sensitive
   derivatives. Agent/contributor guidance and issue/PR templates identify user
-  responsibility under applicable HHS and Office of Finance requirements.
+  responsibility under applicable HHS and organizational requirements.
 - Document release-tag naming, purpose, and publication steps. CI now checks
   `v*` tag pushes and validates package/fallback version consistency plus a
   matching dated changelog entry for tagged releases. Publication remains manual.
