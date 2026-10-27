@@ -64,6 +64,7 @@ class ObservedWord:
     structure_rank: int | None
     structure_group_id: str | None
     structure_group_tag: str | None
+    structure_cell_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -97,6 +98,7 @@ class TaggedContent:
     tag_path: tuple[str, ...]
     group_id: str
     group_tag: str
+    cell_id: str | None = None
 
 
 def dependency_versions() -> dict[str, str]:
@@ -126,8 +128,15 @@ def tagged_content_by_page(
     path: Path,
     *,
     nested_container_groups: bool = False,
+    nested_table_blocks: bool = False,
 ) -> tuple[dict[tuple[int, int], TaggedContent], str | None]:
-    """Read page-local MCID paths and logical rank without requiring tags."""
+    """Read page-local MCID paths and logical rank without requiring tags.
+
+    ``nested_table_blocks`` exposes semantic blocks grouped under TD/TH as
+    their own groups. Other semantic containers keep their existing grouping. Inline tags inherit that group. ``cell_id`` preserves the cell
+    identity separately so direct cell content cannot bridge a nested block.
+    Group identities are local to this traversal, shared across page references.
+    """
 
     try:
         reader = PdfReader(path)
@@ -150,12 +159,15 @@ def tagged_content_by_page(
             inherited_page: Any = None,
             tag_path: tuple[str, ...] = (),
             inherited_group: tuple[str, str] | None = None,
+            inherited_cell: str | None = None,
         ) -> None:
             nonlocal group_rank, rank
             value = node.get_object() if isinstance(node, IndirectObject) else node
             if isinstance(value, (ArrayObject, list, tuple)):
                 for child in value:
-                    walk(child, inherited_page, tag_path, inherited_group)
+                    walk(
+                        child, inherited_page, tag_path, inherited_group, inherited_cell
+                    )
                 return
             if isinstance(value, int):
                 page_number = page_numbers.get(_reference_key(inherited_page))
@@ -168,6 +180,7 @@ def tagged_content_by_page(
                         tag_path=tag_path,
                         group_id=inherited_group[0],
                         group_tag=inherited_group[1],
+                        cell_id=inherited_cell,
                     )
                     if key in observed and observed[key] != tagged:
                         conflicts.add(key)
@@ -194,11 +207,19 @@ def tagged_content_by_page(
             )
             if tag_name in _STRUCTURE_GROUP_TAGS and (
                 nested_container
+                or (
+                    nested_table_blocks
+                    and inherited_group is not None
+                    and inherited_group[1] in {"TD", "TH"}
+                )
                 or inherited_group is None
                 or inherited_group[1] not in _STRUCTURE_GROUP_CONTAINERS
             ):
                 next_group = (f"structure-group-{group_rank}", tag_name)
                 group_rank += 1
+            next_cell = inherited_cell
+            if tag_name in {"TD", "TH"} and next_group is not None:
+                next_cell = next_group[0]
             if "/MCID" in value:
                 page_number = page_numbers.get(_reference_key(page_reference))
                 if page_number is not None and next_group is not None:
@@ -208,6 +229,7 @@ def tagged_content_by_page(
                         tag_path=next_path,
                         group_id=next_group[0],
                         group_tag=next_group[1],
+                        cell_id=next_cell,
                     )
                     if key in observed and observed[key] != tagged:
                         conflicts.add(key)
@@ -215,7 +237,7 @@ def tagged_content_by_page(
                         observed[key] = tagged
                     rank += 1
             if "/K" in value:
-                walk(value["/K"], page_reference, next_path, next_group)
+                walk(value["/K"], page_reference, next_path, next_group, next_cell)
 
         walk(root.get("/K"))
         for key in conflicts:
@@ -288,6 +310,7 @@ def observed_words(
                 structure_rank=(tagged.rank if tagged is not None else None),
                 structure_group_id=(tagged.group_id if tagged is not None else None),
                 structure_group_tag=(tagged.group_tag if tagged is not None else None),
+                structure_cell_id=(tagged.cell_id if tagged is not None else None),
             )
         )
     return tuple(values)

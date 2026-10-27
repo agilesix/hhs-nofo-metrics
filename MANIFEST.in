@@ -1,4 +1,9 @@
+include AGENTS.md
 include CHANGELOG.md
 include CONTRIBUTING.md
 include SECURITY.md
 recursive-include docs *.md
+include .github/pull_request_template.md
+recursive-include .github/ISSUE_TEMPLATE *.md
+include .github/workflows/ci.yml
+recursive-include tools *.py

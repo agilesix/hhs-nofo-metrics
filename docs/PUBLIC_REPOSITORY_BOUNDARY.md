@@ -4,6 +4,32 @@ This repository contains the supported metric package, its public contracts,
 focused regression tests, and release tooling. It does not contain the private
 or bulky research artifacts used to calibrate a particular method.
 
+## Public-release eligibility and user responsibility
+
+This repository is public. Do not use pre-decisional NOFOs or pre-decisional
+information about NOFOs for work here, and do not save or disclose that material
+in repository files, commits/history, issues, PRs, comments, or attachments.
+The prohibition includes sensitive excerpts, metadata, reviewer comments, logs,
+screenshots, generated reports, and derivatives that reveal pre-decisional
+information. It applies before committing: local temporary, untracked, or
+ignored files in this repository are not an approved place for that material.
+
+Each user/contributor is responsible for ensuring that information supplied or
+authorized for this work is not pre-decisional and is eligible for public
+release under applicable HHS and HHS Office of Finance Rules of Behavior,
+data-sensitivity and information-handling requirements, and cybersecurity
+policies. When eligibility is unclear, do not access, process, or save the source
+for repository work; use synthetic material until the responsible user confirms
+eligibility. Private evaluation must use separately approved systems and
+workflows. Keeping a file outside Git does not itself authorize its use.
+
+Automated repository/history checks detect some artifact and path patterns;
+they cannot determine whether content is pre-decisional, grant public-release
+clearance, or establish compliance with those policies. Users remain responsible
+for reviewing what they save and publish. Public-release eligibility is also
+not permission to commit source corpora: the stricter artifact exclusions below
+still apply.
+
 ## Commit
 
 - versioned production methods;
@@ -20,6 +46,7 @@ or bulky research artifacts used to calibrate a particular method.
 - rendered pages, screenshots, crops, and visual-review evidence;
 - full per-document reports and debug inventories;
 - Airtable exports, coaching or design cohort labels, and internal bypass data;
+- pre-decisional NOFOs and information about them;
 - reviewer comments, clearance drafts, and unpublished documents;
 - local absolute paths, machine configuration, and application workspaces;
 - generated package artifacts and temporary files.

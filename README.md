@@ -182,9 +182,26 @@ output is only a receipt and does not replace that stable result artifact.
 - [Measurement methodology](docs/METHODOLOGY.md)
 - [Consumer-neutral integration contract](docs/INTEGRATION_CONTRACT.md)
 - [Release process](docs/RELEASE_PROCESS.md)
+- [Nested table continuity candidate and validation](docs/NESTED_TABLE_ADOPTION.md)
 - [NOFO Builder consumer guide](docs/consumers/NOFO_BUILDER.md)
 - [NOFO Checker integration](docs/NOFO_CHECKER_INTEGRATION.md)
 - [Public/private repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md)
+
+## Repository guidance
+
+See the [documentation index](docs/README.md),
+[contributor guide](CONTRIBUTING.md), and [agent instructions](AGENTS.md).
+Repository version tags identify release source commits; see
+[tags and release checks](docs/RELEASE_PROCESS.md#what-the-tags-mean).
+
+## Public information only
+
+Do not use or save pre-decisional NOFOs or information about them in this public
+repository, including temporary files, commits, issues, and PRs. Users are
+responsible for public-release eligibility and applicable HHS and HHS Office of
+Finance Rules of Behavior, data-sensitivity, information-handling, and
+cybersecurity requirements. Use synthetic examples; see the
+[public repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md).
 
 ## Development
 

@@ -1,6 +1,10 @@
 # NOFO Checker integration
 
-## Current local proof
+## Historical local proof
+
+This records the original local integration experiment, not the current status
+of a Checker branch or deployment. Recheck the target consumer and its pinned
+package before adopting these findings.
 
 NOFO Checker can incrementally centralize metric behavior without changing its
 existing extraction, repeated-edge selection, page metrics, sentence inventory,
@@ -34,19 +38,15 @@ with repeated headers and footers because raw parity retains that content. That
 difference is expected and demonstrates why method parity and profile policy
 must remain separately observable.
 
-## Distribution blocker
+## Distribution requirements
 
-The integration must not be released until this package has a stable,
-installable artifact available to every NOFO Checker user. Preferred:
-
-```text
-hhs-nofo-metrics==0.5.0
-```
-
-from PyPI or another public package registry. An immutable public Git commit is
-a temporary second choice. Do not ship a local file URL, sibling-relative path,
-editable dependency, private Git URL, mutable branch reference, submodule, or
-vendored copy.
+A distributed integration requires a reviewed, installable artifact available
+to every NOFO Checker user. Pin the exact adopted package version from PyPI or
+another public package registry when available; an immutable public Git commit
+is a temporary second choice. The original proof's version is historical, not
+a recommendation for the current integration. Do not ship a local file URL,
+sibling-relative path, editable dependency, private Git URL, mutable branch
+reference, submodule, or vendored copy.
 
 After publication, add the pinned dependency to NOFO Checker's distributed
 requirements, environment diagnostics, setup documentation, clean-clone CI,

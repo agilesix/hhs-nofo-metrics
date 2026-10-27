@@ -13,6 +13,37 @@ package release may support more than one measurement contract.
 - Explain whole-NOFO content scopes, recognition limits, program and maintenance
   roles, and explicit consumer upgrades without changing calculations.
 
+### Added
+
+- Initial maintainer release-decision policy covering timing, related-PR
+  dependencies, recorded scope/technical agreement, patch/minor/major version
+  choices during 0.x and after 1.0, and explicit publication/consumer adoption.
+- Repository-specific agent guidance, bug/change issue templates, a PR template,
+  and a documentation index.
+- Explicit public-repository prohibition on using, saving, or publishing
+  pre-decisional NOFOs/information, including temporary files and sensitive
+  derivatives. Agent/contributor guidance and issue/PR templates identify user
+  responsibility under applicable HHS and Office of Finance requirements.
+- Document release-tag naming, purpose, and publication steps. CI now checks
+  `v*` tag pushes and validates package/fallback version consistency plus a
+  matching dated changelog entry for tagged releases. Publication remains manual.
+
+### Fixed
+
+- Candidate package 0.6.1 exposes stable nested table-block identities in tagged
+  adapter 0.1.8 / resolver 0.3.8. The same source-declared paragraph inside a
+  TD or TH can continue across pages without creating sentence or paragraph
+  boundaries. Different paragraphs, headings, and cells stay separate; inline
+  spans retain the enclosing block identity and existing table metric scope.
+- Mixed direct cell content remains page-local when the cell also contains
+  semantic blocks. Existing role, warning, and page-provenance guards remain.
+  Metric formulas, profiles, and result schemas are unchanged. Retain package
+  0.6.0 for the previous extraction behavior.
+- Synthetic fixture and independently enumerated counts cover all five
+  Builder-displayed measures. Actual Word-export evidence and downstream
+  authenticated Builder verification remain pending; see
+  [nested table adoption](docs/NESTED_TABLE_ADOPTION.md).
+
 ## [0.6.0] - 2026-10-16
 
 ### Added

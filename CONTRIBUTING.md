@@ -4,6 +4,20 @@ This repository contains the supported HHS NOFO metric package and its public
 contracts. A method change can alter reported metrics, so reproducibility and
 explicit versioning matter as much as code correctness.
 
+[The documentation guide](docs/README.md) maps the contracts and consumer
+notes. Coding agents should also read [AGENTS.md](AGENTS.md).
+
+## Issues and proposed changes
+
+Use the [bug report template](.github/ISSUE_TEMPLATE/bug_report.md) for failures
+and the [change request template](.github/ISSUE_TEMPLATE/change_request.md) for
+new capabilities, documentation, or tooling. Before implementing a historical
+report, reproduce it against the relevant current package or explain why it no
+longer occurs. State the package, profile, adapter, and source kind where
+applicable. Prefer a small synthetic reproduction with independently checked
+expected behavior. Keep sensitive details out of public issues; follow
+[SECURITY.md](SECURITY.md) for vulnerability reports.
+
 ## Development setup
 
 Use Python 3.11 or newer:
@@ -22,6 +36,7 @@ Run the local checks with:
 .venv/bin/ruff check .
 .venv/bin/pytest --cov=hhs_nofo_metrics --cov-report=term-missing
 .venv/bin/python tools/check_public_repo.py
+.venv/bin/python tools/check_release_identity.py
 .venv/bin/pre-commit run --all-files
 ```
 
@@ -32,6 +47,11 @@ To test the distributable artifact:
 .venv/bin/python tools/check_wheel_contents.py dist/*.whl
 .venv/bin/python tools/check_sdist_contents.py dist/*.tar.gz
 ```
+
+The distribution check tools each accept one artifact path. If `dist/` contains
+multiple versions, replace each wildcard with the exact candidate filename.
+Pre-commit's `--all-files` covers tracked files; check newly created files with
+`.venv/bin/pre-commit run --files <paths>` until they are tracked.
 
 CI installs both built distributions into clean environments and runs the
 packaged API and CLI as additional smoke tests.
@@ -53,6 +73,18 @@ packaged API and CLI as additional smoke tests.
 - Keep draft contracts disconnected from active profiles until they have the
   required approval and validation evidence.
 - Record user-visible changes in `CHANGELOG.md`.
+
+## Public information only
+
+This is a public repository. Do not use, save, commit, or publish pre-decisional
+NOFOs or pre-decisional information about NOFOs here, including sensitive
+extracts and derivatives in temporary/ignored files, reports, issues, PRs, or
+attachments. Each user/contributor is responsible for confirming public-release
+eligibility and following applicable HHS and HHS Office of Finance Rules of
+Behavior, data-sensitivity/information-handling requirements, and cybersecurity
+policies. Use synthetic examples when eligibility is unclear. Automated checks
+do not replace that responsibility. See the
+[public repository boundary](docs/PUBLIC_REPOSITORY_BOUNDARY.md).
 
 ## Tests and evidence
 
@@ -76,11 +108,47 @@ Word. Word automation is reserved for bounded parity questions, uses private
 fixtures, and should be announced before it is run because it can disrupt the
 desktop session.
 
+## Release tags and automation
+
+[The release policy](docs/RELEASE_PROCESS.md#when-to-make-a-release) explains when
+to publish, how Ben/Mike or designated maintainers record the decision, when to
+wait for related PRs, and how to choose patch/minor/major versions during 0.x
+and after 1.0. A merged PR does not automatically trigger a package release.
+
+Version tags identify package release commits, not issue categories or profile
+versions. CI checks `v*` tag pushes as well as PRs and `main`, and validates the
+package/fallback version and a dated changelog entry before building a tagged
+release. See [the release process](docs/RELEASE_PROCESS.md) for the complete
+sequence. Tags, asset publication, and consumer deployment remain separate
+maintainer/consumer actions; CI does not publish a release automatically.
+
+## Documentation changes
+
+Update docs alongside the contract they describe. In particular:
+
+- keep README profile references and examples aligned with packaged resources;
+- update the integration contract for API, status, or result-shape changes;
+- update methodology and adoption notes for output-changing behavior;
+- keep release publication, private-cohort validation, and consumer adoption
+  distinct, with unavailable evidence explicitly pending; and
+- link new guides from `docs/README.md`.
+
+Documentation-only changes need checks for local links, command accuracy,
+formatting, and public-boundary compliance. They do not require new product
+tests. Build and verify distributions when changing packaged documentation or
+its manifest.
+
 ## Pull requests
 
-Keep changes focused and describe:
+Use the [PR template](.github/pull_request_template.md). Keep changes focused and
+describe:
 
 - which method, profile, schema, or tooling contract changed;
 - whether outputs can change;
 - the evidence and tests supporting the change; and
 - any private calibration artifacts intentionally excluded from the commit.
+
+Use closing issue references only when the PR meets the issue's acceptance
+criteria. If release or downstream verification remains pending, link the issue
+without claiming it is complete and record the dependency in the PR/adoption
+notes.

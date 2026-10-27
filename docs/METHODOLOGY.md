@@ -176,3 +176,17 @@ Follow [consumer update steps](INTEGRATION_CONTRACT.md#consumer-updates) for
 release notifications, verified artifact pins, regression checks and deliberate
 adoption. Future HHS decisions about token edge cases, presentation bands and
 uncertainty wording remain distinct from this provisional implementation.
+
+## Nested table paragraph repair candidate
+
+The unpublished package 0.6.1 candidate introduces tagged adapter 0.1.8 / resolver
+0.3.8. It preserves the identity of a declared paragraph inside a TD/TH across
+pages, while keeping separate paragraphs, headings, and cells separate. This
+can change accepted sentence words and sentence-bearing block counts under an
+existing profile; formulas and released profiles are unchanged. Published 0.6.0
+retains adapter 0.1.7 and its page-local nested-cell limitation. See
+[nested table adoption](NESTED_TABLE_ADOPTION.md) for supported structures,
+independent synthetic references, remaining producer limitations, and pending
+Word-export, release, and Builder verification. A nested PDF table heading
+retains its existing table role; this repair does not make its scope equivalent
+to an HTML `th`.

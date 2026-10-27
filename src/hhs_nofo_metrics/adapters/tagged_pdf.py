@@ -41,8 +41,8 @@ from .tagged_structure import (
 )
 
 ADAPTER_ID: Final = "hhs-tagged-pdf-adapter"
-ADAPTER_VERSION: Final = "0.1.7"
-RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.7"
+ADAPTER_VERSION: Final = "0.1.8"
+RESOLVER_METHOD: Final = "pdf-tagged-structure-group-resolver@0.3.8"
 
 _ROLE_BY_GROUP_TAG: Final = {
     "P": "body",
@@ -154,7 +154,9 @@ def _is_standalone_link_annotation(page, line) -> bool:
 def _tagged_structure(
     path: Path,
 ) -> tuple[dict[tuple[int, int], Any], str | None]:
-    return tagged_content_by_page(path, nested_container_groups=True)
+    return tagged_content_by_page(
+        path, nested_container_groups=True, nested_table_blocks=True
+    )
 
 
 def _artifact_supported_top_navigation(words, page_number, artifact_words_by_page):
@@ -261,20 +263,24 @@ def _resolved_document(path: Path) -> NormalizedDocument:
                         if word.structure_group_tag is not None
                     }
                     group_tag = next(iter(group_tags)) if len(group_tags) == 1 else None
-                    if group_tag == "TD":
-                        # Container grouping hides nested paragraph identities.
-                        # Do not infer continuity across their explicit boundaries,
-                        # even when another page has direct cell content.
-                        for word in ordered_words:
-                            cell_index = (
-                                len(word.tag_path) - 1 - word.tag_path[::-1].index("TD")
-                            )
-                            if any(
-                                tag in _ROLE_BY_GROUP_TAG
-                                for tag in word.tag_path[cell_index + 1 :]
-                            ):
-                                nested_cell_groups.add(word.structure_group_id)
-                    role = _ROLE_BY_GROUP_TAG.get(group_tag or "", "unknown")
+                    # Nested blocks retain their own identity while keeping the
+                    # cell's existing table metric scope. Inline spans inherit
+                    # the enclosing semantic block rather than creating one.
+                    for word in ordered_words:
+                        if (
+                            word.structure_cell_id is not None
+                            and word.structure_cell_id != word.structure_group_id
+                        ):
+                            nested_cell_groups.add(word.structure_cell_id)
+                    role = (
+                        "table"
+                        if group_tag
+                        in {"P", "H", "H1", "H2", "H3", "H4", "H5", "H6", "H7"}
+                        and all(
+                            word.structure_cell_id is not None for word in ordered_words
+                        )
+                        else _ROLE_BY_GROUP_TAG.get(group_tag or "", "unknown")
+                    )
                     role_basis = (
                         RESOLVER_METHOD
                         if group_tag is None
