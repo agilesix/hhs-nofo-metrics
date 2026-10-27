@@ -1,8 +1,11 @@
 # Passive classifier correction and consumer adoption
 
-Candidate package: 0.6.0. Method: `hhs-nofo-passive-sentence-rule@0.4.0-provisional`.
-This is a release candidate until the package and private-cohort release gates
-in RELEASE_PROCESS.md are complete. No deployment or guidance change is implied.
+Released package: [v0.6.0, October 16, 2026](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.6.0).
+Method: `hhs-nofo-passive-sentence-rule@0.4.0-provisional`.
+Publication does not establish a consumer's deployed version or formal HHS
+approval of the method. [Release gates](RELEASE_PROCESS.md) apply to future
+releases; [consumer updates](INTEGRATION_CONTRACT.md#consumer-updates) require
+explicit adoption and preservation of earlier results.
 
 ## Profile selection
 
@@ -14,24 +17,29 @@ in RELEASE_PROCESS.md are complete. No deployment or guidance change is implied.
 
 The old method module and old profile resources are retained unchanged. The
 shared engine selects the classifier declared in the requested profile, including
-PDF unknown-content sensitivity calculations. CLI defaults are retained;
-explicitly select a corrected profile to receive the corrections.
+PDF unknown-content sensitivity calculations. The CLI requires an explicit
+profile; it does not automatically select a corrected profile after an install.
 
-## Builder adoption after package review and release
+## NOFO Builder adoption and verification
 
-1. Publish the reviewed release artifact after the release gates pass. Record
-   its wheel SHA-256 and commit. Do not point Builder at an unpublished release URL.
-2. Pin Builder's dependency and regenerate its lockfile against that artifact.
-3. Update `nofos/nofos/readability.py::PROFILE_REFERENCE` to HTML @0.5.0 and both
-   PDF profile constants in `nofos/nofos/pdf_readability_worker.py` to the new
+NOFO Builder [PR #1123](https://github.com/HHS/simpler-grants-pdf-builder/pull/1123)
+adopted the released v0.6.0 wheel and corrected profiles. This is source-level
+adoption, not proof of the version used for a particular stakeholder result.
+For deployment verification and subsequent upgrades:
+
+1. Verify the released artifact's digest and record its package/profile identities.
+   Keep the consumer lockfile aligned with the reviewed artifact.
+2. Check `nofos/nofos/readability.py::PROFILE_REFERENCE` for HTML @0.5.0 and both
+   PDF profile constants in `nofos/nofos/pdf_readability_worker.py` for the new
    references above. Keep adapter selection aligned with the released package;
    adapter 0.1.7 is already present in 0.5.5 and does not originate in this fix.
-4. Verify that the existing snapshot identity checks use both package and profile
+3. Verify that the existing snapshot identity checks use both package and profile
    versions. Earlier snapshots stay in history and are not reused as current
    calculations. Existing result schemas and percentage units are unchanged.
-5. Test the built-in panel and authenticated PDF upload with identical synthetic
-   text, including historical versus corrected profiles. Record actual deployed
-   package/profile identity when evaluating a real-document cohort.
+4. Test the built-in panel and standalone Word/PDF uploads on appropriate
+   synthetic controls, including historical versus corrected profiles. Record
+   actual deployed package/profile identity and matching source revisions when
+   evaluating a real-document cohort.
 
 ## Measurement interpretation
 
