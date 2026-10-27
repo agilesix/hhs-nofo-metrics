@@ -110,6 +110,11 @@ desktop session.
 
 ## Release tags and automation
 
+[The release policy](docs/RELEASE_PROCESS.md#when-to-make-a-release) explains when
+to publish, how Ben/Mike or designated maintainers record the decision, when to
+wait for related PRs, and how to choose patch/minor/major versions during 0.x
+and after 1.0. A merged PR does not automatically trigger a package release.
+
 Version tags identify package release commits, not issue categories or profile
 versions. CI checks `v*` tag pushes as well as PRs and `main`, and validates the
 package/fallback version and a dated changelog entry before building a tagged

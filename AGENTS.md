@@ -74,6 +74,25 @@ Paths above are relative to `src/hhs_nofo_metrics/` unless explicitly prefixed.
 - Keep built-in results source-free. Preserve status, uncertainty, reliability,
   and provenance; never turn an unavailable value into zero or an overall pass.
 
+## Release decisions and versioning
+
+Read [the release policy](docs/RELEASE_PROCESS.md) before preparing a release.
+A merge is not a publication or consumer deployment. Do not wait for unrelated
+open PRs; identify actual dependencies and freeze the intended release scope.
+Record the scope/timing agreement and technical review in a release PR or issue.
+The initial working convention is Ben/Mike or designated maintainers; technical
+release agreement does not establish formal HHS method approval.
+
+Use patch versions for compatible bug fixes, minor versions for compatible new
+capabilities, and major versions after 1.0 for incompatible public contracts.
+During 0.x, use a new minor version for intentional incompatibilities. A patch
+can change corrected scores: advance changed measurement-component identities,
+preserve released contracts, and explain output impact. Do not publish or deploy
+solely because implementation/merge was requested; use explicit authorization
+for those actions. A local candidate version or green CI does not replace the
+release decision and required evidence gates. Document mismatches and limits
+rather than claiming all producer formats are repaired.
+
 ## Development and verification
 
 Use Python 3.11 or newer and the repository's `.venv`. Setup and the complete

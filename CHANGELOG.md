@@ -15,6 +15,9 @@ package release may support more than one measurement contract.
 
 ### Added
 
+- Initial maintainer release-decision policy covering timing, related-PR
+  dependencies, recorded scope/technical agreement, patch/minor/major version
+  choices during 0.x and after 1.0, and explicit publication/consumer adoption.
 - Repository-specific agent guidance, bug/change issue templates, a PR template,
   and a documentation index.
 - Explicit public-repository prohibition on using, saving, or publishing

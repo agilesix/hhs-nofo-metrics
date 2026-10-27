@@ -23,7 +23,7 @@ on a development branch may include changes that have not been released.
 | --- | --- |
 | [Contributing](../CONTRIBUTING.md) | Setup, checks, versioning, tests, and evidence expectations |
 | [Agent guidance](../AGENTS.md) | Repository-specific instructions for coding agents |
-| [Release process](RELEASE_PROCESS.md) | Version tags, tag-triggered CI, publication, and release gates |
+| [Release process](RELEASE_PROCESS.md) | Release decisions, patch/minor/major versions, dependencies, tags, publication, and gates |
 | [Public repository boundary](PUBLIC_REPOSITORY_BOUNDARY.md) | What belongs in Git and what must remain private |
 | [Security policy](../SECURITY.md) | Reporting sensitive findings |
 | [Changelog](../CHANGELOG.md) | Released changes and the current unreleased candidate |
