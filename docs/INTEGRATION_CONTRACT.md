@@ -3,6 +3,11 @@
 This is the consumer-neutral boundary for `hhs-nofo-metrics`. Builder, NOFO
 Checker, batch jobs, and future consumers use the same API. Persistence,
 orchestration, UI, thresholds, and clearance decisions remain consumer-owned.
+See [reuse and roles](REUSE_AND_UPDATES.md) for Office of Grants direction,
+Agile Six maintenance, and explicit consumer upgrades, and
+[installation](INSTALLATION.md) for verified release artifacts. This contract
+covers aggregate measurements for the supplied whole NOFO; finer-grained
+Announcement Module functions are outside scope.
 
 ## Python API
 
@@ -12,7 +17,7 @@ from hhs_nofo_metrics import NofoMetricsError, analyze
 try:
     result = analyze(
         pdf_source,
-        profile="hhs-nofo-fy27-pdf-estimate@0.5.0",
+        profile="hhs-nofo-fy27-pdf-estimate@0.6.0",
         production_path="consumer_supplied_label",
         document_id="optional-consumer-id",
         revision="optional-consumer-revision",
@@ -38,23 +43,41 @@ from hhs_nofo_metrics import SourceBundle, analyze
 
 result = analyze(
     SourceBundle.from_html(html_bytes),
-    profile="hhs-nofo-fy27-html@0.4.0",
+    profile="hhs-nofo-fy27-html@0.5.0",
     adapter_config={"root_id": "download_target"},
     production_path="structured_export_html",
 )
 ```
 
 HTML must be UTF-8. `root_id` is optional; when present, analysis is limited to
-that element and fails if it is absent.
+that element and fails if it is absent. DOCX is not a built-in package input;
+Builder's Word adapter converts body content to HTML before calling this API.
+Its conversion omissions and retained writer instructions are consumer-source
+limitations; see [the reuse boundary](REUSE_AND_UPDATES.md).
 
 ## Profiles and source behavior
 
-- `hhs-nofo-fy27-html@0.4.0` uses DOM order and semantic element boundaries.
+Each source supports a corrected passive-classifier profile and a retained
+earlier profile:
+
+| Source | Corrected profile | Retained earlier profile |
+| --- | --- | --- |
+| Semantic HTML | `hhs-nofo-fy27-html@0.5.0` | `hhs-nofo-fy27-html@0.4.0` |
+| Tagged PDF | `hhs-nofo-fy27-pdf-estimate@0.6.0` | `hhs-nofo-fy27-pdf-estimate@0.5.0` |
+| Generic PDF | `hhs-nofo-fy27-generic-pdf-estimate@0.5.0` | `hhs-nofo-fy27-generic-pdf-estimate@0.4.0` |
+
+Corrected profiles select passive method `0.4.0-provisional`; earlier profiles
+retain `0.3.0-provisional`. Source selection and the other metric methods are
+unchanged between each pair. See [passive adoption](PASSIVE_V4_ADOPTION.md)
+for limitations and migration checks. Examples use the corrected profiles; the
+earlier references remain available for deliberate historical-method selection.
+
+- `hhs-nofo-fy27-html@0.5.0` uses DOM order and semantic element boundaries.
   It is the recommended Builder draft-metrics path.
-- `hhs-nofo-fy27-pdf-estimate@0.5.0` requires a usable PDF structure tree,
+- `hhs-nofo-fy27-pdf-estimate@0.6.0` requires a usable PDF structure tree,
   includes unknown tagged blocks, and reports per-metric reliability based on
   coverage and include/exclude sensitivity.
-- `hhs-nofo-fy27-generic-pdf-estimate@0.4.0` accepts PDFs without usable tags,
+- `hhs-nofo-fy27-generic-pdf-estimate@0.5.0` accepts PDFs without usable tags,
   reconstructs conservative paragraph blocks from visual text lines, and
   applies a low reliability ceiling to every configured metric. It is a
   fallback for cases such as Word-saved PDFs, not the preferred Builder path.
@@ -100,6 +123,12 @@ human-readable explanation of the active behavior.
 
 ## Metric status
 
+The [methodology](METHODOLOGY.md) explains each numerator/denominator,
+recognition limits, and selection rationale. Sentence metrics serialize values
+rounded to two decimal places and retain `components.unrounded_value`;
+`components.sentences_per_paragraph` supplies the unrounded block ratio for
+consumer display. These components do not change Word Count's document scope.
+
 Consumers must read `metrics.<id>.status` before its value:
 
 - `calculated`: a configured deterministic method completed.
@@ -132,7 +161,7 @@ unexpected diagnostics.
 
 ```bash
 hhs-nofo-metrics analyze input.pdf \
-  --profile hhs-nofo-fy27-pdf-estimate@0.5.0 \
+  --profile hhs-nofo-fy27-pdf-estimate@0.6.0 \
   --output result.json
 ```
 
@@ -142,7 +171,12 @@ Consumers should retain the complete result and compare the package, schema,
 profile, method, adapter, configuration, and dependency identities they
 support. Unknown schema versions must be rejected. Repeated analysis with the
 same source and identities reproduces metrics, coverage, selection, and
-warnings; invocation ID and timestamp differ.
+warnings; invocation ID and timestamp differ. Adapter and dependency versions
+matter even when the selected profile stays the same. Subscribe to release
+notifications and adopt upgrades explicitly using
+[the consumer workflow](REUSE_AND_UPDATES.md#explicit-upgrade-workflow).
+Preserve saved results under their original identities; recalculation creates a
+new analysis rather than rewriting history.
 
 The package does not persist results, schedule work, retrieve external files,
 render UI, manage permissions, or translate metrics into pass/fail. Private

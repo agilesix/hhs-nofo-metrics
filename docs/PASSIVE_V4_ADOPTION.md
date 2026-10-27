@@ -1,8 +1,12 @@
 # Passive classifier correction and consumer adoption
 
-Candidate package: 0.6.0. Method: `hhs-nofo-passive-sentence-rule@0.4.0-provisional`.
-This is a release candidate until the package and private-cohort release gates
-in RELEASE_PROCESS.md are complete. No deployment or guidance change is implied.
+Published in [package 0.6.0 on October 16, 2026](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.6.0).
+Method: `hhs-nofo-passive-sentence-rule@0.4.0-provisional`.
+The release and asset digests were verified on October 27, 2026; see
+[installation](INSTALLATION.md). Release notes report package checks and a
+private technical cohort. That report is not a new independent cohort run or
+proof of a consumer deployment or formal method approval. The current 0.6.1
+candidate concerns extraction and is documented separately.
 
 ## Profile selection
 
@@ -14,17 +18,20 @@ in RELEASE_PROCESS.md are complete. No deployment or guidance change is implied.
 
 The old method module and old profile resources are retained unchanged. The
 shared engine selects the classifier declared in the requested profile, including
-PDF unknown-content sensitivity calculations. CLI defaults are retained;
-explicitly select a corrected profile to receive the corrections.
+PDF unknown-content sensitivity calculations. The API and CLI both require an
+explicit profile; select a corrected profile to receive the corrections.
+Existing callers selecting the earlier profiles retain their passive method.
 
-## Builder adoption after package review and release
+## Builder adoption of the published release
 
-1. Publish the reviewed release artifact after the release gates pass. Record
-   its wheel SHA-256 and commit. Do not point Builder at an unpublished release URL.
+1. Use the verified 0.6.0 release artifact and record its wheel SHA-256 and
+   commit. The release is published; check the consumer's actual installed
+   version rather than assuming deployment follows publication.
 2. Pin Builder's dependency and regenerate its lockfile against that artifact.
-3. Update `nofos/nofos/readability.py::PROFILE_REFERENCE` to HTML @0.5.0 and both
-   PDF profile constants in `nofos/nofos/pdf_readability_worker.py` to the new
-   references above. Keep adapter selection aligned with the released package;
+3. Select HTML @0.5.0 and the PDF references above. Reviewed Builder source at
+   `c3fad94` already selects those profiles in `nofos/nofos/readability.py` and
+   `nofos/nofos/pdf_readability_worker.py`; a consumer on earlier selections
+   must make the change explicitly. Keep adapter selection aligned with the released package;
    adapter 0.1.7 is already present in 0.5.5 and does not originate in this fix.
 4. Verify that the existing snapshot identity checks use both package and profile
    versions. Earlier snapshots stay in history and are not reused as current
@@ -48,3 +55,8 @@ miss requiring stronger grammatical disambiguation. Explicit `been` and `being`
 passives work without expanding `'s`. This release addresses the unambiguous
 contraction and non-participle cases in issue #10; it does not close that issue's
 remaining ambiguous-contraction case.
+
+See [release notifications and consumer updates](REUSE_AND_UPDATES.md) for how
+to learn about releases, review output impact, lock dependencies, and retain
+historical results. Upgrading package code does not automatically select a new
+profile or upgrade another system.

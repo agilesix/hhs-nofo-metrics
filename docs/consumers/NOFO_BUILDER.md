@@ -20,7 +20,7 @@ from hhs_nofo_metrics import NofoMetricsError, SourceBundle, analyze
 try:
     result = analyze(
         SourceBundle.from_html(render_current_export_html(nofo)),
-        profile="hhs-nofo-fy27-html@0.4.0",
+        profile="hhs-nofo-fy27-html@0.5.0",
         adapter_config={"root_id": "download_target"},
         production_path="nofo_builder_export_html",
         document_id=str(nofo.pk),
@@ -31,6 +31,14 @@ except NofoMetricsError as error:
 else:
     record_success(nofo_id=nofo.pk, result=result.to_dict())
 ```
+
+This example uses HTML profile `0.5.0` and passive method `0.4.0-provisional`,
+matching the reviewed [Builder source at c3fad94](https://github.com/HHS/simpler-grants-pdf-builder/blob/c3fad94/nofos/nofos/readability.py).
+The retained HTML `0.4.0` profile still selects passive method
+`0.3.0-provisional`. See [passive adoption](../PASSIVE_V4_ADOPTION.md) for consumer
+migration and checks. Source configuration does not establish what is deployed.
+PDF-upload consumers should consult the
+[nested table continuity candidate](../NESTED_TABLE_ADOPTION.md).
 
 `render_current_export_html(nofo)` is intentionally a Builder-owned placeholder.
 It should render the same template/context and current database revision used
@@ -51,7 +59,7 @@ making PDF reconstruction part of Builder's draft calculation path.
 
 ## Current policy behavior
 
-The provisional HTML profile:
+The example's corrected provisional HTML profile:
 
 - counts selected headings, body text, list items, and table content for the
   standalone Word Count;
@@ -62,7 +70,7 @@ The provisional HTML profile:
 - excludes unpunctuated trailing fragments instead of joining neighboring
   elements; and
 - calculates passive-sentence percentage from that same accepted sentence
-  inventory using `hhs-nofo-passive-sentence-rule@0.3.0-provisional`.
+  inventory using `hhs-nofo-passive-sentence-rule@0.4.0-provisional`.
 
 The profile and warnings must remain visible to consumers. Numeric output is a
 versioned measurement, not HHS approval or a pass/fail determination.
@@ -83,15 +91,27 @@ Display the latest successful result whose Builder revision, HTML SHA-256, and
 profile reference still match the current source. Never coerce
 `not_configured` or `unable_to_calculate` to zero.
 
+## Word conversion and package boundary
+
+Builder also accepts standalone Word uploads through its own conversion adapter,
+which converts body content to HTML and calls HTML profile `0.5.0`. The package
+does not expose DOCX as a source kind. Conversion may omit headers, footers,
+text boxes, images, or unsupported objects; writer instructions and draft
+options converted to ordinary text can remain counted. See the reviewed
+[worker](https://github.com/HHS/simpler-grants-pdf-builder/blob/c3fad94/nofos/nofos/pdf_readability_worker.py)
+and [reuse guide](../REUSE_AND_UPDATES.md). This boundary differs from opening a
+PDF in Microsoft Word for calibration.
+
 ## Validation status
 
-The semantic HTML path has been exercised against a frozen ten-document Builder
-cohort and a matched HTML/PDF diagnostic cohort. It avoids the sentence
-inflation introduced when Word opens a designed PDF, and warm analysis of
-realistic Builder exports completes in well under one second on the development
-baseline.
+Earlier project documentation reports a frozen ten-document Builder HTML cohort
+and matched HTML/PDF diagnostics. It does not link a receipt establishing those
+findings for every later package or deployed environment. Treat them as historical
+evidence, not a current cross-system parity or performance guarantee.
 
-This supports a contained feature-flagged integration, not promotion of the
-provisional HHS method. Before broad release, verify that the export HTML and
-downloadable document use the same source revision and repeat the frozen-cohort
-acceptance check in the target runtime.
+Before broad release, verify that export HTML and the downloadable document use
+the same source revision and repeat the authorized frozen-cohort checks in the
+target runtime. Retain package/profile/adapter identities and private receipts.
+Follow [consumer upgrades](../REUSE_AND_UPDATES.md) for explicit dependency
+updates and preservation of saved results. Program direction, provisional method
+approval, package publication, and consumer deployment remain separate facts.

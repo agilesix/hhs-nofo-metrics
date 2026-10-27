@@ -145,7 +145,7 @@ def test_cross_page_paragraph_preserves_readability(
 @pytest.mark.parametrize("nested_tag", ["P", "H2", "Span"])
 @pytest.mark.parametrize("shared_nested_block", [False, True])
 @pytest.mark.parametrize("mixed_direct_content", [False, True])
-def test_cross_page_cell_does_not_merge_nested_blocks(
+def test_cross_page_cell_joins_only_the_same_nested_paragraph(
     tmp_path, nested_tag, mixed_direct_content, shared_nested_block
 ):
     test_cross_page_paragraph_preserves_readability(
@@ -182,7 +182,9 @@ def test_cross_page_cell_does_not_merge_nested_blocks(
     with materialize_source_bundle(SourceBundle.from_pdf(path)) as source:
         doc = TaggedPdfAdapterPlugin().extract(source, config={}).document
     cells = [segment for segment in doc.segments if segment.role == "table"]
-    joined = nested_tag == "Span"
+    joined = nested_tag == "Span" or (
+        nested_tag == "P" and shared_nested_block and not mixed_direct_content
+    )
     assert [segment.text for segment in cells] == (
         ["Applications must be reviewed by staff. Submit complete forms."]
         if joined

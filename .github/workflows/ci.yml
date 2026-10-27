@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
@@ -62,6 +63,16 @@ jobs:
           python-version: "3.14"
           cache: pip
 
+      - name: Check package and release identity
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: |
+          if [ -n "$RELEASE_TAG" ]; then
+            python tools/check_release_identity.py --tag "$RELEASE_TAG"
+          else
+            python tools/check_release_identity.py
+          fi
+
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip
@@ -83,7 +94,7 @@ jobs:
         run: |
           python -m venv /tmp/hhs-nofo-metrics-wheel-smoke
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/python -m pip install dist/*.whl
-          test "$(/tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --version)" = "0.6.0"
+          test "$(/tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --version)" = "0.6.1"
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics | grep 'profiles\[6\]:'
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics profiles list --json | python -m json.tool > /dev/null
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --help
@@ -120,7 +131,7 @@ jobs:
         run: |
           python -m venv /tmp/hhs-nofo-metrics-sdist-smoke
           /tmp/hhs-nofo-metrics-sdist-smoke/bin/python -m pip install dist/*.tar.gz
-          test "$(/tmp/hhs-nofo-metrics-sdist-smoke/bin/hhs-nofo-metrics --version)" = "0.6.0"
+          test "$(/tmp/hhs-nofo-metrics-sdist-smoke/bin/hhs-nofo-metrics --version)" = "0.6.1"
           /tmp/hhs-nofo-metrics-sdist-smoke/bin/python - <<'PY'
           from hhs_nofo_metrics import AnalysisResult, list_profiles
 
