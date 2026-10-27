@@ -1,6 +1,7 @@
 # Documentation guide
 
-Start with the [project README](../README.md) for installation, profile selection,
+Start with the [project README](../README.md) for the purpose and capabilities,
+then use [getting started](GETTING_STARTED.md) for installation, profile selection,
 and API/CLI examples. The installed `profiles list`, `profiles show`, and
 `adapters list` commands describe the actual installed contracts. Documentation
 on a development branch may include changes that have not been released.
@@ -9,7 +10,7 @@ on a development branch may include changes that have not been released.
 
 | Document | Use it for |
 | --- | --- |
-| [Installation](../README.md#installation) | Published artifact pins, hashes, and environment reproducibility |
+| [Getting started](GETTING_STARTED.md) | Installation, profile selection, Python API, and CLI examples |
 | [Consumer updates](INTEGRATION_CONTRACT.md#consumer-updates) | Release notifications, explicit upgrades, and preservation of historical identities |
 | [Integration contract](INTEGRATION_CONTRACT.md) | Inputs, profiles, result schemas, statuses, errors, and consumer responsibilities |
 | [Methodology](METHODOLOGY.md) | Measurement scopes, formulas, sentence selection, and provisional policy limits |

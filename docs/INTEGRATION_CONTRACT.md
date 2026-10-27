@@ -3,7 +3,7 @@
 This is the consumer-neutral boundary for `hhs-nofo-metrics`. NOFO Builder, NOFO
 Checker, batch jobs, and future consumers use the same API. Persistence,
 orchestration, UI, thresholds, and clearance decisions remain consumer-owned.
-Start with the [public package and installation guide](../README.md), then
+Start with the [installation and API/CLI examples](GETTING_STARTED.md), then
 read the [methodology](METHODOLOGY.md) for content selection and calculation
 limits. The API and CLI do not require Django or another application framework.
 Direct Python reuse or CLI invocation can share execution without a new service.
@@ -170,7 +170,7 @@ contract.
    Review the [changelog](../CHANGELOG.md) and profile/method changes, not only
    the package version. Publishing code does not deploy it into another system.
 2. Pin the chosen release artifact and verify its published digest as described
-   in [installation](../README.md#installation). Pin the exact profile and
+   in [installation](GETTING_STARTED.md#installation). Pin the exact profile and
    supported schema, adapter/configuration and dependency identities. Record
    the consumer's content-selection/conversion revision as well.
 3. Test the intended source path before explicitly upgrading the consumer.

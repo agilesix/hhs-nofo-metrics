@@ -139,7 +139,7 @@ assets. A tag alone does not mean an installable wheel was uploaded, a private
 cohort passed, or a consumer upgraded. GitHub's automatically generated source
 ZIP/tar archives are snapshots of the repository; they are distinct from the
 built wheel and Python source distribution whose hashes appear in
-[installation guidance](../README.md#installation). See
+[installation guidance](GETTING_STARTED.md#installation). See
 [GitHub's release explanation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
 
 These version tags are separate from issue/PR labels such as `documentation`,
