@@ -9,12 +9,11 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
-- Add plain-language measurement summaries and explain Builder's saved-HTML
-  source, format and Word differences, metric names, and limits on clearance
-  interpretation. The internal guidance citation/quote remains pending issued
-  version and public-use confirmation. Require contributors and agents to keep
-  the summaries aligned with measurement changes.
-
+- Add plain-language readability metrics summaries, with examples of content
+  selection and differences between file formats and Microsoft Word. Refer
+  readers to FY27 submission guidance and Builder's panel/Readability Checker;
+  keep implementation details in technical documentation. Require contributors
+  and agents to keep the summaries aligned with calculation changes.
 - Correct the Office of Finance attribution in repository guidance and templates;
   cite official HHS strategy, compliance-plan, inventory, and federal executive
   order references while preserving applicable organizational requirements and

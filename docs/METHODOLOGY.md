@@ -10,99 +10,97 @@ changes. Check methods/, adapters/, profiles/, metric_scopes.py,
 resolved_scope.py, and semantic_html_engine.py under src/hhs_nofo_metrics/.
 Also re-check the HHS/Builder section when guidance or consumer behavior changes. -->
 
-The package reports how much selected text a NOFO contains and several signals
-of reading difficulty. It reports values, not a clearance decision or whether
-an HHS target has been met. The [HHS/Builder section](#hhs-clearance-guidance-and-nofo-builder)
-explains the review context and what still needs confirmation.
+**The aim is to measure content intended for applicants.** Navigation, covers,
+tables of contents, headers, footers, decorative material, and instructions
+intended only for NOFO writers are excluded when the file's structure identifies
+them.
 
-**Word Count and the five sentence metrics count different things.** Word Count
-includes selected headings, labels, body text, lists, table cells, and text
-fragments. The other five metrics—words per sentence, characters per word,
-Flesch Reading Ease, Flesch-Kincaid Grade Level, and passive-sentence
-percentage—share the same selected sentences from body, list, and table content.
-Headings do not contribute to those five metrics. A sentence must end with a
-recognized period, exclamation mark, or question mark; recognized abbreviations,
-decimals, and URLs receive special handling. This is a punctuation rule, not a
-check that the text is a complete grammatical sentence. Unfinished fragments
-can add document words without contributing to sentence metrics.
+The package cannot reliably recognize all of this content by appearance alone.
+For example, a table of contents identified as navigation can be excluded, but
+the same text stored as ordinary paragraphs may count. These readability metrics
+can help authors review their NOFO when preparing the NOFO submission package
+for Departmental review. They do not determine whether a NOFO is clear,
+accessible, or ready for submission.
 
-**The aim is to measure applicant-facing content.** Recognized navigation,
-covers, tables of contents, headers, footers, decorative material, and
-writer-only instructions are excluded from both counts. The input must identify
-that structure: the package cannot reliably recognize all of it by appearance.
-A table of contents or instruction presented as ordinary body text can count.
-This limits layout and navigation effects without treating every heading or
-list fragment as a sentence. See [selection and recognition limits](#content-selection-and-rationale).
+**The readability metrics describe different aspects of the text.** Word Count
+reports how much selected text the NOFO contains. Average words per sentence
+and characters per word describe sentence and word length. Flesch Reading Ease
+and Flesch-Kincaid Grade Level combine sentence length and estimated syllable
+counts to indicate reading difficulty. Passive-sentence percentage reports how
+often the package recognizes passive voice. These are signals for people to
+review, not judgments about every sentence or proof of reader comprehension.
 
-**Input format matters.**
+**Word Count includes more text than the other readability metrics.** It
+includes selected headings, labels, paragraphs, lists, table text, and text
+fragments. The other five readability metrics use the same selected text from
+paragraphs, lists, and table cells. That text must end with a period, question
+mark, or exclamation point. Headings are left out of those five readability
+metrics.
 
-- **Word through Builder:** this package does not read Word files directly.
-  Builder imports and renders saved content as HTML; the package uses its
-  reading order and recognized headings, paragraphs, lists, and tables. This is
-  the preferred structured path when the consumer controls that content, but
-  import and rendering changes can change what is measured. It is a structured
-  estimate, not proof of correct extraction or an assessment of the designed PDF.
-- **Tagged PDF:** the package uses the PDF's declared structure. It reports
-  reliability based on extraction and how much uncertain structure affects
-  results. Incorrect or missing tags can change the counts, even when the PDF
-  looks correct.
-- **Untagged PDF:** the fallback reconstructs blocks from visual text lines.
-  Reading order and content roles are less certain, so these results are
-  low-reliability estimates. Headers and similar material may remain included.
+For example, "Submit your application by Friday." can contribute to all five
+readability metrics. "Application deadline" can contribute to Word Count but
+is left out of the other readability metrics because it has no ending
+punctuation. A heading identified as a heading also counts toward Word Count
+but is left out of the other readability metrics, even if it ends with a period.
 
-**Microsoft Word can report different numbers.** Word's proofing scope and
-internal word, sentence, syllable, and passive-voice rules are not this package's
-versioned rules. Conversion, content selection, and paragraph boundaries can
-also change the text being counted. Matching Word's statistics is not the
-package's definition of correctness. These signals help people review writing;
-they do not demonstrate comprehension, accessibility, or HHS approval.
+The package accounts for some punctuation that does not end a sentence, such as
+periods in recognized abbreviations, decimals, and web addresses. It does not
+check whether a sentence is grammatically complete. A fragment ending with a
+period can still count. See [content selection and its limits](#content-selection-and-rationale)
+for the detailed rules.
 
-## HHS clearance guidance and NOFO Builder
+**How a Word or PDF file identifies its content affects what gets counted.**
+For example, a heading identified as a heading is treated differently from text
+that only looks like a heading. A PDF without structural tags can make reading
+order harder to identify on pages with multiple columns, in tables, or around
+sidebars and text boxes.
 
-These metrics support gathering readability information for HHS NOFO review.
-The package provides measurements; the responsible program determines which
-requirements and targets apply. It does not apply clearance targets or certify
-that a NOFO meets them.
+- **Word content imported into NOFO Builder:** this package does not read Word
+  files directly. Builder imports the content, saves it, and renders it as
+  HTML—the format used for web pages. The package uses the identified headings,
+  paragraphs, lists, and tables in that HTML to calculate readability metrics.
+  Importing or rendering the content differently can change the results.
+- **PDF with structural tags:** tags identify content such as paragraphs and
+  tables. The package uses those tags to interpret the document and reports how
+  reliable its estimates are. Missing or incorrect tags can change the counts
+  even when the PDF looks correct.
+- **PDF without usable structural tags:** the package estimates paragraphs and
+  reading order from the placement of text on the page. Repeated headers and
+  similar material may remain included. These results are reported as
+  low-reliability estimates.
 
-**Guidance citation pending maintainer confirmation:** issue
-[#20](https://github.com/agilesix/hhs-nofo-metrics/issues/20) identifies the
-*HHS FY 2027 NOFO Content and Clearance Guidance* as the intended reference.
-Its issued title/version date and permission to publish a short exact quote
-still need confirmation. No quote, target values, or access-restricted resource
-link is included here. This section is incomplete until that review is done;
-it does not establish the guidance's exact requirements.
+**Results can differ from Microsoft Word's readability statistics.** Word uses
+its own rules for counting words and sentences, estimating syllables, and
+identifying passive voice. This package uses its own documented, versioned
+rules. The two may also include different content because of headings,
+paragraph boundaries, or changes introduced during conversion. Matching Word's
+numbers is not the package's definition of correctness. Readability metrics
+help people review writing; they do not demonstrate that readers will
+understand it.
 
-The package's names for the measurements are:
+## HHS Departmental review and NOFO Builder
 
-| Measurement | Package metric name |
-| --- | --- |
-| Word Count | `word_count` |
-| Average words per sentence | `words_per_sentence` |
-| Characters per word | `characters_per_word` |
-| Flesch Reading Ease | `flesch_reading_ease` |
-| Flesch-Kincaid Grade Level | `flesch_kincaid_grade_level` |
-| Passive sentences (%) | `passive_sentence_percentage` |
+These readability metrics can help authors review their NOFO when preparing
+the NOFO submission package for Departmental review. The package calculates
+readability metrics; it does not determine whether submission requirements
+have been met.
 
-Average sentences per paragraph is also available as the
-`sentences_per_paragraph` component of sentence metrics; it is not a separate
-top-level metric. This table names package outputs, not a verified transcription
-of the internal guidance's terminology or required submission fields.
+For submission instructions, follow the *HHS FY 2027 NOFO Content and Clearance
+Guidance*, including **Step 2. Submit your NOFO for Departmental clearance**.
+Use that guidance for requirements about the final designed PDF, approved
+Office of Grants tools, and submission materials.
 
-The SimplerNOFOs team supports gathering measurements through NOFO Builder's
-**Readability metrics** panel. Builder's
-[measurement implementation](https://github.com/HHS/simpler-grants-pdf-builder/blob/8ac6e76d10fc8a1dc4abd82c3504b2fe6877e11f/nofos/nofos/readability.py#L157)
-renders HTML from saved NOFO content and analyzes it with
-`hhs-nofo-fy27-html@0.5.0`. Its
-[panel button](https://github.com/HHS/simpler-grants-pdf-builder/blob/8ac6e76d10fc8a1dc4abd82c3504b2fe6877e11f/nofos/nofos/templates/nofos/includes/readability_metrics_panel.html#L32)
-is labeled **Calculate metrics**. This describes the source implementation
-checked October 28, 2026, not a verification of every deployed environment.
+The SimplerNOFOs team supports reviewing readability metrics through NOFO
+Builder's **Readability metrics** panel and the
+[**Readability Checker**](https://nofos.simpler.grants.gov/nofos/readability-checker/),
+which checks uploaded documents. Access and supported file formats depend on
+the tool's availability and your permissions. Follow the FY27 guidance for
+calculating and submitting readability metrics for Departmental review.
 
-The panel measures that HTML, **not the final designed PDF**. Do not assume
-that a panel result satisfies a final-PDF measurement requirement or that HTML
-and PDF values will match. Confirm the applicable source and tool requirements
-with the Office of Grants. Neither this package nor the panel is represented
-here as an approved Office of Grants tool. The
-[Builder guide](consumers/NOFO_BUILDER.md) describes the integration boundary.
+Builder's panel calculates readability metrics from the NOFO's saved content.
+The [Builder guide](consumers/NOFO_BUILDER.md) describes the calculation path
+and technical details. This overview does not establish that a particular tool
+or calculation path is approved for Departmental submissions.
 
 ## About this document
 
