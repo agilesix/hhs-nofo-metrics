@@ -9,11 +9,11 @@ package release may support more than one measurement contract.
 
 ### Documentation
 
-- Remove the standalone upload-tool link from the public methodology overview.
-
+- Keep the Readability Checker name and description in the public methodology
+  overview without linking directly to the tool.
 - Add plain-language readability metrics summaries, with examples of content
   selection and differences between file formats and Microsoft Word. Refer
-  readers to FY27 submission guidance and Builder's panel;
+  readers to FY27 submission guidance and Builder's panel/Readability Checker;
   keep implementation details in technical documentation. Require contributors
   and agents to keep the summaries aligned with calculation changes.
 - Correct the Office of Finance attribution in repository guidance and templates;

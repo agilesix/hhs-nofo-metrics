@@ -91,8 +91,10 @@ Use that guidance for requirements about the final designed PDF, approved
 Office of Grants tools, and submission materials.
 
 The SimplerNOFOs team supports reviewing readability metrics through NOFO
-Builder's **Readability metrics** panel. Follow the FY27 guidance for calculating
-and submitting readability metrics for Departmental review.
+Builder's **Readability metrics** panel and the **Readability Checker**, which
+checks uploaded documents. Access and supported file formats depend on the
+tool's availability and your permissions. Follow the FY27 guidance for
+calculating and submitting readability metrics for Departmental review.
 
 Builder's panel calculates readability metrics from the NOFO's saved content.
 The [Builder guide](consumers/NOFO_BUILDER.md) describes the calculation path
