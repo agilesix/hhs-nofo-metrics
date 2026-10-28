@@ -18,6 +18,12 @@ from hhs_nofo_metrics.methods.passive_voice_v4 import (
 from hhs_nofo_metrics.methods.passive_voice_v4 import (
     count_passive_sentences as count_passive_sentences_v4,
 )
+from hhs_nofo_metrics.methods.passive_voice_v5 import (
+    METHOD_REFERENCE as PASSIVE_V5_REFERENCE,
+)
+from hhs_nofo_metrics.methods.passive_voice_v5 import (
+    count_passive_sentences as count_passive_sentences_v5,
+)
 
 RESOLVED_SCOPE_CONTRACT_VERSION: Final = "0.1.0-internal"
 SCOPE_STATUSES: Final = frozenset({"eligible", "provisional", "unable"})
@@ -110,17 +116,17 @@ def calculate_resolved_measurement_scope(
     readability_metrics: Mapping[str, int | float | None | str] = {}
     if scope.readability_status == "eligible":
         words, characters, syllables = _token_counts(scope.readability_sentences)
+        passive_counter = {
+            PASSIVE_V4_REFERENCE: count_passive_sentences_v4,
+            PASSIVE_V5_REFERENCE: count_passive_sentences_v5,
+        }.get(passive_method_reference, count_passive_sentences)
         readability_counts = HhsReadabilityScopeCountsDraft(
             readability_word_count=words,
             sentence_count=len(scope.readability_sentences),
             character_count=characters,
             syllable_count=syllables,
             passive_sentence_count=(
-                (
-                    count_passive_sentences_v4
-                    if passive_method_reference == PASSIVE_V4_REFERENCE
-                    else count_passive_sentences
-                )(scope.readability_sentences)
+                passive_counter(scope.readability_sentences)
                 if classify_passive_voice
                 else None
             ),

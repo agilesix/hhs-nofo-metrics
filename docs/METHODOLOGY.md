@@ -49,6 +49,12 @@ check whether a sentence is grammatically complete. A fragment ending with a
 period can still count. See [content selection and its limits](#content-selection-and-rationale)
 for the detailed rules.
 
+A candidate passive rule treats “as defined by” as a reduced definition modifier,
+rather than evidence on its own of a passive sentence. Another passive clause
+in the same sentence still counts. The candidate is not selected by packaged
+profiles; existing results retain their released rules. See the
+[candidate evaluation](PASSIVE_V5_CANDIDATE.md).
+
 **How a Word or PDF file identifies its content affects what gets counted.**
 For example, a heading identified as a heading is treated differently from text
 that only looks like a heading. A PDF without structural tags can make reading
@@ -255,6 +261,15 @@ The corrected method recognizes contracted be auxiliaries, excludes `need` and
 Ambiguous pronoun `'s` retains previous behavior because it can mean either
 `is` or `has`. PassivePy was an attributed calibration reference, not a runtime
 dependency; its code is not copied into this package.
+
+The unpublished candidate `hhs-nofo-passive-sentence-rule@0.5.0-provisional`
+skips `defined` only in the existing `as + participle + by` scan. It retains
+finite be/get passives, including “The award is defined by the agreement,” and
+other reduced by-phrases. It does not use agency names, lists of statutes, or a
+sentence-wide string exemption. It does not determine grammatical completeness
+or limit the modifier exception to legal citations. No packaged profile selects
+it; only explicit kernel evaluation can use it. Denominators and other metric
+formulas are unchanged. See [candidate evaluation](PASSIVE_V5_CANDIDATE.md).
 
 ## Reuse, comparison and change control
 

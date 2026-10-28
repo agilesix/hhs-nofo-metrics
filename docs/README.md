@@ -38,6 +38,10 @@ impact, and release/consumer dependencies.
 
 ## Adoption and validation records
 
+- [Definition modifier candidate](PASSIVE_V5_CANDIDATE.md): proposed passive
+  method, synthetic expectations, explicit kernel evaluation, and pending
+  validation before profile activation.
+
 - [Passive classifier correction](PASSIVE_V4_ADOPTION.md): corrected profile
   references, remaining method limitations, and downstream adoption checks.
 - [Nested table paragraph continuity](NESTED_TABLE_ADOPTION.md): candidate
