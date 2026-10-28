@@ -60,42 +60,34 @@ Changing this classification does not remove words or sentences from metric
 scope. The passive numerator can decrease; the sentence denominator, word and
 syllable counts, grade and other formulas stay unchanged for a fixed inventory.
 
-## Evaluation without activating a profile
+## Profile selection in the prepared release
 
-No packaged profile references this method. The public `analyze` API and CLI
-continue to select released behavior. For explicit kernel evaluation with
-synthetic inputs:
+The prepared 0.7.0 package makes the method selectable through the public
+analysis API and CLI. These profiles remain provisional:
+
+| Input | Existing profile retained | New opt-in profile |
+| --- | --- | --- |
+| Semantic HTML including consumer-converted Word | `hhs-nofo-fy27-html@0.5.0` | `hhs-nofo-fy27-html@0.6.0` |
+| Tagged PDF | `hhs-nofo-fy27-pdf-estimate@0.6.0` | `hhs-nofo-fy27-pdf-estimate@0.7.0` |
+| Untagged PDF | `hhs-nofo-fy27-generic-pdf-estimate@0.5.0` | `hhs-nofo-fy27-generic-pdf-estimate@0.6.0` |
 
 ```python
-from hhs_nofo_metrics.methods.passive_voice_v5 import METHOD_REFERENCE
-from hhs_nofo_metrics.resolved_scope import (
-    ResolvedMeasurementScope,
-    calculate_resolved_measurement_scope,
-)
+from hhs_nofo_metrics import SourceBundle, analyze
 
-sentences = (
-    "An eligible organization as defined by the charter.",
-    "Applications are reviewed by the board.",
+source = SourceBundle.from_html(
+    b"<p>An eligible entity as defined by the charter.</p>"
+    b"<p>Applications are reviewed by the board.</p>"
 )
-scope = ResolvedMeasurementScope(
-    document_status="eligible",
-    readability_status="eligible",
-    document_content_units=sentences,
-    readability_sentences=sentences,
-)
-result = calculate_resolved_measurement_scope(
-    scope,
-    classify_passive_voice=True,
-    passive_method_reference=METHOD_REFERENCE,
-)
-assert result.readability_counts.passive_sentence_count == 1
-assert result.readability_counts.sentence_count == 2
+result = analyze(source, profile="hhs-nofo-fy27-html@0.6.0")
+assert result.metrics["passive_sentence_percentage"].value == 50
+assert result.metrics["words_per_sentence"].components["sentence_count"] == 2
 ```
 
-This uses an internal evaluation interface, not a newly supported public
-profile. Adoption needs a separately versioned profile, package release and
-explicit consumer selection. Do not relabel old results with the candidate
-identity or assume installing a package activates it.
+The earlier PR #25 exposed only an explicit kernel candidate; release preparation
+adds profiles and engine validation for the public paths. Installing the package
+does not change a caller's selected profile. Keep old results under their actual
+identities and recalculate explicitly. Publication and downstream adoption remain
+pending until the [release preparation gates](RELEASE_0_7_0.md) are complete.
 
 ## Validation and remaining decisions
 
@@ -103,7 +95,10 @@ identity or assume installing a package activates it.
 modifiers, finite definitions, genuine be/get passives before and after the
 modifier, contractions, another reduced passive later in the sentence, active
 controls, counting a sentence once, and preservation of the accepted inventory
-and other metric values. Historical profile selection remains unchanged.
+and other metric values. Historical profiles retain their selected methods.
+`tests/test_passive_v5_profiles.py` also exercises public API selection for HTML,
+tagged PDF and generic PDF, plus fixed inventories, source-free results and
+profile changes limited to identity, description and passive method.
 
 An independently enumerated six-item synthetic inventory contains three
 standalone definition modifiers, two genuinely passive sentences and one active

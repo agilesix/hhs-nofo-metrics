@@ -12,6 +12,13 @@ For the complete input/result contract, see
 
 ## Choose a source and profile
 
+Release preparation for **0.7.0** adds new opt-in definition-modifier profiles:
+HTML `0.6.0`, tagged PDF `0.7.0` and generic PDF `0.6.0`. They are selectable in
+the prepared source, but do not treat the package as published until its release
+record and assets exist. See [release preparation](RELEASE_0_7_0.md) and
+[profile selection](PASSIVE_V5_CANDIDATE.md#profile-selection-in-the-prepared-release).
+The installation instructions below continue to identify the last published release.
+
 The recommended profiles in released package **v0.6.0** are:
 
 - `hhs-nofo-fy27-html@0.5.0`: provisional source-native behavior for semantic

@@ -1,7 +1,8 @@
 # Nested table paragraph continuity
 
 Issue: [metrics #12](https://github.com/agilesix/hhs-nofo-metrics/issues/12).
-Candidate package: **0.6.1**. Tagged adapter: **0.1.8**.
+Originally prepared package: **0.6.1**; now included in the **0.7.0** release
+preparation. Tagged adapter: **0.1.8**.
 Resolver: `pdf-tagged-structure-group-resolver@0.3.8`.
 Release publication and downstream verification are pending.
 
@@ -126,7 +127,7 @@ release, using eligible sources and separately approved systems/workflows under
 
 ## Release and Builder dependency
 
-1. Release package 0.6.1 with adapter 0.1.8 / resolver 0.3.8 after the package
+1. Release package 0.7.0 with adapter 0.1.8 / resolver 0.3.8 after the package
    and private real-document gates pass. Keep 0.6.0 available to reproduce the
    previous extraction. The source change alone does not publish a release.
 2. Builder must adopt the released package or its immutable release commit;

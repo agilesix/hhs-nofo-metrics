@@ -126,8 +126,14 @@ def test_explicit_candidate_changes_only_passive_numerator():
     assert released.METHOD_VERSION == "0.4.0-provisional"
 
 
-def test_candidate_is_not_selected_by_any_packaged_profile():
+def test_new_profiles_select_v5_without_changing_historical_profiles():
+    new_profiles = {
+        "hhs-nofo-fy27-html@0.6.0",
+        "hhs-nofo-fy27-pdf-estimate@0.7.0",
+        "hhs-nofo-fy27-generic-pdf-estimate@0.6.0",
+    }
     for reference in list_profile_references():
         profile, _ = load_profile_record(reference)
         method = profile.methods["passive_classifier"]
-        assert f"{method.id}@{method.version}" != candidate.METHOD_REFERENCE
+        observed = f"{method.id}@{method.version}"
+        assert (observed == candidate.METHOD_REFERENCE) == (reference in new_profiles)

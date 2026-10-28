@@ -203,6 +203,9 @@ def test_packaged_profiles_resolve_explicit_product_pipelines() -> None:
 
 def test_distribution_preserves_released_profiles_and_corrected_profiles() -> None:
     assert {path.name for path in PROFILE_PATHS} == {
+        "hhs-nofo-fy27-html-0.6.0.json",
+        "hhs-nofo-fy27-pdf-estimate-0.7.0.json",
+        "hhs-nofo-fy27-generic-pdf-estimate-0.6.0.json",
         "hhs-nofo-fy27-html-0.4.0.json",
         "hhs-nofo-fy27-pdf-estimate-0.5.0.json",
         "hhs-nofo-fy27-generic-pdf-estimate-0.4.0.json",

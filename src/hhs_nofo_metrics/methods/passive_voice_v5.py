@@ -6,7 +6,7 @@ is passive when it contains a bounded finite passive. The narrow phrase
 ``as + participle + by`` is also recognized, except for the reduced definition
 modifier ``as defined by``. Other passive clauses in the same sentence still
 count. Broader reduced passives and bounded adjectival-state patterns are excluded.
-This candidate is not selected by any packaged measurement profile.
+New opt-in profiles select this method; historical profiles retain their rules.
 """
 
 from __future__ import annotations

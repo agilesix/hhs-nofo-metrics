@@ -113,6 +113,16 @@ first extend and test the tooling and document the prerelease installation
 contract; do not label an unvalidated normal release as a candidate after
 publishing it.
 
+## Current release preparation
+
+The user has authorized preparation and publication of 0.7.0, including the
+new opt-in definition-modifier profiles and the already-merged nested-table
+repair. For this release, Ben has explicitly authorized proceeding without a
+separate agreement from Mike. This records the release-specific instruction;
+it does not change the general maintainer convention above or waive validation,
+public-information, CI, or program requirements. See the
+[0.7.0 preparation record](RELEASE_0_7_0.md) for the frozen scope and remaining gates.
+
 ## Applying this to candidate 0.6.1
 
 PR #14 proposes a bounded extraction correction with unchanged formulas,

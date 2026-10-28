@@ -25,6 +25,9 @@ from hhs_nofo_metrics.methods import (
 from hhs_nofo_metrics.methods.passive_voice_v4 import (
     METHOD_REFERENCE as PASSIVE_V4_REFERENCE,
 )
+from hhs_nofo_metrics.methods.passive_voice_v5 import (
+    METHOD_REFERENCE as PASSIVE_V5_REFERENCE,
+)
 from hhs_nofo_metrics.methods.token_candidates import (
     READABILITY_CHARACTER_CANDIDATE_REFERENCE,
     SYLLABLE_CANDIDATE_METHOD_REFERENCE,
@@ -122,10 +125,12 @@ def _validate_profile(profile: MetricProfile) -> None:
     if passive_reference not in {
         PASSIVE_SENTENCE_METHOD_REFERENCE,
         PASSIVE_V4_REFERENCE,
+        PASSIVE_V5_REFERENCE,
     }:
         raise ProfileError(
             "Semantic block pipeline requires passive_classifier method "
-            f"{PASSIVE_SENTENCE_METHOD_REFERENCE!r} or {PASSIVE_V4_REFERENCE!r}; profile "
+            f"{PASSIVE_SENTENCE_METHOD_REFERENCE!r}, {PASSIVE_V4_REFERENCE!r} "
+            f"or {PASSIVE_V5_REFERENCE!r}; profile "
             f"declares {passive_reference!r}"
         )
     resolve_profile_metric_scopes(profile)

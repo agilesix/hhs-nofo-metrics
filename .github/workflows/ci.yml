@@ -94,14 +94,17 @@ jobs:
         run: |
           python -m venv /tmp/hhs-nofo-metrics-wheel-smoke
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/python -m pip install dist/*.whl
-          test "$(/tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --version)" = "0.6.1"
-          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics | grep 'profiles\[6\]:'
+          test "$(/tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --version)" = "0.7.0"
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics | grep 'profiles\[9\]:'
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics profiles list --json | python -m json.tool > /dev/null
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --help
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/python - <<'PY'
           from hhs_nofo_metrics import SourceBundle, analyze, list_profiles
 
           assert set(list_profiles()) == {
+              "hhs-nofo-fy27-html@0.6.0",
+              "hhs-nofo-fy27-pdf-estimate@0.7.0",
+              "hhs-nofo-fy27-generic-pdf-estimate@0.6.0",
               "hhs-nofo-fy27-html@0.4.0",
               "hhs-nofo-fy27-pdf-estimate@0.5.0",
               "hhs-nofo-fy27-generic-pdf-estimate@0.4.0",
@@ -125,18 +128,25 @@ jobs:
           assert old.metrics["passive_sentence_percentage"].components["passive_sentence_count"] == 1
           assert corrected.metrics["passive_sentence_percentage"].components["passive_sentence_count"] == 2
           assert corrected.metrics["passive_sentence_percentage"].method.version == "0.4.0-provisional"
+          source = SourceBundle.from_html(b"<p>An eligible entity as defined by the charter.</p><p>Applications are reviewed by the board.</p>")
+          released = analyze(source, profile="hhs-nofo-fy27-html@0.5.0")
+          defined = analyze(source, profile="hhs-nofo-fy27-html@0.6.0")
+          assert released.metrics["passive_sentence_percentage"].value == 100
+          assert defined.metrics["passive_sentence_percentage"].value == 50
+          assert defined.metrics["passive_sentence_percentage"].method.version == "0.5.0-provisional"
+          assert defined.metrics["words_per_sentence"].components["sentence_count"] == 2
           PY
 
       - name: Install source distribution in a clean environment
         run: |
           python -m venv /tmp/hhs-nofo-metrics-sdist-smoke
           /tmp/hhs-nofo-metrics-sdist-smoke/bin/python -m pip install dist/*.tar.gz
-          test "$(/tmp/hhs-nofo-metrics-sdist-smoke/bin/hhs-nofo-metrics --version)" = "0.6.1"
+          test "$(/tmp/hhs-nofo-metrics-sdist-smoke/bin/hhs-nofo-metrics --version)" = "0.7.0"
           /tmp/hhs-nofo-metrics-sdist-smoke/bin/python - <<'PY'
           from hhs_nofo_metrics import AnalysisResult, list_profiles
 
           assert AnalysisResult.__name__ == "AnalysisResult"
-          assert len(list_profiles()) == 6
+          assert len(list_profiles()) == 9
           PY
 
   secrets:
