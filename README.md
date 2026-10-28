@@ -38,6 +38,11 @@ counts toward Word Count but is left out of the other readability metrics. A
 PDF without structural tags can make reading order harder to identify on pages
 with multiple columns, in tables, or around sidebars and text boxes.
 
+A [candidate passive rule](docs/PASSIVE_V5_CANDIDATE.md) stops counting the
+reduced modifier “as defined by” alone as passive. Other passive clauses still
+count. It is available for explicit kernel evaluation only; packaged profiles
+and current consumer calculations are unchanged.
+
 Read the [plain-language explanation](docs/METHODOLOGY.md#in-brief) and
 [HHS Departmental review and NOFO Builder](docs/METHODOLOGY.md#hhs-departmental-review-and-nofo-builder)
 for more about what is counted, why results can differ from Microsoft Word, and

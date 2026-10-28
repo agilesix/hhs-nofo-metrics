@@ -35,6 +35,12 @@ package release may support more than one measurement contract.
 
 ### Added
 
+- Add an opt-in kernel candidate, passive method `0.5.0-provisional`, that excludes
+  the reduced definition modifier “as defined by” as the sole passive evidence.
+  Preserve finite passive clauses, other reduced by-phrases and all released
+  methods/profiles. Synthetic regressions cover counting and unchanged metric
+  scope; packaged profiles and consumer behavior are not changed.
+
 - Initial maintainer release-decision policy covering timing, related-PR
   dependencies, recorded scope/technical agreement, patch/minor/major version
   choices during 0.x and after 1.0, and explicit publication/consumer adoption.
