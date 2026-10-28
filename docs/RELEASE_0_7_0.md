@@ -8,8 +8,9 @@ The planned date and dated changelog must be refreshed if publication happens la
 Ben explicitly requested the release-preparation PR and publication of 0.7.0,
 including making the new passive method selectable, and directed proceeding
 without asking Mike for separate agreement. This is the release-specific scope
-and publication authorization. It does not establish formal HHS method approval
-or waive the repository's validation and public-information gates.
+and publication authorization. It does not establish formal HHS method approval.
+The release-specific validation decision below defers the broader real-document
+gate; public-information and automated verification requirements remain in force.
 
 Base: `bee45e54864093f1a375f2ded2f3239e4562d301` on `main`.
 This release includes all merged changes since published tag `v0.6.0`:
