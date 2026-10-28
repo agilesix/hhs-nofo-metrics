@@ -1,8 +1,8 @@
 # HHS NOFO Metrics
 
-HHS NOFO Metrics calculates versioned, reproducible plain-language measurements
+HHS NOFO Metrics calculates versioned, reproducible readability metrics
 for an HHS Notice of Funding Opportunity (NOFO). It gives authors and consuming
-systems measurements and provenance for a whole NOFO under an explicit
+systems readability metrics and provenance for a whole NOFO under an explicit
 measurement profile.
 
 ## What it measures
@@ -16,7 +16,7 @@ measurement profile.
 
 Results also include sentence-bearing block counts and average sentences per
 paragraph for consumer display. The
-[methodology](docs/METHODOLOGY.md) explains how the measurements work, which
+[methodology](docs/METHODOLOGY.md) explains how the readability metrics work, which
 content is counted, and the limitations of each input path.
 
 A numeric result does not establish clearance, compliance, accessibility, or
@@ -24,6 +24,25 @@ document quality. The package does not perform generative-AI review, and its
 measurement profiles and methods remain provisional. See
 [AI use and contribution guidance](docs/AI_USE.md) for the package boundary and
 contributor responsibilities.
+
+## How the metrics are calculated
+
+The readability metrics focus on content intended for applicants. Navigation,
+covers, tables of contents, headers, footers, decorative material, and
+instructions intended only for NOFO writers are excluded when the file's
+structure identifies them.
+
+How a Word or PDF file identifies headings, paragraphs, lists, and tables
+affects what gets counted. For example, a heading identified as a heading
+counts toward Word Count but is left out of the other readability metrics. A
+PDF without structural tags can make reading order harder to identify on pages
+with multiple columns, in tables, or around sidebars and text boxes.
+
+Read the [plain-language explanation](docs/METHODOLOGY.md#in-brief) and
+[HHS Departmental review and NOFO Builder](docs/METHODOLOGY.md#hhs-departmental-review-and-nofo-builder)
+for more about what is counted, why results can differ from Microsoft Word, and
+how readability metrics can support preparation of a NOFO submission package
+for Departmental review.
 
 ## How it can be used
 

@@ -24,6 +24,7 @@ Identify required release and adoption/verification dependencies, or state
 
 ## Review checklist
 
+- [ ] For changes to content selection, sentence rules, formulas, input handling, or reliability (including `methods/`, `adapters/`, `profiles/`, `metric_scopes.py`, `resolved_scope.py`, or `semantic_html_engine.py` under `src/hhs_nofo_metrics/`), I re-checked and updated the [methodology summary](../docs/METHODOLOGY.md#in-brief) and [README summary](../README.md#how-the-metrics-are-calculated) as needed, or explained why neither changes. I also re-checked the HHS/Builder section if guidance or consumer behavior changed.
 - [ ] Appropriate checks pass, with limitations recorded above.
 - [ ] User-visible behavior and version changes appear in the changelog and relevant docs.
 - [ ] Released contracts are preserved, or versioning is explained above.

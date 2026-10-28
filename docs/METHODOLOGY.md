@@ -2,6 +2,108 @@
 
 Status: **provisional implementation; not formally HHS-approved**
 
+## In brief
+
+<!-- Keep this section and README.md#how-the-metrics-are-calculated accurate
+when content selection, sentence rules, formulas, input handling, or reliability
+changes. Check methods/, adapters/, profiles/, metric_scopes.py,
+resolved_scope.py, and semantic_html_engine.py under src/hhs_nofo_metrics/.
+Also re-check the HHS/Builder section when guidance or consumer behavior changes. -->
+
+**The aim is to measure content intended for applicants.** Navigation, covers,
+tables of contents, headers, footers, decorative material, and instructions
+intended only for NOFO writers are excluded when the file's structure identifies
+them.
+
+The package cannot reliably recognize all of this content by appearance alone.
+For example, a table of contents identified as navigation can be excluded, but
+the same text stored as ordinary paragraphs may count. These readability metrics
+can help authors review their NOFO when preparing the NOFO submission package
+for Departmental review. They do not determine whether a NOFO is clear,
+accessible, or ready for submission.
+
+**The readability metrics describe different aspects of the text.** Word Count
+reports how much selected text the NOFO contains. Average words per sentence
+and characters per word describe sentence and word length. Flesch Reading Ease
+and Flesch-Kincaid Grade Level combine sentence length and estimated syllable
+counts to indicate reading difficulty. Passive-sentence percentage reports how
+often the package recognizes passive voice. These are signals for people to
+review, not judgments about every sentence or proof of reader comprehension.
+
+**Word Count includes more text than the other readability metrics.** It
+includes selected headings, labels, paragraphs, lists, table text, and text
+fragments. The other five readability metrics use the same selected text from
+paragraphs, lists, and table cells. That text must end with a period, question
+mark, or exclamation point. Headings are left out of those five readability
+metrics.
+
+For example, "Submit your application by Friday." can contribute to all five
+readability metrics. "Application deadline" can contribute to Word Count but
+is left out of the other readability metrics because it has no ending
+punctuation. A heading identified as a heading also counts toward Word Count
+but is left out of the other readability metrics, even if it ends with a period.
+
+The package accounts for some punctuation that does not end a sentence, such as
+periods in recognized abbreviations, decimals, and web addresses. It does not
+check whether a sentence is grammatically complete. A fragment ending with a
+period can still count. See [content selection and its limits](#content-selection-and-rationale)
+for the detailed rules.
+
+**How a Word or PDF file identifies its content affects what gets counted.**
+For example, a heading identified as a heading is treated differently from text
+that only looks like a heading. A PDF without structural tags can make reading
+order harder to identify on pages with multiple columns, in tables, or around
+sidebars and text boxes.
+
+- **Word content imported into NOFO Builder:** this package does not read Word
+  files directly. Builder imports the content, saves it, and renders it as
+  HTML—the format used for web pages. The package uses the identified headings,
+  paragraphs, lists, and tables in that HTML to calculate readability metrics.
+  Importing or rendering the content differently can change the results.
+- **PDF with structural tags:** tags identify content such as paragraphs and
+  tables. The package uses those tags to interpret the document and reports how
+  reliable its estimates are. Missing or incorrect tags can change the counts
+  even when the PDF looks correct.
+- **PDF without usable structural tags:** the package estimates paragraphs and
+  reading order from the placement of text on the page. Repeated headers and
+  similar material may remain included. These results are reported as
+  low-reliability estimates.
+
+**Results can differ from Microsoft Word's readability statistics.** Word uses
+its own rules for counting words and sentences, estimating syllables, and
+identifying passive voice. This package uses its own documented, versioned
+rules. The two may also include different content because of headings,
+paragraph boundaries, or changes introduced during conversion. Matching Word's
+numbers is not the package's definition of correctness. Readability metrics
+help people review writing; they do not demonstrate that readers will
+understand it.
+
+## HHS Departmental review and NOFO Builder
+
+These readability metrics can help authors review their NOFO when preparing
+the NOFO submission package for Departmental review. The package calculates
+readability metrics; it does not determine whether submission requirements
+have been met.
+
+For submission instructions, follow the *HHS FY 2027 NOFO Content and Clearance
+Guidance*, including **Step 2. Submit your NOFO for Departmental clearance**.
+Use that guidance for requirements about the final designed PDF, approved
+Office of Grants tools, and submission materials.
+
+The SimplerNOFOs team supports reviewing readability metrics through NOFO
+Builder's **Readability metrics** panel and the
+[**Readability Checker**](https://nofos.simpler.grants.gov/nofos/readability-checker/),
+which checks uploaded documents. Access and supported file formats depend on
+the tool's availability and your permissions. Follow the FY27 guidance for
+calculating and submitting readability metrics for Departmental review.
+
+Builder's panel calculates readability metrics from the NOFO's saved content.
+The [Builder guide](consumers/NOFO_BUILDER.md) describes the calculation path
+and technical details. This overview does not establish that a particular tool
+or calculation path is approved for Departmental submissions.
+
+## About this document
+
 This describes the whole-NOFO calculations implemented by the bundled profiles,
 not a new calculation policy. The HHS Office of Grants directs the work and
 measurement decisions; Agile Six implements and maintains the code as a
