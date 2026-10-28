@@ -7,6 +7,21 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-28
+
+Release preparation; publication is pending the gates in
+[the preparation record](docs/RELEASE_0_7_0.md). The date is the planned release
+date and must be updated if publication occurs later.
+
+### Measurement profiles
+
+- Add HTML `0.6.0`, tagged-PDF `0.7.0` and generic-PDF `0.6.0` profiles selecting
+  passive method `0.5.0-provisional`. The public API/CLI can explicitly select
+  the new definition-modifier rule. Existing profiles retain their methods.
+- Fold the previously unpublished 0.6.1 nested-table correction into this 0.7.0
+  preparation. Adapter 0.1.8 / resolver 0.3.8 can change PDF inventories under
+  existing profiles; retain the original package for historical reproduction.
+
 ### Documentation
 
 - Keep the Readability Checker name and description in the public methodology
@@ -39,7 +54,8 @@ package release may support more than one measurement contract.
   the reduced definition modifier “as defined by” as the sole passive evidence.
   Preserve finite passive clauses, other reduced by-phrases and all released
   methods/profiles. Synthetic regressions cover counting and unchanged metric
-  scope; packaged profiles and consumer behavior are not changed.
+  scope. New 0.7.0 profiles expose the option; existing consumer references do
+  not switch automatically.
 
 - Initial maintainer release-decision policy covering timing, related-PR
   dependencies, recorded scope/technical agreement, patch/minor/major version
@@ -56,7 +72,7 @@ package release may support more than one measurement contract.
 
 ### Fixed
 
-- Candidate package 0.6.1 exposes stable nested table-block identities in tagged
+- The nested-table fix originally prepared for 0.6.1 exposes stable identities in tagged
   adapter 0.1.8 / resolver 0.3.8. The same source-declared paragraph inside a
   TD or TH can continue across pages without creating sentence or paragraph
   boundaries. Different paragraphs, headings, and cells stay separate; inline

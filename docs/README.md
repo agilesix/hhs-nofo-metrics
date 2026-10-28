@@ -38,6 +38,9 @@ impact, and release/consumer dependencies.
 
 ## Adoption and validation records
 
+- [Release 0.7.0 preparation](RELEASE_0_7_0.md): included changes, explicit profile
+  selection, validation state, publication conditions and consumer follow-up.
+
 - [Definition modifier candidate](PASSIVE_V5_CANDIDATE.md): proposed passive
   method, synthetic expectations, explicit kernel evaluation, and pending
   validation before profile activation.

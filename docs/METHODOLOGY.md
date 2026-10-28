@@ -51,9 +51,9 @@ for the detailed rules.
 
 A candidate passive rule treats “as defined by” as a reduced definition modifier,
 rather than evidence on its own of a passive sentence. Another passive clause
-in the same sentence still counts. The candidate is not selected by packaged
-profiles; existing results retain their released rules. See the
-[candidate evaluation](PASSIVE_V5_CANDIDATE.md).
+in the same sentence still counts. The prepared 0.7.0 release adds opt-in
+profiles for this method; historical profiles retain their released rules.
+See the [method evaluation](PASSIVE_V5_CANDIDATE.md).
 
 **How a Word or PDF file identifies its content affects what gets counted.**
 For example, a heading identified as a heading is treated differently from text
@@ -267,9 +267,13 @@ skips `defined` only in the existing `as + participle + by` scan. It retains
 finite be/get passives, including “The award is defined by the agreement,” and
 other reduced by-phrases. It does not use agency names, lists of statutes, or a
 sentence-wide string exemption. It does not determine grammatical completeness
-or limit the modifier exception to legal citations. No packaged profile selects
-it; only explicit kernel evaluation can use it. Denominators and other metric
-formulas are unchanged. See [candidate evaluation](PASSIVE_V5_CANDIDATE.md).
+or limit the modifier exception to legal citations. The prepared 0.7.0 release
+selects it in HTML profile `0.6.0`, tagged-PDF
+profile `0.7.0` and generic-PDF profile `0.6.0`. Historical profiles remain
+unchanged. Denominators and other metric formulas are unchanged for a fixed
+inventory; the release also includes a separately versioned tagged-adapter
+repair, which can change PDF extraction scope. See
+[candidate evaluation](PASSIVE_V5_CANDIDATE.md).
 
 ## Reuse, comparison and change control
 
@@ -295,7 +299,8 @@ uncertainty wording remain distinct from this provisional implementation.
 
 ## Nested table paragraph repair candidate
 
-The unpublished package 0.6.1 candidate introduces tagged adapter 0.1.8 / resolver
+The nested-table repair initially prepared for 0.6.1 is included in the
+unpublished 0.7.0 preparation, with tagged adapter 0.1.8 / resolver
 0.3.8. It preserves the identity of a declared paragraph inside a TD/TH across
 pages, while keeping separate paragraphs, headings, and cells separate. This
 can change accepted sentence words and sentence-bearing block counts under an
