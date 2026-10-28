@@ -12,27 +12,20 @@ For the complete input/result contract, see
 
 ## Choose a source and profile
 
-Release preparation for **0.7.0** adds new opt-in definition-modifier profiles:
-HTML `0.6.0`, tagged PDF `0.7.0` and generic PDF `0.6.0`. They are selectable in
-the prepared source, but do not treat the package as published until its release
-record and assets exist. See [release preparation](RELEASE_0_7_0.md) and
-[profile selection](PASSIVE_V5_CANDIDATE.md#profile-selection-in-the-prepared-release).
-The installation instructions below continue to identify the last published release.
+The recommended profiles in released package **v0.7.0** are:
 
-The recommended profiles in released package **v0.6.0** are:
-
-- `hhs-nofo-fy27-html@0.5.0`: provisional source-native behavior for semantic
+- `hhs-nofo-fy27-html@0.6.0`: provisional source-native behavior for semantic
   export HTML.
-- `hhs-nofo-fy27-pdf-estimate@0.6.0`: recommended PDF-only profile for PDFs
+- `hhs-nofo-fy27-pdf-estimate@0.7.0`: recommended PDF-only profile for PDFs
   with a usable structure tree; returns numeric estimates with metric-specific
   reliability and include/exclude sensitivity when tagged content is unknown.
-- `hhs-nofo-fy27-generic-pdf-estimate@0.5.0`: fallback for untagged or
+- `hhs-nofo-fy27-generic-pdf-estimate@0.6.0`: fallback for untagged or
   Word-saved PDFs; reconstructs conservative paragraph blocks from visual text
   lines and always labels configured metrics as low-reliability estimates.
 
-These profiles select passive method `0.4.0-provisional`. Historical profiles
+These profiles select passive method `0.5.0-provisional`. Historical profiles
 remain available unchanged for interpreting earlier results; see the
-[profile comparison](PASSIVE_V4_ADOPTION.md#profile-selection). Installing
+[profile comparison](PASSIVE_V5_CANDIDATE.md#profile-selection-in-release-070). Installing
 a new package does not select a new profile or upgrade a deployed consumer.
 
 For PDF-only workflows that need useful numeric estimates without a separate
@@ -50,11 +43,11 @@ semantic HTML whenever it is available.
 ## Installation
 
 Use Python 3.11 or newer. Install the pinned wheel from the
-[v0.6.0 release](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.6.0).
+[v0.7.0 release](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.7.0).
 The URL fragment makes pip verify the downloaded wheel's SHA-256:
 
 ```bash
-python -m pip install "https://github.com/agilesix/hhs-nofo-metrics/releases/download/v0.6.0/hhs_nofo_metrics-0.6.0-py3-none-any.whl#sha256=7fc342f8bc0b7f78cf876ef41de847cf09404cdfe1045db10bd908df338ca81c"
+python -m pip install "https://github.com/agilesix/hhs-nofo-metrics/releases/download/v0.7.0/hhs_nofo_metrics-0.7.0-py3-none-any.whl#sha256=12b7af8292552096e05dceb7911981b93ec4eb5bc6120a7622befea646ab7966"
 ```
 
 The release also provides a source distribution. Its published SHA-256 is
@@ -84,7 +77,7 @@ from hhs_nofo_metrics import NofoMetricsError, analyze
 try:
     result = analyze(
         "notice.pdf",
-        profile="hhs-nofo-fy27-pdf-estimate@0.6.0",
+        profile="hhs-nofo-fy27-pdf-estimate@0.7.0",
     )
 except NofoMetricsError as error:
     print(error.to_dict())
@@ -104,7 +97,7 @@ For a tagged PDF estimate:
 ```python
 result = analyze(
     "notice.pdf",
-    profile="hhs-nofo-fy27-pdf-estimate@0.6.0",
+    profile="hhs-nofo-fy27-pdf-estimate@0.7.0",
 )
 
 reliability = result.metrics["word_count"].reliability
@@ -120,7 +113,7 @@ from hhs_nofo_metrics import SourceBundle, analyze
 
 result = analyze(
     SourceBundle.from_html(export_html.encode("utf-8")),
-    profile="hhs-nofo-fy27-html@0.5.0",
+    profile="hhs-nofo-fy27-html@0.6.0",
     adapter_config={"root_id": "download_target"},
     production_path="nofo_builder_export_html",
 )
@@ -137,21 +130,21 @@ to limit analysis to the element with ID `download_target`:
 
 ```bash
 hhs-nofo-metrics analyze notice.pdf \
-  --profile hhs-nofo-fy27-pdf-estimate@0.6.0 \
+  --profile hhs-nofo-fy27-pdf-estimate@0.7.0 \
   --output result.json
 
 hhs-nofo-metrics analyze export.html \
   --source-kind html \
-  --profile hhs-nofo-fy27-html@0.5.0 \
+  --profile hhs-nofo-fy27-html@0.6.0 \
   --adapter-config html-adapter.json \
   --output result.json
 
 hhs-nofo-metrics analyze tagged-notice.pdf \
-  --profile hhs-nofo-fy27-pdf-estimate@0.6.0 \
+  --profile hhs-nofo-fy27-pdf-estimate@0.7.0 \
   --output result.json
 
 hhs-nofo-metrics analyze word-saved-notice.pdf \
-  --profile hhs-nofo-fy27-generic-pdf-estimate@0.5.0 \
+  --profile hhs-nofo-fy27-generic-pdf-estimate@0.6.0 \
   --output result.json
 
 hhs-nofo-metrics profiles list

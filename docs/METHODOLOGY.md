@@ -51,7 +51,7 @@ for the detailed rules.
 
 A candidate passive rule treats “as defined by” as a reduced definition modifier,
 rather than evidence on its own of a passive sentence. Another passive clause
-in the same sentence still counts. The prepared 0.7.0 release adds opt-in
+in the same sentence still counts. Released 0.7.0 adds opt-in
 profiles for this method; historical profiles retain their released rules.
 See the [method evaluation](PASSIVE_V5_CANDIDATE.md).
 
@@ -262,12 +262,12 @@ Ambiguous pronoun `'s` retains previous behavior because it can mean either
 `is` or `has`. PassivePy was an attributed calibration reference, not a runtime
 dependency; its code is not copied into this package.
 
-The unpublished candidate `hhs-nofo-passive-sentence-rule@0.5.0-provisional`
+Released `hhs-nofo-passive-sentence-rule@0.5.0-provisional`
 skips `defined` only in the existing `as + participle + by` scan. It retains
 finite be/get passives, including “The award is defined by the agreement,” and
 other reduced by-phrases. It does not use agency names, lists of statutes, or a
 sentence-wide string exemption. It does not determine grammatical completeness
-or limit the modifier exception to legal citations. The prepared 0.7.0 release
+or limit the modifier exception to legal citations. Released 0.7.0
 selects it in HTML profile `0.6.0`, tagged-PDF
 profile `0.7.0` and generic-PDF profile `0.6.0`. Historical profiles remain
 unchanged. Denominators and other metric formulas are unchanged for a fixed
@@ -300,7 +300,7 @@ uncertainty wording remain distinct from this provisional implementation.
 ## Nested table paragraph repair candidate
 
 The nested-table repair initially prepared for 0.6.1 is included in the
-unpublished 0.7.0 preparation, with tagged adapter 0.1.8 / resolver
+released package 0.7.0, with tagged adapter 0.1.8 / resolver
 0.3.8. It preserves the identity of a declared paragraph inside a TD/TH across
 pages, while keeping separate paragraphs, headings, and cells separate. This
 can change accepted sentence words and sentence-bearing block counts under an
