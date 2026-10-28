@@ -1,6 +1,6 @@
-# Definition modifier passive candidate
+# Definition modifier passive rule
 
-The candidate method `hhs-nofo-passive-sentence-rule@0.5.0-provisional` stops
+The released provisional method `hhs-nofo-passive-sentence-rule@0.5.0-provisional` stops
 counting the reduced modifier “as defined by” alone as evidence of a passive
 sentence. The intent is to distinguish a reference to a definition from a finite
 passive predicate. This is a provisional measurement choice, not a declaration
@@ -60,9 +60,9 @@ Changing this classification does not remove words or sentences from metric
 scope. The passive numerator can decrease; the sentence denominator, word and
 syllable counts, grade and other formulas stay unchanged for a fixed inventory.
 
-## Profile selection in the prepared release
+## Profile selection in release 070
 
-The prepared 0.7.0 package makes the method selectable through the public
+Released 0.7.0 makes the method selectable through the public
 analysis API and CLI. These profiles remain provisional:
 
 | Input | Existing profile retained | New opt-in profile |
@@ -83,11 +83,11 @@ assert result.metrics["passive_sentence_percentage"].value == 50
 assert result.metrics["words_per_sentence"].components["sentence_count"] == 2
 ```
 
-The earlier PR #25 exposed only an explicit kernel candidate; release preparation
+The earlier PR #25 exposed only an explicit kernel candidate; release 0.7.0
 adds profiles and engine validation for the public paths. Installing the package
 does not change a caller's selected profile. Keep old results under their actual
-identities and recalculate explicitly. Publication and downstream adoption remain
-pending until the [release preparation gates](RELEASE_0_7_0.md) are complete.
+identities and recalculate explicitly. Package publication is complete; downstream adoption is separate. The
+[release record](RELEASE_0_7_0.md) discloses the release-specific validation deferral.
 
 ## Validation and remaining decisions
 
@@ -111,7 +111,9 @@ suite passed, with 86.22% overall coverage against the 84% requirement. Formatti
 lint, pre-commit, public-boundary and release-identity checks passed. These checks
 establish tested implementation behavior, not independent linguistic validation.
 
-Private-document cohort validation and independent method review remain pending.
+The broader real-document cohort gate was deferred for 0.7.0 by explicit release
+decision, as recorded in [the release record](RELEASE_0_7_0.md). Independent
+linguistic validation and downstream consumer verification remain pending.
 Only use eligible inputs and approved workflows under the
 [public repository boundary](PUBLIC_REPOSITORY_BOUNDARY.md). Keep private source
 files and per-document evidence out of this repository. If adopted, select new

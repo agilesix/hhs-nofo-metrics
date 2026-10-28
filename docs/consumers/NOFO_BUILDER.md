@@ -71,20 +71,20 @@ before assuming that visually similar Word, HTML and PDF inputs have identical
 included content. Word conversion and import transformations are NOFO Builder
 responsibilities, not a DOCX adapter in this package.
 
-## Prepared definition modifier upgrade
+## Definition modifier upgrade
 
-The unpublished 0.7.0 release preparation adds HTML profile
+Released 0.7.0 adds HTML profile
 `hhs-nofo-fy27-html@0.6.0`, tagged-PDF profile `hhs-nofo-fy27-pdf-estimate@0.7.0`
 and generic-PDF profile `hhs-nofo-fy27-generic-pdf-estimate@0.6.0`. These select
 passive method `0.5.0-provisional`. Retaining existing profile references retains
 the earlier passive classifier, even after installing the package.
 
-After publication, Builder must explicitly update the artifact dependency and
+Builder must explicitly update the artifact dependency and
 lockfile, the saved-HTML panel profile, the standalone Word upload's HTML profile,
 and the PDF worker's tagged/generic profiles if PDF adoption is in scope. Test
 all paths separately. Keep older snapshots under their original identities; new
 profile/package identities should produce new calculations. See
-[release preparation](../RELEASE_0_7_0.md) for scope and pending gates.
+[release record](../RELEASE_0_7_0.md) for scope and deferred validation.
 
 ## Suggested persistence
 

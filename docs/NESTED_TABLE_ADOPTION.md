@@ -1,10 +1,11 @@
 # Nested table paragraph continuity
 
 Issue: [metrics #12](https://github.com/agilesix/hhs-nofo-metrics/issues/12).
-Originally prepared package: **0.6.1**; now included in the **0.7.0** release
-preparation. Tagged adapter: **0.1.8**.
+Originally prepared package: **0.6.1**; included in published **0.7.0**. Tagged adapter: **0.1.8**.
 Resolver: `pdf-tagged-structure-group-resolver@0.3.8`.
-Release publication and downstream verification are pending.
+[Package 0.7.0 is published](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.7.0);
+downstream verification remains pending. The broader real-document gate was
+explicitly deferred for this release; see [the release record](RELEASE_0_7_0.md).
 
 ## Reproduction and reference
 
@@ -127,9 +128,9 @@ release, using eligible sources and separately approved systems/workflows under
 
 ## Release and Builder dependency
 
-1. Release package 0.7.0 with adapter 0.1.8 / resolver 0.3.8 after the package
-   and private real-document gates pass. Keep 0.6.0 available to reproduce the
-   previous extraction. The source change alone does not publish a release.
+1. Package 0.7.0 is published with adapter 0.1.8 / resolver 0.3.8. Its
+   [release record](RELEASE_0_7_0.md) records completed automated gates and the
+   explicitly deferred real-document gate. Keep 0.6.0 for previous extraction.
 2. Builder must adopt the released package or its immutable release commit;
    explicit adapter consumers must update their adapter reference to 0.1.8.
    Profile 0.5.0 may remain selected; opting into profile 0.6.0 is the separate

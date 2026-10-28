@@ -9,9 +9,9 @@ package release may support more than one measurement contract.
 
 ## [0.7.0] - 2026-10-28
 
-Release preparation; publication is pending the gates in
-[the preparation record](docs/RELEASE_0_7_0.md). The date is the planned release
-date and must be updated if publication occurs later.
+Published with an explicitly documented real-document validation deferral.
+See [the release record](docs/RELEASE_0_7_0.md) and
+[release notes](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.7.0).
 
 ### Measurement profiles
 

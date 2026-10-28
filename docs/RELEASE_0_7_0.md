@@ -1,7 +1,11 @@
-# Release 0.7.0 preparation
+# Release 0.7.0 record
 
-Status: **authorized for publication after automated gates**. Planned date: October 28, 2026.
-The planned date and dated changelog must be refreshed if publication happens later.
+Status: **published October 28, 2026**. [GitHub Release](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.7.0).
+Source commit: `505ce6116ff52445affb0163ac1e854e39fd4f95`. [Tag CI](https://github.com/agilesix/hhs-nofo-metrics/actions/runs/40754060462) passed.
+Wheel and source distribution were rebuilt from that commit and passed contents
+and clean-install API/CLI checks. Both uploaded assets and `SHA256SUMS` were
+downloaded and verified against the final local bytes. The release-specific
+real-document deferral below remains part of the publication record.
 
 ## Scope and authorization
 
@@ -71,8 +75,8 @@ Synthetic expectations are specified independently of the parser output:
 Local preparation checks passed: **369 tests**, **86.22% coverage**, formatting,
 lint, pre-commit, public tree/history boundary, tagged release identity, and
 wheel/source-distribution contents plus clean-install API/CLI checks. The new
-profile paths were exercised on invented inputs. GitHub CI and final release
-artifact receipts are recorded in the release PR as they complete. Checks must be rerun on the final release commit and artifact.
+profile paths were exercised on invented inputs. GitHub PR and tag CI passed. Final artifact hashes are published with the
+GitHub Release; uploaded bytes were verified against the final local receipts. Checks must be rerun on the final release commit and artifact.
 A previous package build or a green PR is not the hosted tag check.
 
 ## Release decision and deferred validation
@@ -108,7 +112,7 @@ attribution is unchanged, and source/examples added for this release are invente
 No pre-decisional documents or derivatives have been included. Automated scans
 still do not establish formal policy or public-release approval.
 
-## Publication sequence
+## Publication procedure and consumer follow-up
 
 1. Retain the release-specific real-document deferral above and the known limits;
    complete all automated gates and retain the unchanged license attribution.
