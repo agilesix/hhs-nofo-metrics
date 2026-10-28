@@ -6,6 +6,31 @@ sentence. The intent is to distinguish a reference to a definition from a finite
 passive predicate. This is a provisional measurement choice, not a declaration
 that reduced clauses have no passive grammatical interpretation.
 
+## Investigation and rationale
+
+Manual comparison with Microsoft Word separated two possible sources of different
+passive percentages: different text being measured, and different passive
+classifications within that text. Small wording substitutions and a separate
+content-control removal test were used to investigate them.
+
+Replacing definition modifiers reduced the Checker's passive count without
+changing its sentence count, while Word's displayed passive percentage stayed
+unchanged. Separately, bulk removal of Word content controls increased Word's
+measured sentence count to match the Checker's count, but a passive-percentage
+difference remained. These observations support keeping scope and classification
+investigations separate. Equal sentence totals do not establish identical
+sentence inventories or a shared classifier.
+
+This candidate addresses the definition-modifier classification only. It does
+not repair Word proofing scope or explain every remaining discrepancy. Matching
+Word is not itself a correctness criterion. The question for method review is
+whether treating a reduced definition modifier alone as passive evidence gives
+useful feedback while preserving recognition of other passive clauses.
+
+Document-specific observations and source evidence remain private. The examples
+and fixtures here are invented. The manual observations motivated this candidate;
+they are not a completed cohort evaluation of the implemented method.
+
 ## Exact behavior
 
 The candidate copies the released 0.4 method and changes only its reduced
