@@ -119,8 +119,12 @@ The user has authorized preparation and publication of 0.7.0, including the
 new opt-in definition-modifier profiles and the already-merged nested-table
 repair. For this release, Ben has explicitly authorized proceeding without a
 separate agreement from Mike. This records the release-specific instruction;
-it does not change the general maintainer convention above or waive validation,
-public-information, CI, or program requirements. See the
+it does not change the general maintainer convention above. Ben subsequently
+explicitly authorized deferring the five-source real-document gate for this
+release, relying on the sanitized PR #25 investigation and synthetic/public-path
+checks. The gate is recorded as not run, not passed; the general gate remains
+unchanged for future releases. Public-information, automated CI and program
+requirements are not waived. See the
 [0.7.0 preparation record](RELEASE_0_7_0.md) for the frozen scope and remaining gates.
 
 ## Applying this to candidate 0.6.1

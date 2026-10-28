@@ -1,6 +1,6 @@
 # Release 0.7.0 preparation
 
-Status: **prepared source; not published**. Planned date: October 28, 2026.
+Status: **authorized for publication after automated gates**. Planned date: October 28, 2026.
 The planned date and dated changelog must be refreshed if publication happens later.
 
 ## Scope and authorization
@@ -74,24 +74,43 @@ profile paths were exercised on invented inputs. GitHub CI and final release
 artifact receipts are recorded in the release PR as they complete. Checks must be rerun on the final release commit and artifact.
 A previous package build or a green PR is not the hosted tag check.
 
-**Publication hold:** the five-source real-document gate has not been completed
-for this release. No eligible cohort or current approved receipt was found
-while preparing this PR. Required source kinds are Builder HTML, native
-Builder/Prince tagged PDF, Builder Word-to-PDF, non-Builder tagged PDF and
-untagged/degraded PDF. Use an approved workflow and eligible sources; retain
-only the sanitized aggregate receipt described in
-[the release process](RELEASE_PROCESS.md#private-real-document-gate).
-Synthetic fixtures and the earlier Word comparison are not a substitute.
-Independent linguistic review is also not established by automated code review.
+## Release decision and deferred validation
 
-The existing MIT attribution is retained. A responsible maintainer's
-public-release eligibility and attribution confirmation remains a manual gate;
-automated scans cannot make that determination.
+On October 28, 2026, Ben explicitly directed proceeding with 0.7.0 without the
+broader five-source real-document gate for this release. The decision accepts
+the bounded scope on the basis of the manual investigation summarized in
+[PR #25](https://github.com/agilesix/hhs-nofo-metrics/pull/25),
+its synthetic regression evidence, and this preparation's public-path and
+package checks. This is a release-specific exception, not a change to the
+default gate for future releases. No further Mike agreement was requested.
+
+The investigation found that definition-modifier substitutions changed Checker
+passive classification with a fixed Checker sentence denominator, while Word's
+displayed passive percentage stayed unchanged. A separate bulk content-control
+removal test changed Word's measured scope and brought sentence counts into
+agreement, while a passive-percentage difference remained. The evidence supports
+separating scope and classifier issues; it does not establish Word parity,
+independent linguistic accuracy, or that this candidate resolves every difference.
+Only the sanitized explanation is public; source documents and per-document
+receipts are not part of the release.
+
+The five-source gate remains **not run for 0.7.0**: Builder HTML, native
+Builder/Prince PDF, Builder Word-to-PDF, non-Builder tagged PDF and
+untagged/degraded PDF were not evaluated as a frozen release cohort. Synthetic
+checks are not relabeled as real-document evidence. Independent linguistic
+validation and downstream consumer verification also remain unestablished.
+The existing nested-table producer limitation remains accepted as outside the
+bounded repair; the release does not claim it fixed.
+
+Ben's explicit publication instruction is the release decision. The existing MIT
+attribution is unchanged, and source/examples added for this release are invented.
+No pre-decisional documents or derivatives have been included. Automated scans
+still do not establish formal policy or public-release approval.
 
 ## Publication sequence
 
-1. Complete the real-document gate, record the sanitized outcome and disposition
-   of known limits, and confirm public-release eligibility and attribution.
+1. Retain the release-specific real-document deferral above and the known limits;
+   complete all automated gates and retain the unchanged license attribution.
 2. Merge this release preparation with required checks passing. Freeze the exact
    merge commit, refresh the date as needed, and build/check both distributions
    from the final committed source. Verify clean-install API and CLI behavior,
