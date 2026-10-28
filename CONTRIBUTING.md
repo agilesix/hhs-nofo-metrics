@@ -133,6 +133,17 @@ maintainer/consumer actions; CI does not publish a release automatically.
 
 ## Documentation changes
 
+Re-check the [methodology's In brief section](docs/METHODOLOGY.md#in-brief)
+and [README calculation summary](README.md#how-the-metrics-are-calculated)
+whenever content selection, sentence rules, formulas, input handling, or
+reliability changes. This includes changes in `methods/`, `adapters/`,
+`profiles/`, `metric_scopes.py`, `resolved_scope.py`, and
+`semantic_html_engine.py` under `src/hhs_nofo_metrics/`. Update the summaries in
+the same PR when their descriptions change. Re-check the HHS/Builder section
+when guidance or the consumer implementation changes. Confirm an internal
+source's public-release eligibility before publishing a citation or excerpt;
+do not reproduce internal guidance or targets without authorization.
+
 Update docs alongside the contract they describe. In particular:
 
 - keep getting-started profile references and examples aligned with packaged resources;

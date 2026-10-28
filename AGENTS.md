@@ -64,6 +64,13 @@ Paths above are relative to `src/hhs_nofo_metrics/` unless explicitly prefixed.
 
 ## Measurement changes
 
+- Re-check the [methodology summary](docs/METHODOLOGY.md#in-brief) and
+  [README summary](README.md#how-the-metrics-are-calculated) whenever content
+  selection, sentence rules, formulas, input handling, or reliability changes.
+  This includes changes in `methods/`, `adapters/`, `profiles/`,
+  `metric_scopes.py`, `resolved_scope.py`, or `semantic_html_engine.py` under
+  `src/hhs_nofo_metrics/`. Update both summaries in the same PR as needed;
+  re-check the HHS/Builder section when guidance or consumer behavior changes.
 - Reproduce reported behavior against the relevant current package before
   treating historical observations as a present failure.
 - Check extraction, ordering, block boundaries, selection, and denominators

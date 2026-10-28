@@ -2,6 +2,110 @@
 
 Status: **provisional implementation; not formally HHS-approved**
 
+## In brief
+
+<!-- Keep this section and README.md#how-the-metrics-are-calculated accurate
+when content selection, sentence rules, formulas, input handling, or reliability
+changes. Check methods/, adapters/, profiles/, metric_scopes.py,
+resolved_scope.py, and semantic_html_engine.py under src/hhs_nofo_metrics/.
+Also re-check the HHS/Builder section when guidance or consumer behavior changes. -->
+
+The package reports how much selected text a NOFO contains and several signals
+of reading difficulty. It reports values, not a clearance decision or whether
+an HHS target has been met. The [HHS/Builder section](#hhs-clearance-guidance-and-nofo-builder)
+explains the review context and what still needs confirmation.
+
+**Word Count and the five sentence metrics count different things.** Word Count
+includes selected headings, labels, body text, lists, table cells, and text
+fragments. The other five metrics—words per sentence, characters per word,
+Flesch Reading Ease, Flesch-Kincaid Grade Level, and passive-sentence
+percentage—share the same selected sentences from body, list, and table content.
+Headings do not contribute to those five metrics. A sentence must end with a
+recognized period, exclamation mark, or question mark; recognized abbreviations,
+decimals, and URLs receive special handling. This is a punctuation rule, not a
+check that the text is a complete grammatical sentence. Unfinished fragments
+can add document words without contributing to sentence metrics.
+
+**The aim is to measure applicant-facing content.** Recognized navigation,
+covers, tables of contents, headers, footers, decorative material, and
+writer-only instructions are excluded from both counts. The input must identify
+that structure: the package cannot reliably recognize all of it by appearance.
+A table of contents or instruction presented as ordinary body text can count.
+This limits layout and navigation effects without treating every heading or
+list fragment as a sentence. See [selection and recognition limits](#content-selection-and-rationale).
+
+**Input format matters.**
+
+- **Word through Builder:** this package does not read Word files directly.
+  Builder imports and renders saved content as HTML; the package uses its
+  reading order and recognized headings, paragraphs, lists, and tables. This is
+  the preferred structured path when the consumer controls that content, but
+  import and rendering changes can change what is measured. It is a structured
+  estimate, not proof of correct extraction or an assessment of the designed PDF.
+- **Tagged PDF:** the package uses the PDF's declared structure. It reports
+  reliability based on extraction and how much uncertain structure affects
+  results. Incorrect or missing tags can change the counts, even when the PDF
+  looks correct.
+- **Untagged PDF:** the fallback reconstructs blocks from visual text lines.
+  Reading order and content roles are less certain, so these results are
+  low-reliability estimates. Headers and similar material may remain included.
+
+**Microsoft Word can report different numbers.** Word's proofing scope and
+internal word, sentence, syllable, and passive-voice rules are not this package's
+versioned rules. Conversion, content selection, and paragraph boundaries can
+also change the text being counted. Matching Word's statistics is not the
+package's definition of correctness. These signals help people review writing;
+they do not demonstrate comprehension, accessibility, or HHS approval.
+
+## HHS clearance guidance and NOFO Builder
+
+These metrics support gathering readability information for HHS NOFO review.
+The package provides measurements; the responsible program determines which
+requirements and targets apply. It does not apply clearance targets or certify
+that a NOFO meets them.
+
+**Guidance citation pending maintainer confirmation:** issue
+[#20](https://github.com/agilesix/hhs-nofo-metrics/issues/20) identifies the
+*HHS FY 2027 NOFO Content and Clearance Guidance* as the intended reference.
+Its issued title/version date and permission to publish a short exact quote
+still need confirmation. No quote, target values, or access-restricted resource
+link is included here. This section is incomplete until that review is done;
+it does not establish the guidance's exact requirements.
+
+The package's names for the measurements are:
+
+| Measurement | Package metric name |
+| --- | --- |
+| Word Count | `word_count` |
+| Average words per sentence | `words_per_sentence` |
+| Characters per word | `characters_per_word` |
+| Flesch Reading Ease | `flesch_reading_ease` |
+| Flesch-Kincaid Grade Level | `flesch_kincaid_grade_level` |
+| Passive sentences (%) | `passive_sentence_percentage` |
+
+Average sentences per paragraph is also available as the
+`sentences_per_paragraph` component of sentence metrics; it is not a separate
+top-level metric. This table names package outputs, not a verified transcription
+of the internal guidance's terminology or required submission fields.
+
+The SimplerNOFOs team supports gathering measurements through NOFO Builder's
+**Readability metrics** panel. Builder's
+[measurement implementation](https://github.com/HHS/simpler-grants-pdf-builder/blob/8ac6e76d10fc8a1dc4abd82c3504b2fe6877e11f/nofos/nofos/readability.py#L157)
+renders HTML from saved NOFO content and analyzes it with
+`hhs-nofo-fy27-html@0.5.0`. Its
+[panel button](https://github.com/HHS/simpler-grants-pdf-builder/blob/8ac6e76d10fc8a1dc4abd82c3504b2fe6877e11f/nofos/nofos/templates/nofos/includes/readability_metrics_panel.html#L32)
+is labeled **Calculate metrics**. This describes the source implementation
+checked October 28, 2026, not a verification of every deployed environment.
+
+The panel measures that HTML, **not the final designed PDF**. Do not assume
+that a panel result satisfies a final-PDF measurement requirement or that HTML
+and PDF values will match. Confirm the applicable source and tool requirements
+with the Office of Grants. Neither this package nor the panel is represented
+here as an approved Office of Grants tool. The
+[Builder guide](consumers/NOFO_BUILDER.md) describes the integration boundary.
+
+## About this document
+
 This describes the whole-NOFO calculations implemented by the bundled profiles,
 not a new calculation policy. The HHS Office of Grants directs the work and
 measurement decisions; Agile Six implements and maintains the code as a

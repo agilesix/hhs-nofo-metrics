@@ -25,6 +25,16 @@ measurement profiles and methods remain provisional. See
 [AI use and contribution guidance](docs/AI_USE.md) for the package boundary and
 contributor responsibilities.
 
+## How the metrics are calculated
+
+Word Count includes selected headings and fragments; the five sentence metrics
+use the same selected, terminally punctuated sentences. Input structure affects
+what is recognized and counted, so HTML, PDFs, and Microsoft Word can produce
+different results. Read the [plain-language summary](docs/METHODOLOGY.md#in-brief)
+and [HHS clearance guidance and NOFO Builder](docs/METHODOLOGY.md#hhs-clearance-guidance-and-nofo-builder)
+for the measurement source, review context, and pending guidance confirmation.
+The package reports values and does not apply clearance targets.
+
 ## How it can be used
 
 The package supports semantic HTML, tagged PDFs, and a lower-confidence fallback
