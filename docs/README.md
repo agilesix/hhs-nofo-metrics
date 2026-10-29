@@ -38,6 +38,9 @@ impact, and release/consumer dependencies.
 
 ## Adoption and validation records
 
+- [October 29 master-template passive review](validation/2026-10-29-master-template-passive-review.md):
+  manual comparison findings, synthetic controls, and the decision to retain existing rules.
+
 - [Release 0.7.0 record](RELEASE_0_7_0.md): published artifacts, included changes,
   explicit profile selection, deferred validation and consumer follow-up.
 
