@@ -120,3 +120,11 @@ files and per-document evidence out of this repository. If adopted, select new
 profiles explicitly and validate each consumer's conversion path separately.
 Do not bundle this candidate into a release merely because it shares a working
 package version with another unreleased correction.
+
+## Subsequent manual comparison
+
+The [October 29 FY27 master-template review](validation/2026-10-29-master-template-passive-review.md)
+found similar directional responses in Word and Checker for three applicant-facing
+passive-to-active rewrites. No further exceptions were justified. Sentence-count
+differences remain unresolved; the supporting synthetic tests preserve existing
+behavior and do not establish Word parity.
