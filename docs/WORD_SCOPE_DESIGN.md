@@ -32,3 +32,13 @@ and actual converter fixtures for TOC boundary paragraphs and galleries.
 The position heuristic in the initial tests is deliberately bounded to
 front matter with a structural cue immediately following the break and
 no earlier structural heading. Unsupported input stays countable.
+
+## Conversion probe
+
+A synthetic DOCX passed through Builder's current Mammoth options preserved
+temporary bookmark anchors inside their own HTML paragraphs for a text
+paragraph, an otherwise empty paragraph, and a paragraph in a content
+control. This supports a conversion-only association prototype. It does
+not yet establish that bookmarks survive all table, list, or field paths.
+Generate markers that cannot collide with input bookmarks, require an
+unambiguous association, and remove the markers before scoring or output.
