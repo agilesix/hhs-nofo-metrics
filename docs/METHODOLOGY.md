@@ -172,6 +172,11 @@ Recognition depends on the input path:
   and non-content elements such as scripts are skipped. The adapter does not
   infer covers, writer instructions, citations or TOCs from visual styling,
   arbitrary CSS class names or arbitrary `role` attributes.
+- **Word-derived HTML**, with the opt-in Word profile, uses paired conversion
+  boundaries tied to native Word styles, fields, section breaks and content
+  controls. Verified HHS writer-instruction containers and bounded Builder
+  metadata are also recognized. Unmatched or ambiguous boundaries do not
+  exclude recovered text.
 - **Tagged PDFs** use source-declared structure and selected producer/profile
   rules. For example, `TOCI` maps to table of contents, `Note` to body and
   `Caption` to heading. Unknown content contributes to estimates, with coverage
@@ -187,7 +192,9 @@ Common cases illustrate the limits:
   ordinary paragraphs can add document words and, if punctuated, accepted
   sentences. An unpunctuated TOC row can add words without a sentence. Tagged-PDF
   `TOCI` is excluded, but a visually identical unrecognized PDF row need not be.
-  There is no universal TOC-removal guarantee.
+  Word TOC styles, fields or a TOC content control can exclude recognized
+  entries, but a plain lookalike paragraph still counts. There is no universal
+  TOC-removal guarantee.
 - An accepted instruction in a list or table cell contributes to sentence
   metrics; an unpunctuated fragment contributes only document words. A `<th>`
   is a heading, while an ordinary `<td>` label is not automatically recognized
