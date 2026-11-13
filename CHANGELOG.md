@@ -7,6 +7,10 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+- Add a synthetic-tested Word cover/contents recognition foundation for the
+  proposed standalone checker profile. No released profile, score, or input
+  contract changes; analysis does not use the recognizer yet.
+
 ## [0.7.0] - 2026-10-28
 
 Published with an explicitly documented real-document validation deferral.
