@@ -91,7 +91,10 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
     # Track the complete outer field, including nested page-reference fields.
     # Never accept an unterminated field or exclude unrelated prose that shares
     # the opening/closing paragraph of a field.
-    fields: list[tuple[int, list[str]]] = []
+    fields: list[list[str]] = []
+    result_start = None
+    result_paragraphs: set[int] = set()
+    outside_text: set[int] = set()
     for index, block in enumerate(blocks):
         if _is_instruction_table(block):
             roles[index] = WordFrontMatter("instruction", "table")
@@ -105,6 +108,8 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
                     roles[index] = WordFrontMatter("table_of_contents", "gallery")
         if block.tag != f"{_W}p":
             fields.clear()
+            result_start = None
+            result_paragraphs.clear()
             continue
         if _TOC_STYLE.fullmatch(_style(block)):
             roles[index] = WordFrontMatter("table_of_contents", "style")
@@ -114,16 +119,34 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
             if node.tag == f"{_W}fldChar":
                 kind = node.get(f"{_W}fldCharType")
                 if kind == "begin":
-                    fields.append((index, []))
+                    if not fields:
+                        result_start = None
+                        result_paragraphs.clear()
+                    fields.append([])
+                elif kind == "separate" and len(fields) == 1:
+                    if _TOC_INSTRUCTION.match("".join(fields[0])):
+                        result_start = index
                 elif kind == "end" and fields:
-                    start, instruction = fields.pop()
-                    if not fields and _TOC_INSTRUCTION.match("".join(instruction)):
-                        for position in range(start + 1, index):
+                    fields.pop()
+                    if not fields and result_start is not None:
+                        for position in result_paragraphs:
                             roles.setdefault(
                                 position, WordFrontMatter("table_of_contents", "field")
                             )
+                        result_start = None
             elif node.tag == f"{_W}instrText" and fields:
-                fields[-1][1].append(node.text or "")
+                fields[-1].append(node.text or "")
+            elif node.tag == f"{_W}t" and (node.text or "").strip():
+                if result_start is not None:
+                    result_paragraphs.add(index)
+                else:
+                    outside_text.add(index)
+
+    for position in outside_text:
+        if roles.get(position) == WordFrontMatter("table_of_contents", "field"):
+            # A simple field was checked for whole-paragraph ownership above.
+            if not _is_simple_toc(blocks[position]):
+                del roles[position]
 
     for index, block in enumerate(blocks):
         if index in roles or block.tag != f"{_W}p":

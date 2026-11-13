@@ -86,6 +86,30 @@ def test_simple_toc_field_does_not_exclude_shared_applicant_prose():
     assert recognize(f"<w:p>{field}<w:r><w:t>Apply today.</w:t></w:r></w:p>") == {}
 
 
+def test_complex_field_keeps_mixed_boundaries_and_excludes_whole_results():
+    start = (
+        '<w:r><w:fldChar w:fldCharType="begin"/></w:r>'
+        "<w:r><w:instrText> TOC </w:instrText></w:r>"
+        '<w:r><w:fldChar w:fldCharType="separate"/></w:r>'
+    )
+    end = '<w:r><w:fldChar w:fldCharType="end"/></w:r>'
+    entry = "<w:r><w:t>Eligibility 3</w:t></w:r>"
+    prose = "<w:r><w:t>Applicants should apply.</w:t></w:r>"
+    assert recognize(f"<w:p>{start}{entry}{end}</w:p>") == {
+        0: WordFrontMatter("table_of_contents", "field")
+    }
+    assert recognize(f"<w:p>{start}{entry}</w:p>", f"<w:p>{entry}{end}</w:p>") == {
+        0: WordFrontMatter("table_of_contents", "field"),
+        1: WordFrontMatter("table_of_contents", "field"),
+    }
+    assert (
+        recognize(
+            f"<w:p>{prose}{start}{entry}</w:p>", f"<w:p>{entry}{end}{prose}</w:p>"
+        )
+        == {}
+    )
+
+
 def test_generated_metadata_needs_basic_information_context():
     label = paragraph("Metadata author: Example agency")
     assert recognize(label) == {}
