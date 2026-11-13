@@ -7,9 +7,9 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
-- Add a synthetic-tested Word cover/contents recognition foundation for the
-  proposed standalone checker profile. No released profile, score, or input
-  contract changes; analysis does not use the recognizer yet.
+- Add an opt-in Word-derived profile and result schema 1.3.0. Verified
+  conversion boundaries support cover, contents, and instruction exclusions,
+  with aggregate counts only. Released profiles retain their behavior.
 
 ## [0.7.0] - 2026-10-28
 

@@ -1,5 +1,9 @@
 # NOFO Builder consumer guide
 
+Only the standalone checker's Word upload path should adopt the Word-derived
+profile. The Builder editor panel keeps its existing semantic HTML profile
+and saved results; the PDF upload path also keeps its existing profiles.
+
 This is a non-normative mapping from the consumer-neutral package contract to
 NOFO Builder. Builder is one consumer; its persistence, jobs, permissions, and
 UI remain outside the package.

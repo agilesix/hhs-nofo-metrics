@@ -1,5 +1,11 @@
 # Measurement methodology
 
+The opt-in Word-derived profile recognizes native Word structure and verified
+HHS instruction containers before conversion. It leaves recovered text
+countable when the structure or its conversion boundaries are ambiguous.
+Ordinary text that looks like a contents entry is not enough to exclude it.
+See [Word scope and conversion](WORD_SCOPE_DESIGN.md).
+
 Status: **provisional implementation; not formally HHS-approved**
 
 ## In brief

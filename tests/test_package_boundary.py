@@ -17,5 +17,6 @@ def test_product_registers_supported_generic_source_adapters() -> None:
         "hhs-pdf-adapter",
         "hhs-semantic-html-adapter",
         "hhs-tagged-pdf-adapter",
+        "hhs-word-derived-html-adapter",
     ]
     assert adapters[0]["reference"].startswith("hhs-pdf-adapter@")
