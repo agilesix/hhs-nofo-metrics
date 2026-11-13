@@ -57,6 +57,10 @@ for untagged PDFs. Prefer semantic HTML when a system owns ordered source
 content. PDF results include reliability information to help consumers interpret
 extraction uncertainty.
 
+The opt-in Word-derived profile accepts converted HTML with verified source
+boundaries and reports counts for recognized excluded content. Plain HTML and
+PDF profiles do not adopt the Word rules.
+
 Systems can reuse the Python package or its command-line interface. Consumers
 own their interface, storage, permissions, targets, and workflow. Word conversion
 is currently handled by NOFO Builder outside this package.

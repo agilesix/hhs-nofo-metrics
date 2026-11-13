@@ -9,6 +9,7 @@ from hhs_nofo_metrics.errors import AdapterContractError, AdapterNotFoundError
 from .builtin import HtmlAdapterPlugin, PdfAdapterPlugin
 from .contracts import AdapterDescriptor, AdapterPlugin
 from .tagged_pdf import TaggedPdfAdapterPlugin
+from .word_html import WordHtmlAdapterPlugin
 
 
 class AdapterRegistry:
@@ -74,12 +75,14 @@ def create_default_registry() -> AdapterRegistry:
     pdf = PdfAdapterPlugin()
     html = HtmlAdapterPlugin()
     tagged_pdf = TaggedPdfAdapterPlugin()
+    word_html = WordHtmlAdapterPlugin()
     return AdapterRegistry(
-        plugins=(pdf, html, tagged_pdf),
+        plugins=(pdf, html, tagged_pdf, word_html),
         aliases={
             "pdf": pdf.descriptor.reference,
             "html": html.descriptor.reference,
             "tagged-pdf": tagged_pdf.descriptor.reference,
+            "word-html": word_html.descriptor.reference,
         },
     )
 

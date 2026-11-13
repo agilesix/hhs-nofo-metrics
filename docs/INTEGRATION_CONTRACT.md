@@ -1,5 +1,13 @@
 # Integration contract
 
+The opt-in `hhs-nofo-fy27-word@0.1.0` profile takes converted HTML with a
+trusted `word_boundaries` map in the adapter configuration. The map must come
+from the disposable, validated DOCX conversion, not from the upload or
+arbitrary HTML attributes. Unmatched blocks remain countable. Result schema
+1.3.0 adds `excluded_word_content`, a map of category to aggregate word and
+segment counts. It never contains source text. Existing profiles retain their
+result schemas.
+
 This is the consumer-neutral boundary for `hhs-nofo-metrics`. NOFO Builder, NOFO
 Checker, batch jobs, and future consumers use the same API. Persistence,
 orchestration, UI, thresholds, and clearance decisions remain consumer-owned.
