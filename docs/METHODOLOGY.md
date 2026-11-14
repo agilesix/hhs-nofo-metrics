@@ -173,8 +173,9 @@ Recognition depends on the input path:
   infer covers, writer instructions, citations or TOCs from visual styling,
   arbitrary CSS class names or arbitrary `role` attributes.
 - **Word-derived HTML**, with the opt-in Word profile, uses paired conversion
-  boundaries tied to native Word styles, fields, section breaks and content
-  controls. Verified HHS writer-instruction containers and bounded Builder
+  boundaries tied to native Word styles, fields, and content controls. A cover
+  requires the Word Cover Pages gallery. Paragraphs with both contents-field
+  results and prose outside the field remain countable. Verified HHS writer-instruction containers and bounded Builder
   metadata are also recognized. Unmatched or ambiguous boundaries do not
   exclude recovered text.
 - **Tagged PDFs** use source-declared structure and selected producer/profile

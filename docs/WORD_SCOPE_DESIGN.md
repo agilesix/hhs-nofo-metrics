@@ -21,17 +21,17 @@ whole HTML block and each occur exactly once.
 Use a new, opt-in Word-derived profile with the existing role-based
 selection and unchanged formulas. Existing HTML and PDF profiles and prior
 results must not change. Report only aggregate excluded word/segment
-counts, plus the count attributed to a position-only cover. Keep
-comparison persistence and UI in Builder. The metadata rule requires the
+counts for recognized content. Keep comparison persistence and UI in Builder. The metadata rule requires the
 generated Basic information pattern with OpDiv and opportunity number before
 excluding the three specific PDF metadata labels.
 
 Single-cell instruction tables must start with a known writer-only label.
 Builder reuses its verified template-box eligibility check and passes the
 resulting paragraph positions instead of duplicating its DrawingML/VML rules.
-The position heuristic is deliberately bounded to
-front matter with a structural cue immediately following the break and
-no earlier structural heading. Unsupported input stays countable.
+A cover requires the Word Cover Pages gallery. A section break alone leaves
+preceding text countable. A paragraph that contains both a completed TOC
+field result and prose outside the field stays countable, even when it uses
+a built-in TOC style.
 
 ## Conversion probe
 

@@ -29,7 +29,7 @@ _HEADING_LEVELS = frozenset(str(i) for i in range(9))
 @dataclass(frozen=True, slots=True)
 class WordFrontMatter:
     role: Literal["cover", "table_of_contents", "instruction", "metadata"]
-    basis: Literal["gallery", "style", "field", "label", "position", "table", "builder"]
+    basis: Literal["gallery", "style", "field", "label", "table", "builder"]
 
 
 def _text(node: Element) -> str:
@@ -71,15 +71,12 @@ def _is_instruction_table(table: Element) -> bool:
     return bool(_INSTRUCTION_LABEL.match(first))
 
 
-def _is_simple_toc(paragraph: Element) -> bool:
-    text_nodes = {
-        node for node in paragraph.iter(f"{_W}t") if (node.text or "").strip()
-    }
-    return any(
-        _TOC_INSTRUCTION.match(field.get(f"{_W}instr", ""))
-        and text_nodes <= set(field.iter(f"{_W}t"))
+def _simple_toc_fields(paragraph: Element) -> list[Element]:
+    return [
+        field
         for field in paragraph.findall(f"{_W}fldSimple")
-    )
+        if _TOC_INSTRUCTION.match(field.get(f"{_W}instr", ""))
+    ]
 
 
 def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
@@ -95,6 +92,8 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
     result_start = None
     result_paragraphs: set[int] = set()
     outside_text: set[int] = set()
+    completed_toc_paragraphs: set[int] = set()
+    mixed_toc_paragraphs: set[int] = set()
     for index, block in enumerate(blocks):
         if _is_instruction_table(block):
             roles[index] = WordFrontMatter("instruction", "table")
@@ -113,8 +112,15 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
             continue
         if _TOC_STYLE.fullmatch(_style(block)):
             roles[index] = WordFrontMatter("table_of_contents", "style")
-        if _is_simple_toc(block):
-            roles[index] = WordFrontMatter("table_of_contents", "field")
+        simple_fields = _simple_toc_fields(block)
+        if simple_fields:
+            text_nodes = {
+                node for node in block.iter(f"{_W}t") if (node.text or "").strip()
+            }
+            if any(text_nodes <= set(field.iter(f"{_W}t")) for field in simple_fields):
+                roles[index] = WordFrontMatter("table_of_contents", "field")
+            else:
+                mixed_toc_paragraphs.add(index)
         for node in block.iter():
             if node.tag == f"{_W}fldChar":
                 kind = node.get(f"{_W}fldCharType")
@@ -129,10 +135,7 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
                 elif kind == "end" and fields:
                     fields.pop()
                     if not fields and result_start is not None:
-                        for position in result_paragraphs:
-                            roles.setdefault(
-                                position, WordFrontMatter("table_of_contents", "field")
-                            )
+                        completed_toc_paragraphs.update(result_paragraphs)
                         result_start = None
             elif node.tag == f"{_W}instrText" and fields:
                 fields[-1].append(node.text or "")
@@ -142,14 +145,15 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
                 else:
                     outside_text.add(index)
 
-    for position in outside_text:
-        if roles.get(position) == WordFrontMatter("table_of_contents", "field"):
-            # A simple field was checked for whole-paragraph ownership above.
-            if not _is_simple_toc(blocks[position]):
-                del roles[position]
+    # Field boundaries take precedence over the paragraph style.
+    mixed_toc_paragraphs.update(completed_toc_paragraphs & outside_text)
+    for position in completed_toc_paragraphs - outside_text:
+        roles.setdefault(position, WordFrontMatter("table_of_contents", "field"))
+    for position in mixed_toc_paragraphs:
+        roles.pop(position, None)
 
     for index, block in enumerate(blocks):
-        if index in roles or block.tag != f"{_W}p":
+        if index in roles or index in mixed_toc_paragraphs or block.tag != f"{_W}p":
             continue
         # Recognize the built-in TOC heading only beside actual TOC entries.
         next_role = roles.get(index + 1)
@@ -160,17 +164,6 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
         ):
             roles[index] = WordFrontMatter("table_of_contents", "label")
 
-    for index, block in enumerate(blocks[:-1]):
-        if block.find(f"{_W}pPr/{_W}sectPr") is None:
-            continue
-        next_role = roles.get(index + 1)
-        if (
-            (next_role is not None and next_role.role == "table_of_contents")
-            or _is_heading(blocks[index + 1])
-        ) and not any(_is_heading(previous) for previous in blocks[: index + 1]):
-            for position in range(index + 1):
-                roles.setdefault(position, WordFrontMatter("cover", "position"))
-        break
     # A literal label alone is not sufficient. Match the generated Basic
     # information run, bounded by the next heading/non-paragraph.
     for index, block in enumerate(blocks):
@@ -234,13 +227,8 @@ def mark_word_scope(
     blocks = list(body)
     classifications = {}
     for index, classification in recognize_front_matter(body).items():
-        role = (
-            "cover_position"
-            if classification.basis == "position"
-            else classification.role
-        )
         for paragraph in blocks[index].iter(f"{_W}p"):
-            classifications[paragraph] = role
+            classifications[paragraph] = classification.role
     paragraphs = list(body.iter(f"{_W}p"))
     for index in instruction_paragraphs:
         classifications[paragraphs[index]] = "instruction"

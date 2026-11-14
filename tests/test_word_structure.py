@@ -47,20 +47,14 @@ def test_galleries_styles_and_unmarked_lookalikes():
     }
 
 
-def test_position_needs_next_heading_or_toc_and_no_earlier_heading():
-    first = paragraph("Draft title", section=True)
-    assert recognize(first, paragraph("Eligibility", "Heading1")) == {
-        0: WordFrontMatter("cover", "position")
-    }
-    assert recognize(first, paragraph("Eligibility")) == {}
-    assert (
-        recognize(
-            paragraph("Earlier heading", "Heading1"),
-            first,
-            paragraph("Another heading", "Heading2"),
-        )
-        == {}
+def test_section_break_preserves_opening_applicant_prose():
+    opening = paragraph(
+        "Eligible applicants must serve rural communities.", section=True
     )
+    assert recognize(opening, paragraph("Eligibility", "Heading1")) == {}
+    assert recognize(opening, gallery("Table of Contents")) == {
+        1: WordFrontMatter("table_of_contents", "gallery")
+    }
 
 
 def test_complex_toc_uses_completed_field_not_label_text():
@@ -83,7 +77,9 @@ def test_simple_toc_field_does_not_exclude_shared_applicant_prose():
     assert recognize(f"<w:p>{field}</w:p>") == {
         0: WordFrontMatter("table_of_contents", "field")
     }
-    assert recognize(f"<w:p>{field}<w:r><w:t>Apply today.</w:t></w:r></w:p>") == {}
+    style = '<w:pPr><w:pStyle w:val="TOC1"/></w:pPr>'
+    prose = "<w:r><w:t>Apply today.</w:t></w:r>"
+    assert recognize(f"<w:p>{style}{field}{prose}</w:p>") == {}
 
 
 def test_complex_field_keeps_mixed_boundaries_and_excludes_whole_results():
@@ -95,6 +91,7 @@ def test_complex_field_keeps_mixed_boundaries_and_excludes_whole_results():
     end = '<w:r><w:fldChar w:fldCharType="end"/></w:r>'
     entry = "<w:r><w:t>Eligibility 3</w:t></w:r>"
     prose = "<w:r><w:t>Applicants should apply.</w:t></w:r>"
+    toc_style = '<w:pPr><w:pStyle w:val="TOC1"/></w:pPr>'
     assert recognize(f"<w:p>{start}{entry}{end}</w:p>") == {
         0: WordFrontMatter("table_of_contents", "field")
     }
@@ -102,12 +99,11 @@ def test_complex_field_keeps_mixed_boundaries_and_excludes_whole_results():
         0: WordFrontMatter("table_of_contents", "field"),
         1: WordFrontMatter("table_of_contents", "field"),
     }
-    assert (
-        recognize(
-            f"<w:p>{prose}{start}{entry}</w:p>", f"<w:p>{entry}{end}{prose}</w:p>"
-        )
-        == {}
-    )
+    assert recognize(
+        f"<w:p>{toc_style}{prose}{start}{entry}</w:p>",
+        paragraph("How to apply 4", "TOC1"),
+        f"<w:p>{toc_style}{entry}{end}{prose}</w:p>",
+    ) == {1: WordFrontMatter("table_of_contents", "style")}
 
 
 def test_generated_metadata_needs_basic_information_context():

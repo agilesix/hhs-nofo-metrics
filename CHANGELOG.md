@@ -9,7 +9,9 @@ package release may support more than one measurement contract.
 
 - Add an opt-in Word-derived profile and result schema 1.3.0. Verified
   conversion boundaries support cover, contents, and instruction exclusions,
-  with aggregate counts only. Released profiles retain their behavior.
+  with aggregate counts only. The Word profile excludes gallery-marked covers
+  and preserves paragraphs with prose outside a shared contents field.
+  Released profiles retain their behavior.
 
 ## [0.7.0] - 2026-10-28
 
