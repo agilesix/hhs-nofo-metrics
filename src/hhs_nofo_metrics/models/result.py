@@ -562,6 +562,7 @@ class AnalysisResult:
     selection: Mapping[str, SelectionSummary]
     metrics: Mapping[str, MetricResult]
     warnings: tuple[WarningRecord, ...] = ()
+    excluded_word_content: Mapping[str, Mapping[str, int]] | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -592,7 +593,7 @@ class AnalysisResult:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "schema_version": self.schema_version,
             "analysis_id": self.analysis_id,
             "generated_at": self.generated_at,
@@ -615,3 +616,9 @@ class AnalysisResult:
             },
             "warnings": [warning.to_dict() for warning in self.warnings],
         }
+        if self.excluded_word_content is not None:
+            result["excluded_word_content"] = {
+                role: dict(counts)
+                for role, counts in self.excluded_word_content.items()
+            }
+        return result

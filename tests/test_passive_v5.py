@@ -128,6 +128,7 @@ def test_explicit_candidate_changes_only_passive_numerator():
 
 def test_new_profiles_select_v5_without_changing_historical_profiles():
     new_profiles = {
+        "hhs-nofo-fy27-word@0.1.0",
         "hhs-nofo-fy27-html@0.6.0",
         "hhs-nofo-fy27-pdf-estimate@0.7.0",
         "hhs-nofo-fy27-generic-pdf-estimate@0.6.0",

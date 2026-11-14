@@ -95,13 +95,14 @@ jobs:
           python -m venv /tmp/hhs-nofo-metrics-wheel-smoke
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/python -m pip install dist/*.whl
           test "$(/tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --version)" = "0.7.0"
-          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics | grep 'profiles\[9\]:'
+          /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics | grep 'profiles\[10\]:'
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics profiles list --json | python -m json.tool > /dev/null
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/hhs-nofo-metrics --help
           /tmp/hhs-nofo-metrics-wheel-smoke/bin/python - <<'PY'
           from hhs_nofo_metrics import SourceBundle, analyze, list_profiles
 
           assert set(list_profiles()) == {
+              "hhs-nofo-fy27-word@0.1.0",
               "hhs-nofo-fy27-html@0.6.0",
               "hhs-nofo-fy27-pdf-estimate@0.7.0",
               "hhs-nofo-fy27-generic-pdf-estimate@0.6.0",
@@ -146,7 +147,7 @@ jobs:
           from hhs_nofo_metrics import AnalysisResult, list_profiles
 
           assert AnalysisResult.__name__ == "AnalysisResult"
-          assert len(list_profiles()) == 9
+          assert len(list_profiles()) == 10
           PY
 
   secrets:

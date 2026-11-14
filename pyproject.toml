@@ -48,6 +48,7 @@ hhs_nofo_metrics = [
   "profiles/*.json",
   "schemas/analysis-result-1.1.0.json",
   "schemas/analysis-result-1.2.0.json",
+  "schemas/analysis-result-1.3.0.json",
   "schemas/profile-1.1.0.json",
 ]
 

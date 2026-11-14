@@ -25,6 +25,7 @@ REQUIRED_FILES = {
     "hhs_nofo_metrics/profiles/hhs-nofo-fy27-pdf-estimate-0.5.0.json",
     "hhs_nofo_metrics/schemas/analysis-result-1.1.0.json",
     "hhs_nofo_metrics/schemas/analysis-result-1.2.0.json",
+    "hhs_nofo_metrics/schemas/analysis-result-1.3.0.json",
     "hhs_nofo_metrics/schemas/profile-1.1.0.json",
 }
 

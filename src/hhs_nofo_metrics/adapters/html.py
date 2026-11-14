@@ -261,8 +261,18 @@ def _context_role(node: _Node, inherited: str) -> str:
     return inherited
 
 
-def _semantic_blocks(root: _Node) -> list[tuple[str, str, str]]:
+def _semantic_blocks(
+    root: _Node, word_roles: Mapping[int, str] | None = None
+) -> list[tuple[str, str, str]]:
     blocks: list[tuple[str, str, str]] = []
+    word_roles = word_roles or {}
+    excluded_word_roles = {
+        "cover",
+        "cover_position",
+        "metadata",
+        "table_of_contents",
+        "instruction",
+    }
 
     def emit(text: str, role: str, tag: str) -> None:
         normalized = _normalized_text(text)
@@ -288,11 +298,17 @@ def _semantic_blocks(root: _Node) -> list[tuple[str, str, str]]:
     def walk(node: _Node, inherited_role: str = "body") -> None:
         if node.tag in _SKIP_TAGS or _is_hidden(node):
             return
-        role = _context_role(node, inherited_role)
+        role = word_roles.get(id(node)) or (
+            inherited_role
+            if inherited_role in excluded_word_roles
+            else _context_role(node, inherited_role)
+        )
         if node.tag in _HEADING_TAGS:
             emit(
                 _inline_text(node),
-                role if role in {"navigation", "header", "footer"} else "heading",
+                role
+                if role in {"navigation", "header", "footer"} | excluded_word_roles
+                else "heading",
                 node.tag,
             )
             return

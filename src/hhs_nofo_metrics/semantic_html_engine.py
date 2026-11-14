@@ -443,8 +443,24 @@ def analyze_semantic_document(
         WarningRecord(code="adapter_warning", severity="warning", message=value)
         for value in (*document.warnings, *adapter_result.warnings)
     )
+    word_exclusions = None
+    if adapter_descriptor.id == "hhs-word-derived-html-adapter":
+        word_exclusions = {}
+        for segment in document.segments:
+            if not segment.role_basis.startswith("word_structure:"):
+                continue
+            category = segment.role_basis.removeprefix("word_structure:")
+            counts = word_exclusions.setdefault(category, {"words": 0, "segments": 0})
+            counts["words"] += len(tokenize_hhs_readability_draft(segment.text))
+            counts["segments"] += 1
     return AnalysisResult(
-        schema_version="1.2.0" if is_estimate else RESULT_SCHEMA_VERSION,
+        schema_version=(
+            "1.3.0"
+            if word_exclusions is not None
+            else "1.2.0"
+            if is_estimate
+            else RESULT_SCHEMA_VERSION
+        ),
         analysis_id=str(uuid4()),
         generated_at=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         engine=EngineIdentity(name="hhs-nofo-metrics", version=PACKAGE_VERSION),
@@ -501,6 +517,7 @@ def analyze_semantic_document(
         selection=selections,
         metrics=metrics,
         warnings=tuple(warnings),
+        excluded_word_content=word_exclusions,
     )
 
 

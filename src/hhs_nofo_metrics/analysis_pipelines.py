@@ -56,6 +56,14 @@ SEMANTIC_HTML_PIPELINE = AnalysisPipelineDescriptor(
     required_adapter_id="hhs-semantic-html-adapter",
     estimate_kind="none",
 )
+WORD_HTML_PIPELINE = AnalysisPipelineDescriptor(
+    id="hhs-word-derived-html-analysis",
+    version="0.1.0",
+    default_adapter="word-html",
+    source_kind="html",
+    required_adapter_id="hhs-word-derived-html-adapter",
+    estimate_kind="none",
+)
 TAGGED_PDF_ESTIMATE_PIPELINE = AnalysisPipelineDescriptor(
     id=TAGGED_PDF_ESTIMATE_PIPELINE_ID,
     version=TAGGED_PDF_ESTIMATE_PIPELINE_VERSION,
@@ -81,6 +89,7 @@ class AnalysisPipelineRegistry:
         self,
         descriptors: Iterable[AnalysisPipelineDescriptor] = (
             SEMANTIC_HTML_PIPELINE,
+            WORD_HTML_PIPELINE,
             TAGGED_PDF_ESTIMATE_PIPELINE,
             GENERIC_PDF_ESTIMATE_PIPELINE,
         ),
