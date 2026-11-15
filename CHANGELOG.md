@@ -7,6 +7,8 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-15
+
 - Word-derived recognition (adapter `hhs-word-derived-html-adapter@0.2.0`):
   recognize a plain-paragraph leading cover section followed by a table of
   contents as `cover_position`, and recognize Builder metadata labels under a
@@ -15,6 +17,11 @@ package release may support more than one measurement contract.
   Word uploads; sentence-based scores change only if a recognized line was
   previously part of the sentence inventory. HTML and PDF profiles are
   unchanged. See [#34](https://github.com/agilesix/hhs-nofo-metrics/issues/34).
+
+The private real-document gate was not run for this release; it is deferred
+by maintainer decision and recorded as not run, not passed. Evidence is the
+synthetic regression coverage from
+[#35](https://github.com/agilesix/hhs-nofo-metrics/pull/35).
 
 ## [0.8.0] - 2026-11-14
 
