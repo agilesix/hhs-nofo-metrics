@@ -7,6 +7,15 @@ package release may support more than one measurement contract.
 
 ## [Unreleased]
 
+- Word-derived recognition (adapter `hhs-word-derived-html-adapter@0.2.0`):
+  recognize a plain-paragraph leading cover section followed by a table of
+  contents as `cover_position`, and recognize Builder metadata labels under a
+  "Before You Begin" heading as well as "Basic information". Ambiguous layouts
+  stay countable. Word Count and the excluded-content counts can change for
+  Word uploads; sentence-based scores change only if a recognized line was
+  previously part of the sentence inventory. HTML and PDF profiles are
+  unchanged. See [#34](https://github.com/agilesix/hhs-nofo-metrics/issues/34).
+
 ## [0.8.0] - 2026-11-14
 
 - Add an opt-in Word-derived profile and result schema 1.3.0. Verified

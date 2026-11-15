@@ -174,9 +174,16 @@ Recognition depends on the input path:
   arbitrary CSS class names or arbitrary `role` attributes.
 - **Word-derived HTML**, with the opt-in Word profile, uses paired conversion
   boundaries tied to native Word styles, fields, and content controls. A cover
-  requires the Word Cover Pages gallery. Paragraphs with both contents-field
+  is recognized from the Word Cover Pages gallery, or by position: a first
+  section that ends in a section break, is followed directly by a recognized
+  table of contents (optionally after one label paragraph), has no headings,
+  no line ending in sentence punctuation, at most 25 words per line and at most
+  100 words in total. Opening prose before a section break stays countable.
+  Paragraphs with both contents-field
   results and prose outside the field remain countable. Verified HHS writer-instruction containers and bounded Builder
-  metadata are also recognized. Unmatched or ambiguous boundaries do not
+  metadata are also recognized (the three metadata labels under a
+  "Basic information" or "Before You Begin" heading whose run starts with
+  `OpDiv:` and includes `Opportunity number:`). Unmatched or ambiguous boundaries do not
   exclude recovered text.
 - **Tagged PDFs** use source-declared structure and selected producer/profile
   rules. For example, `TOCI` maps to table of contents, `Note` to body and

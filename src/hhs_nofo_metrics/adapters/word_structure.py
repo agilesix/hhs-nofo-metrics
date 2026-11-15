@@ -24,12 +24,20 @@ _INSTRUCTION_LABEL = re.compile(
     re.IGNORECASE,
 )
 _HEADING_LEVELS = frozenset(str(i) for i in range(9))
+# A leading cover section is short, unheaded, and made of labels, not prose.
+_COVER_MAX_WORDS = 100
+_COVER_MAX_PARAGRAPH_WORDS = 25
+_TERMINAL_PUNCTUATION = re.compile(r"[.!?][\"'\u201d\u2019)\]]*$")
+_COVER_SECTION_TAGS = frozenset({f"{_W}p", f"{_W}bookmarkStart", f"{_W}bookmarkEnd"})
+_METADATA_HEADINGS = frozenset({"basic information", "before you begin"})
 
 
 @dataclass(frozen=True, slots=True)
 class WordFrontMatter:
-    role: Literal["cover", "table_of_contents", "instruction", "metadata"]
-    basis: Literal["gallery", "style", "field", "label", "table", "builder"]
+    role: Literal[
+        "cover", "cover_position", "table_of_contents", "instruction", "metadata"
+    ]
+    basis: Literal["gallery", "style", "field", "label", "table", "builder", "section"]
 
 
 def _text(node: Element) -> str:
@@ -77,6 +85,67 @@ def _simple_toc_fields(paragraph: Element) -> list[Element]:
         for field in paragraph.findall(f"{_W}fldSimple")
         if _TOC_INSTRUCTION.match(field.get(f"{_W}instr", ""))
     ]
+
+
+def _leading_cover_section(
+    blocks: list[Element], roles: dict[int, WordFrontMatter]
+) -> tuple[int, ...]:
+    """Return text paragraphs of an unmarked cover section, or nothing.
+
+    Some exports (for example GrantSolutions Announcement Module Word files)
+    place cover lines in plain paragraphs, end the first section, and start
+    the next section with a table of contents. Recognize that layout only when
+    the first section has no headings, no sentence-ending punctuation and few
+    words, so opening applicant prose before a section break stays countable.
+    """
+    end = None
+    for index, block in enumerate(blocks):
+        if block.tag not in _COVER_SECTION_TAGS or index in roles:
+            return ()
+        if block.tag == f"{_W}p" and block.find(f"{_W}pPr/{_W}sectPr") is not None:
+            end = index
+            break
+    if end is None:
+        return ()
+    following = [
+        index
+        for index in range(end + 1, len(blocks))
+        if blocks[index].tag != f"{_W}p" or _text(blocks[index])
+    ]
+    if not following:
+        return ()
+
+    def is_toc(position: int) -> bool:
+        role = roles.get(position)
+        return role is not None and role.role == "table_of_contents"
+
+    # Allow one unrecognized label paragraph (for example "Table of Contents")
+    # directly before the first recognized contents entry.
+    if not (
+        is_toc(following[0])
+        or (
+            blocks[following[0]].tag == f"{_W}p"
+            and len(following) > 1
+            and is_toc(following[1])
+        )
+    ):
+        return ()
+    paragraphs = [
+        (index, _text(block))
+        for index, block in enumerate(blocks[: end + 1])
+        if block.tag == f"{_W}p"
+    ]
+    lines = [(index, text) for index, text in paragraphs if text]
+    if not lines or any(_is_heading(blocks[index]) for index, _ in paragraphs):
+        return ()
+    word_counts = [len(text.split()) for _, text in lines]
+    if (
+        sum(word_counts) > _COVER_MAX_WORDS
+        or max(word_counts) > _COVER_MAX_PARAGRAPH_WORDS
+        or any(_TERMINAL_PUNCTUATION.search(text) for _, text in lines)
+    ):
+        return ()
+    return tuple(index for index, _ in lines)
 
 
 def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
@@ -164,10 +233,14 @@ def recognize_front_matter(body: Element) -> dict[int, WordFrontMatter]:
         ):
             roles[index] = WordFrontMatter("table_of_contents", "label")
 
+    for index in _leading_cover_section(blocks, roles):
+        roles[index] = WordFrontMatter("cover_position", "section")
+
     # A literal label alone is not sufficient. Match the generated Basic
-    # information run, bounded by the next heading/non-paragraph.
+    # information run (titled "Before You Begin" in some exports), bounded by
+    # the next heading/non-paragraph.
     for index, block in enumerate(blocks):
-        if not _is_heading(block) or _text(block).casefold() != "basic information":
+        if not _is_heading(block) or _text(block).casefold() not in _METADATA_HEADINGS:
             continue
         for end in range(index + 1, len(blocks)):
             if blocks[end].tag != f"{_W}p" or _is_heading(blocks[end]):
