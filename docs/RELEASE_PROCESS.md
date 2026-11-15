@@ -154,8 +154,8 @@ published record attached to a tag: release notes and uploaded wheel/sdist
 assets. A tag alone does not mean an installable wheel was uploaded, a private
 cohort passed, or a consumer upgraded. GitHub's automatically generated source
 ZIP/tar archives are snapshots of the repository; they are distinct from the
-built wheel and Python source distribution whose hashes appear in
-[installation guidance](GETTING_STARTED.md#installation). See
+built wheel and Python source distribution whose hashes appear in each
+release's notes (see [installation guidance](GETTING_STARTED.md#installation)). See
 [GitHub's release explanation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases).
 
 These version tags are separate from issue/PR labels such as `documentation`,
@@ -233,7 +233,9 @@ export if any private material ever entered Git history.
 After the package, private real-document, and public-release gates pass:
 
 1. Finalize the package version, source fallback, CI smoke expectations, and
-   changelog. Move the released changes out of `Unreleased` into a heading such
+   changelog. If the release changes the recommended profiles, update the list
+   in [getting started](GETTING_STARTED.md#choose-a-source-and-profile) in the
+   same release-preparation PR. Move the released changes out of `Unreleased` into a heading such
    as `## [0.6.1] - YYYY-MM-DD`, using the actual release date. Keep future work
    under `Unreleased`. Candidate 0.6.1 is not ready to tag merely because it
    builds locally.
@@ -249,12 +251,16 @@ After the package, private real-document, and public-release gates pass:
    records a failure; it does not prevent the Git tag from existing.
 5. After tag CI passes and all manual gates are satisfied, publish a GitHub
    Release for that tag with the reviewed wheel/sdist assets, their SHA-256
-   digests, commit, changes, validation, and remaining limitations. Check the
-   uploaded asset bytes against the recorded hashes. Release publication and
+   digests, commit, changes, validation, and remaining limitations. Include a
+   copyable `pip install` command for the wheel URL with its `#sha256=`
+   fragment; [installation guidance](GETTING_STARTED.md#installation) points
+   readers to the release notes for it instead of repeating per-release
+   digests. Check the uploaded asset bytes against the recorded hashes. Release publication and
    asset upload are explicit maintainer actions, separate from pushing a tag.
-6. Update the release/install and adoption documentation to distinguish the
-   published version from future candidates, then notify consumers through the
-   release record. Consumers upgrade explicitly; see
+6. Update adoption documentation that names a specific version (for example,
+   consumer guides) to distinguish the published version from future
+   candidates, then notify consumers through the release record. Installation
+   guidance links to the latest release and needs no per-release update. Consumers upgrade explicitly; see
    [consumer updates](INTEGRATION_CONTRACT.md#consumer-updates).
 
 The [CI workflow](../.github/workflows/ci.yml) runs on PRs, pushes to `main`,
