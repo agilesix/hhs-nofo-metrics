@@ -12,7 +12,9 @@ For the complete input/result contract, see
 
 ## Choose a source and profile
 
-The recommended profiles in released package **v0.7.0** are:
+The recommended profiles in the current release are listed below. They were
+introduced in package **v0.7.0** (HTML and PDF) and **v0.8.0** (Word-derived)
+and remain current in later releases until a release says otherwise:
 
 - `hhs-nofo-fy27-html@0.6.0`: provisional source-native behavior for semantic
   export HTML.
@@ -22,6 +24,10 @@ The recommended profiles in released package **v0.7.0** are:
 - `hhs-nofo-fy27-generic-pdf-estimate@0.6.0`: fallback for untagged or
   Word-saved PDFs; reconstructs conservative paragraph blocks from visual text
   lines and always labels configured metrics as low-reliability estimates.
+- `hhs-nofo-fy27-word@0.1.0`: opt-in profile for HTML converted from Word by a
+  consumer that supplies verified conversion boundaries (`word_boundaries`).
+  It excludes recognized covers, contents, writer instructions and Builder
+  metadata. See [the integration contract](INTEGRATION_CONTRACT.md).
 
 These profiles select passive method `0.5.0-provisional`. Historical profiles
 remain available unchanged for interpreting earlier results; see the
@@ -42,17 +48,22 @@ semantic HTML whenever it is available.
 
 ## Installation
 
-Use Python 3.11 or newer. Install the pinned wheel from the
-[v0.7.0 release](https://github.com/agilesix/hhs-nofo-metrics/releases/tag/v0.7.0).
-The URL fragment makes pip verify the downloaded wheel's SHA-256:
+Use Python 3.11 or newer. Install a pinned wheel from a published
+[GitHub release](https://github.com/agilesix/hhs-nofo-metrics/releases); the
+[latest release](https://github.com/agilesix/hhs-nofo-metrics/releases/latest)
+is the current version. Each release's notes include a ready-to-copy install
+command and the SHA-256 digests of its wheel and source distribution. This
+guide doesn't repeat them, so it doesn't need updating for each release.
+
+The command has this form. Replace `X.Y.Z` with the release version and
+`<wheel-sha256>` with the wheel digest from that release's notes. The URL
+fragment makes pip verify the downloaded wheel:
 
 ```bash
-python -m pip install "https://github.com/agilesix/hhs-nofo-metrics/releases/download/v0.7.0/hhs_nofo_metrics-0.7.0-py3-none-any.whl#sha256=12b7af8292552096e05dceb7911981b93ec4eb5bc6120a7622befea646ab7966"
+python -m pip install "https://github.com/agilesix/hhs-nofo-metrics/releases/download/vX.Y.Z/hhs_nofo_metrics-X.Y.Z-py3-none-any.whl#sha256=<wheel-sha256>"
 ```
 
-The release also provides a source distribution. Its published SHA-256 is
-`f6b6c3a8c36b9500d6bdf00300be2b530a7226d1db759dd6ff2ccad47181b721`.
-Verify the selected artifact against the release metadata before use; do not
+Verify the selected artifact against the release notes before use; do not
 substitute a digest from a local candidate build. Lock transitive dependencies
 in the consumer's environment too: verifying the wheel does not pin them.
 
