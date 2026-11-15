@@ -62,7 +62,7 @@ class WordHtmlAdapterPlugin(HtmlAdapterPlugin):
     descriptor = replace(
         HtmlAdapterPlugin.descriptor,
         id="hhs-word-derived-html-adapter",
-        version="0.1.0",
+        version="0.2.0",
     )
 
     def extract(

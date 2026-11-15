@@ -22,14 +22,22 @@ Use a new, opt-in Word-derived profile with the existing role-based
 selection and unchanged formulas. Existing HTML and PDF profiles and prior
 results must not change. Report only aggregate excluded word/segment
 counts for recognized content. Keep comparison persistence and UI in Builder. The metadata rule requires the
-generated Basic information pattern with OpDiv and opportunity number before
-excluding the three specific PDF metadata labels.
+generated Basic information pattern (a "Basic information" or "Before You
+Begin" heading) with OpDiv and opportunity number before excluding the three
+specific PDF metadata labels.
 
 Single-cell instruction tables must start with a known writer-only label.
 Builder reuses its verified template-box eligibility check and passes the
 resulting paragraph positions instead of duplicating its DrawingML/VML rules.
-A cover requires the Word Cover Pages gallery. A section break alone leaves
-preceding text countable. A paragraph that contains both a completed TOC
+A cover is recognized from the Word Cover Pages gallery. Exports that use
+plain cover paragraphs (for example, GrantSolutions Announcement Module Word
+files) are recognized by position as `cover_position` only when the first
+section ends in a section break, is followed directly by a recognized table of
+contents (optionally after one label paragraph), has no headings, no line
+ending in sentence punctuation, at most 25 words per line and at most 100 words
+in total. A section break alone leaves preceding text countable, so opening
+applicant prose stays in scope. Tracking:
+[#34](https://github.com/agilesix/hhs-nofo-metrics/issues/34). A paragraph that contains both a completed TOC
 field result and prose outside the field stays countable, even when it uses
 a built-in TOC style.
 
